@@ -188,7 +188,7 @@ def run_experiment_PS(text, B, T, N, epochs, tasks, seed, save_neuron_ages, save
     
         if verbose:
             print(f"Task: {task}")
-            
+
         # Split the random key
         random_key, split_key = jr.split(random_key)
         data_loader = data_loader_class(text=text, B=8, T=128, N=N, key=split_key)
@@ -217,8 +217,8 @@ def run_experiment_PS(text, B, T, N, epochs, tasks, seed, save_neuron_ages, save
     if save_results:
         #  save and pickle loss_array and neuron_ages_array at "save_path"
         # Ensure the path exists (create if it does not)
-        if not os.path.exists(path):
-            os.makedirs(path)
+        if not os.path.exists(save_path):
+            os.makedirs(save_path)
 
         # Define file names for the data
         loss_path = os.path.join(save_path, "loss_array.pkl")
