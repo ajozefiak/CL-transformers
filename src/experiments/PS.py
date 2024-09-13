@@ -155,7 +155,7 @@ def get_dataloader(text):
 #     return x,y
 
 
-def run_experiment(text, B, T, N, epochs, tasks, seed, save_neuron_ages, save_results, save_path, verbose, print_freq):
+def run_experiment_PS(text, B, T, N, epochs, tasks, seed, save_neuron_ages, save_results, save_path, verbose, print_freq):
     
     # Get the data_loader_class
     data_loader_class = get_dataloader(text)
