@@ -111,7 +111,7 @@ def get_dataloader(text):
             x,y = jnp.reshape(buf[:-1],(B,T)), jnp.reshape(buf[1:],(B,T))
             self.current_position += B*T
             if self.current_position + B*T+1 > len(self.tokens):
-            self.current_position = 0
+                self.current_position = 0
             return x,y
     
     return DataLoaderPermuteText
