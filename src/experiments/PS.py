@@ -186,6 +186,9 @@ def run_experiment_PS(text, B, T, N, epochs, tasks, seed, save_neuron_ages, save
     t0 = time.time()
     for task in range(tasks):
     
+        if verbose:
+            print(f"Task: {task}")
+            
         # Split the random key
         random_key, split_key = jr.split(random_key)
         data_loader = data_loader_class(text=text, B=8, T=128, N=N, key=split_key)
