@@ -236,6 +236,6 @@ def run_experiment_PS(text, B, T, N, epochs, tasks, seed, save_neuron_ages, save
                 print(f"Saved neuron_ages_array to {ages_path}")
 
     if save_neuron_ages:
-        return loss_array, neuron_ages
+        return loss_array, neuron_ages_array
     else:
         return loss_array
