@@ -162,7 +162,7 @@ def run_experiment_PS(text, B, T, N, epochs, tasks, seed, save_neuron_ages, save
 
     # Initialize the random key
     key = jr.PRNGKey(seed)
-    key, split_key = key.split(key)
+    key, split_key = jr.split(key)
 
     # TODO: change this if we want to play with the ModelConfig - maybe make it an argument
     config = ModelConfig()
