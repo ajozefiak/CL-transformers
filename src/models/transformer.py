@@ -25,6 +25,8 @@ class ModelConfig:
   dropout_rate: float = 0.0
   gradient_accumulation_steps: int = 1
 
+config = ModelConfig()
+
 class CausalSelfAttention(nn.Module):
 
   config: ModelConfig
