@@ -6,6 +6,7 @@ import jax.random as jr
 import time
 import pickle
 import os
+import numpy as np
 
 # TODO verify that this works
 from ..models import *
@@ -175,7 +176,7 @@ def run_experiment_PS(text, B, T, N, epochs, tasks, seed, save_neuron_ages, save
 
     # initialize neuron_ages_array
     if save_neuron_ages:
-        neuron_ages_arry = np.zeros((3, int(config.n_embd * 4), int(train_steps_per_task * epochs)))
+        neuron_ages_array = np.zeros((3, int(config.n_embd * 4), int(train_steps_per_task * epochs)))
 
     # Iniitialize loss_array
     loss_array = np.zeros(train_steps_per_task * tasks)
