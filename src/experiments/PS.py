@@ -81,38 +81,38 @@ def get_dataloader(text):
     # T: Context window
     # N: Number of Tokens per Task
     class DataLoaderPermuteText:
-    def __init__(self, text, B, T, N, key):
-        self.current_position = 0
-        self.B = B
-        self.T = T
-        self.N = N
+        def __init__(self, text, B, T, N, key):
+            self.current_position = 0
+            self.B = B
+            self.T = T
+            self.N = N
 
-        enc = tiktoken.get_encoding("gpt2")
+            enc = tiktoken.get_encoding("gpt2")
 
-        text = process_text(text)
-        text = ' ' + permute_text_vocabulary(text, key)
+            text = process_text(text)
+            text = ' ' + permute_text_vocabulary(text, key)
 
-        # Number of batches per epoch
-        B = 8
-        T = 128
-        num_bpe = 32
-        tokens_list = enc.encode(text)[0:N]
-        
-        # limited vocab tokens
-        tokens_lv = custom_token_list_encoding(tokens_list)
+            # Number of batches per epoch
+            B = 8
+            T = 128
+            num_bpe = 32
+            tokens_list = enc.encode(text)[0:N]
+            
+            # limited vocab tokens
+            tokens_lv = custom_token_list_encoding(tokens_list)
 
-        self.tokens = jnp.array(tokens_lv)
-        print(f"loaded {len(self.tokens)} tokens in the datasets" )
-        print(f" 1 epoch = {len(self.tokens)//(B*T)} batches")
+            self.tokens = jnp.array(tokens_lv)
+            print(f"loaded {len(self.tokens)} tokens in the datasets" )
+            print(f" 1 epoch = {len(self.tokens)//(B*T)} batches")
 
-    def next_batch(self):
-        B,T = self.B, self.T
-        buf = self.tokens[self.current_position:self.current_position+B*T+1]
-        x,y = jnp.reshape(buf[:-1],(B,T)), jnp.reshape(buf[1:],(B,T))
-        self.current_position += B*T
-        if self.current_position + B*T+1 > len(self.tokens):
-        self.current_position = 0
-        return x,y
+        def next_batch(self):
+            B,T = self.B, self.T
+            buf = self.tokens[self.current_position:self.current_position+B*T+1]
+            x,y = jnp.reshape(buf[:-1],(B,T)), jnp.reshape(buf[1:],(B,T))
+            self.current_position += B*T
+            if self.current_position + B*T+1 > len(self.tokens):
+            self.current_position = 0
+            return x,y
     
     return DataLoaderPermuteText
     
