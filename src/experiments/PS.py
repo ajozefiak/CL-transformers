@@ -206,7 +206,7 @@ def run_experiment_PS(text, B, T, N, epochs, tasks, seed, save_neuron_ages, save
             t += 1
 
             if verbose & (step % print_freq == 0):
-                print(f"step {step}/{train_steps} | loss {loss:.4f} |")
+                print(f"step {step}/{train_steps_per_task} | loss {loss:.4f} |")
 
     print(f"Time to complete experiment: {time.time() - t0}")
 
