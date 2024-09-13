@@ -176,7 +176,7 @@ def run_experiment_PS(text, B, T, N, epochs, tasks, seed, save_neuron_ages, save
 
     # initialize neuron_ages_array
     if save_neuron_ages:
-        neuron_ages_array = np.zeros((3, int(config.n_embd * 4), int(train_steps_per_task * epochs)))
+        neuron_ages_array = np.zeros((3, int(train_steps_per_task * tasks), int(config.n_embd * 4)))
 
     # Iniitialize loss_array
     loss_array = np.zeros(train_steps_per_task * tasks)
