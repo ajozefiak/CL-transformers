@@ -161,9 +161,9 @@ def run_experiment_PS(text, B, T, N, epochs, tasks, seed, save_neuron_ages, save
     data_loader_class = get_dataloader(text)
 
     # Initialize the random key
-    key = jr.PRNGKey(seed)
-    print(f"Initial key: {key}, Type: {type(key)}")
-    key, split_key = jr.split(key)
+    random_key = jr.PRNGKey(seed)
+    print(f"Initial key: {random_key}, Type: {type(random_key)}")
+    random_key, split_key = jr.split(random_key)
 
     # TODO: change this if we want to play with the ModelConfig - maybe make it an argument
     config = ModelConfig()
@@ -186,7 +186,7 @@ def run_experiment_PS(text, B, T, N, epochs, tasks, seed, save_neuron_ages, save
     for task in range(tasks):
     
         # Split the random key
-        key, split_key = jr.split(key)
+        random_key, split_key = jr.split(random_key)
         data_loader = data_loader_class(text=text, B=8, T=128, N=N, key=split_key)
 
         for step in range(train_steps_per_task):
