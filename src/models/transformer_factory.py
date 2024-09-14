@@ -111,7 +111,7 @@ def get_transformer_methods(config, alg, alg_params, key):
             x = tok_emb + pos_emb
 
             for _ in range(self.config.n_layer):
-            x = Block(self.config)(x)
+                x = Block(self.config)(x)
 
             x = nn.LayerNorm()(x)
 
