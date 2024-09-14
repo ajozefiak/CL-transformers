@@ -220,7 +220,7 @@ def get_transformer_methods(config, alg, alg_params, key):
 
             loss, grads = jax.value_and_grad(loss_fn, has_aux=False)(state.params)
             new_state = state.apply_gradients(grads=grads)
-]
+            
             # new_state = p * new_state + sigma * noise
             new_state = new_state.replace(
                 params=jax.tree_util.tree_map(
