@@ -171,7 +171,7 @@ def get_transformer_methods(config, alg, alg_params, key):
             def loss_fn(params: FrozenDict) -> jnp.ndarray:
                 logits = state.apply_fn(params, x, False)
                 loss = optax.softmax_cross_entropy_with_integer_labels(logits, y).mean() 
-                l2_loss = jnp.sum(jnp.sum(jnp.square(p)) for p in jax.tree_util.tree_leaves(params))
+                l2_loss = sum(jnp.sum(jnp.square(p)) for p in jax.tree_util.tree_leaves(params))
                 loss += reg_str * l2_loss
                 return loss
 
@@ -193,7 +193,7 @@ def get_transformer_methods(config, alg, alg_params, key):
             def loss_fn(params: FrozenDict) -> jnp.ndarray:
                 logits = state.apply_fn(params, x, False)
                 loss = optax.softmax_cross_entropy_with_integer_labels(logits, y).mean() 
-                l2_loss = jnp.sum(jnp.sum((p - p0) ** 2) for p, p0 in zip(jax.tree_util.tree_leaves(params), jax.tree_util.tree_leaves(init_params)))
+                l2_loss = sum(jnp.sum((p - p0) ** 2) for p, p0 in zip(jax.tree_util.tree_leaves(params), jax.tree_util.tree_leaves(init_params)))
                 loss += reg_str * l2_loss
                 return loss
 
