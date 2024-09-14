@@ -27,9 +27,9 @@ class ModelConfig:
 def get_transformer_methods(config, alg, alg_params, key):
 
     if alg == 'L2':
-        reg_str = alg_params['reg_str]
+        reg_str = alg_params['reg_str']
     if alg == 'L2Init':
-        reg_str = alg_params['reg_str]
+        reg_str = alg_params['reg_str']
     if alg == 'S&P':
         p = alg_params['p']
         sigma = alg_params['sigma']
