@@ -172,10 +172,12 @@ def get_transformer_methods(config, alg, alg_params, key):
                 logits = state.apply_fn(params, x, False)
                 loss = optax.softmax_cross_entropy_with_integer_labels(logits, y).mean() 
                 l2_loss = sum(jnp.sum(jnp.square(p)) for p in jax.tree_util.tree_leaves(params))
-                loss += reg_str * l2_loss
-                return loss
+                loss_reg = loss + reg_str * l2_loss
+                return loss_reg, loss
 
-            loss, grads = jax.value_and_grad(loss_fn, has_aux=False)(state.params)
+            loss, grads = jax.value_and_grad(loss_fn, has_aux=True)(state.params)
+            # Return the true loss
+            loss = loss[1]
             new_state = state.apply_gradients(grads=grads)
 
             return loss, new_state
@@ -194,10 +196,12 @@ def get_transformer_methods(config, alg, alg_params, key):
                 logits = state.apply_fn(params, x, False)
                 loss = optax.softmax_cross_entropy_with_integer_labels(logits, y).mean() 
                 l2_loss = sum(jnp.sum((p - p0) ** 2) for p, p0 in zip(jax.tree_util.tree_leaves(params), jax.tree_util.tree_leaves(init_params)))
-                loss += reg_str * l2_loss
-                return loss
+                loss_reg = loss + reg_str * l2_loss
+                return loss_reg, loss
 
-            loss, grads = jax.value_and_grad(loss_fn, has_aux=False)(state.params)
+            loss, grads = jax.value_and_grad(loss_fn, has_aux=True)(state.params)
+            # Return the true loss
+            loss = loss[1]
             new_state = state.apply_gradients(grads=grads)
 
             return loss, new_state
