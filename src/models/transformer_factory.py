@@ -149,7 +149,7 @@ def get_transformer_methods(config, alg, alg_params, key):
     # Vanilla Algorithm 
     if alg == 'Vanilla':
         @jax.jit
-        def train_step(state: TrainState, x: jnp.ndarray, y: jnp.ndarray) -> Tuple[jnp.ndarray, TrainState]:
+        def train_step(state: TrainState, x: jnp.ndarray, y: jnp.ndarray, key: jr.PRNGKey) -> Tuple[jnp.ndarray, TrainState]:
 
             def loss_fn(params: FrozenDict) -> jnp.ndarray:
                 logits = state.apply_fn(params, x, False)
@@ -166,7 +166,7 @@ def get_transformer_methods(config, alg, alg_params, key):
     # L2 Algorithm 
     if alg == 'L2':
         @jax.jit
-        def train_step(state: TrainState, x: jnp.ndarray, y: jnp.ndarray) -> Tuple[jnp.ndarray, TrainState]:
+        def train_step(state: TrainState, x: jnp.ndarray, y: jnp.ndarray, key: jr.PRNGKey) -> Tuple[jnp.ndarray, TrainState]:
 
             def loss_fn(params: FrozenDict) -> jnp.ndarray:
                 logits = state.apply_fn(params, x, False)
@@ -188,7 +188,7 @@ def get_transformer_methods(config, alg, alg_params, key):
         init_params = train_state.params
 
         @jax.jit
-        def train_step(state: TrainState, x: jnp.ndarray, y: jnp.ndarray) -> Tuple[jnp.ndarray, TrainState]:
+        def train_step(state: TrainState, x: jnp.ndarray, y: jnp.ndarray, key: jr.PRNGKey) -> Tuple[jnp.ndarray, TrainState]:
 
             def loss_fn(params: FrozenDict) -> jnp.ndarray:
                 logits = state.apply_fn(params, x, False)
@@ -208,7 +208,7 @@ def get_transformer_methods(config, alg, alg_params, key):
     if alg == 'S&P':
 
         @jax.jit
-        def train_step(state: TrainState, x: jnp.ndarray, y: jnp.ndarray, key: jax.random.KeyArray) -> Tuple[jnp.ndarray, TrainState]:
+        def train_step(state: TrainState, x: jnp.ndarray, y: jnp.ndarray, key: jr.PRNGKey) -> Tuple[jnp.ndarray, TrainState]:
 
             def loss_fn(params: FrozenDict) -> jnp.ndarray:
                 logits = state.apply_fn(params, x, False)
