@@ -1,12 +1,4 @@
-# These two are necessary for experiments, but not for the transformer
-# import datasets
-# from datasets import load_from_disk
-# import tiktoken
-# import pickle
-# import numpy as np
-
-# Imports
-
+# Imports 
 import jax
 import jax.numpy as jnp
 import jax.random as jr
@@ -16,7 +8,7 @@ from dataclasses import dataclass
 
 @dataclass
 class ModelConfig:
-  vocab_size: int = 11387 # 50257
+  vocab_size: int = 50257
   block_size: int = 128
 
   n_layer: int = 3
