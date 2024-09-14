@@ -16,7 +16,7 @@ from dataclasses import dataclass
 
 @dataclass
 class ModelConfig:
-  vocab_size: int = 11387 # 50257
+  vocab_size: int = 50257 # 11387
   block_size: int = 128
 
   n_layer: int = 3
