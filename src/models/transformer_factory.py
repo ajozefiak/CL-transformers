@@ -225,7 +225,7 @@ def get_transformer_methods(config, alg, alg_params, key):
             new_state = new_state.replace(
                 params=jax.tree_util.tree_map(
                     lambda param, noise_param: p * param + sigma * noise_param,
-                    mew_state.params,
+                    new_state.params,
                     noise_params
                 )
             )
