@@ -153,16 +153,38 @@ def run_experiment_PS_factory(alg, alg_params, text, B, T, N, epochs, tasks, see
         # Split the random key
         random_key, split_key = jr.split(random_key)
         data_loader = data_loader_class(text=text, B=B, T=T, N=N, key=split_key)
-
+        
+        ###############
+        # In principle, we should be able to copy the for loop below to other experiments as long as the 
+        # data_loader API is unchanged.
+        ###############
         for step in range(train_steps_per_task):
+            
+            ###############
+            # COMMON APPLICATION of DATA LOADER
+            ###############
             x,y = data_loader.next_batch()
             
+            ###############
+            # COMMON TRAINING LOOP:
+            # (1) maps x,y -> (new) train_state (and reset_state)
+            # (2) outputs loss and neuron_ages for logging purposes
+            # In practice, it should be the case that this code can be copied to every experiment
+            ###############
             neuron_pre_activ = get_neuron_pre_activ(train_state, x)
             random_key, split_key = jr.split(random_key)
             loss, train_state = train_step(train_state, x, y, split_key)
-            neuron_ages = update_neuron_ages(neuron_ages, neuron_pre_activ)
+            # Perform reset step and 
+            if alg == 'ART' or alg = 'ReDO' or alg = 'CBP':
+                # TODO
+                random_key, split_key = jr.split(random_key)
+                train_state, reset_state, neuron_ages = reset_neurons(train_state, reset_state, neuron_ages, neuron_pre_activ, split_key)
+            else:
+                neuron_ages = update_neuron_ages(neuron_ages, neuron_pre_activ)  
+            ###############
+            ###############
             
-            # Update loss_array and neuron_ages_array
+            # Update loss_array and neuron_ages_array for logigng purposes
             loss_array[t] = loss
             if save_neuron_ages:
                 neuron_ages_array[0,t,:] = neuron_ages['Block_0']
