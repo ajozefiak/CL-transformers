@@ -131,6 +131,9 @@ def run_experiment_PS_factory(alg, alg_params, text, B, T, N, epochs, tasks, see
     config = ModelConfig(vocab_size=11387)
     train_state, train_step = get_transformer_methods(config, alg, alg_params, split_key)
     neuron_ages = init_neuron_ages(config)
+    if alg == 'ART' or alg = 'ReDO' or alg = 'CBP':
+        init_reset_state, reset_neurons = get_reset_methods(config, alg, alg_params)
+        reset_state = init_reset_state(config, alg, alg_params)
 
     # Get the total number of training steps
     train_steps_per_task = (N * epochs) // (B * T)
@@ -175,8 +178,7 @@ def run_experiment_PS_factory(alg, alg_params, text, B, T, N, epochs, tasks, see
             random_key, split_key = jr.split(random_key)
             loss, train_state = train_step(train_state, x, y, split_key)
             # Perform reset step and 
-            if alg == 'ART' or alg = 'ReDO' or alg = 'CBP':
-                # TODO
+            if alg == 'ART' or alg == 'ReDO' or alg == 'CBP':
                 random_key, split_key = jr.split(random_key)
                 train_state, reset_state, neuron_ages = reset_neurons(train_state, reset_state, neuron_ages, neuron_pre_activ, split_key)
             else:
