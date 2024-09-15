@@ -94,9 +94,9 @@ def get_dataloader(text):
             text = ' ' + permute_text_vocabulary(text, key)
 
             # Number of batches per epoch
-            B = 8
-            T = 128
-            num_bpe = 32
+            # B = 8
+            # T = 128
+            # num_bpe = 32
             tokens_list = enc.encode(text)[0:N]
             
             # limited vocab tokens
