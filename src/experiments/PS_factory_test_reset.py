@@ -135,6 +135,9 @@ def run_experiment_PS_factory_test_reset(alg, alg_params, text, B, T, N, epochs,
         init_reset_state, reset_neurons = get_reset_methods(config, alg, alg_params)
         reset_state = init_reset_state(config, alg, alg_params)
 
+        # Initialize reset_mask_array
+        reset_mask_array = np.zeros((3, int(train_steps_per_task * tasks), int(config.n_embd * 4)), dtype = bool)
+
     # Get the total number of training steps
     train_steps_per_task = (N * epochs) // (B * T)
 
@@ -180,7 +183,11 @@ def run_experiment_PS_factory_test_reset(alg, alg_params, text, B, T, N, epochs,
             # Perform reset step and 
             if alg == 'ART' or alg == 'ReDO' or alg == 'CBP':
                 random_key, split_key = jr.split(random_key)
-                train_state, reset_state, neuron_ages = reset_neurons(train_state, reset_state, neuron_ages, neuron_pre_activ, split_key)
+                train_state, reset_state, neuron_ages, reset_mask = reset_neurons(train_state, reset_state, neuron_ages, neuron_pre_activ, split_key)
+                # Store reset_mask in reset_mask_array
+                reset_mask_array[0,t,:] = reset_mask['Block_0']
+                reset_mask_array[1,t,:] = reset_mask['Block_1']
+                reset_mask_array[2,t,:] = reset_mask['Block_2']
             else:
                 neuron_ages = update_neuron_ages(neuron_ages, neuron_pre_activ)  
             ###############
@@ -209,6 +216,7 @@ def run_experiment_PS_factory_test_reset(alg, alg_params, text, B, T, N, epochs,
         # Define file names for the data
         loss_path = os.path.join(save_path, "loss_array.pkl")
         ages_path = os.path.join(save_path, "neuron_ages_array.pkl")
+        reset_mask_path = os.path.join(save_path, "reset_mask_array.pkl")
 
         # Save the loss_array to a pickle file
         with open(loss_path, 'wb') as f:
@@ -220,8 +228,21 @@ def run_experiment_PS_factory_test_reset(alg, alg_params, text, B, T, N, epochs,
             with open(ages_path, 'wb') as f:
                 pickle.dump(neuron_ages_array, f)
                 print(f"Saved neuron_ages_array to {ages_path}")
+        
+        if alg == 'ART' or alg == 'ReDO' or alg == 'CBP':
+            # Save the reset_mask_array to a pkl file
+            with open(reset_mask_path, 'wb') as f:
+                pickle.dump(reset_mask_array, f)
+                print(f"Saved reset_mask_array to {reset_mask_path}")
 
+    # Return results in case we want to analyze/plot immediately
     if save_neuron_ages:
-        return loss_array, neuron_ages_array
+        if alg == 'ART' or alg == 'ReDO' or alg == 'CBP':
+            return loss_array, neuron_ages_array, reset_mask_array
+        else:
+            return loss_array, neuron_ages_array
     else:
-        return loss_array
+        if alg == 'ART' or alg == 'ReDO' or alg == 'CBP':
+            return loss_array, reset_mask_array
+        else:
+            return loss_array

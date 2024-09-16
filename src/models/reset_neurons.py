@@ -106,6 +106,7 @@ def get_reset_methods(config, alg, alg_params):
                 
                 params = train_state.params
                 opt_state = train_state.opt_state
+                reset_masks = {}
 
                 for block in blocks:
 
@@ -129,6 +130,7 @@ def get_reset_methods(config, alg, alg_params):
                     # Get reset_mask
                     # reset_mask == True if the neuron is to be reset due to exceeding the reset-threshold
                     reset_mask = neuron_ages[block] >= thresholds
+                    reset_masks[block] = reset_mask
 
                     ####################
                     # Reset Neurons and Reset Adam Optimizer Parameters
@@ -165,7 +167,7 @@ def get_reset_methods(config, alg, alg_params):
 
                 # TODO: Potentially return the reset_mask
                 # We don't need to output the thresholds since we have those already in the experiment loop through reset_states
-                return train_state.replace(params = params, opt_state = opt_state), reset_state, neuron_ages
+                return train_state.replace(params = params, opt_state = opt_state), reset_state, neuron_ages, reset_masks
             
             return reset_neurons
 
