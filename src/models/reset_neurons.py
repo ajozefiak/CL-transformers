@@ -66,13 +66,13 @@ def get_reset_methods(config, alg, alg_params):
     def get_reset_neurons(config, alg, alg_params):
         
         # Initialize the new parameters. 
-        n_layer = config.n_layer
+        n_embd = config.n_embd
         initializer = jax.nn.initializers.lecun_normal()
 
         # Create function that generates layers of the MLP according to the prior distribution
         @jax.jit
         def generate_layer(key):
-            return initializer(key, (n_layer, 4*n_layer), jnp.float32)
+            return initializer(key, (n_embd, 4*n_embd), jnp.float32)
 
         if alg == 'ART':
 
