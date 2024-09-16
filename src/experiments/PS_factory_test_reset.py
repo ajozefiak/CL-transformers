@@ -162,7 +162,6 @@ def run_experiment_PS_factory_test_reset(alg, alg_params, text, B, T, N, epochs,
         # data_loader API is unchanged.
         ###############
         for step in range(train_steps_per_task):
-            print(f"time step {t}")
             
             ###############
             # COMMON APPLICATION of DATA LOADER
