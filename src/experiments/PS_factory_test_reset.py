@@ -127,6 +127,9 @@ def run_experiment_PS_factory_test_reset(alg, alg_params, text, B, T, N, epochs,
     print(f"Initial key: {random_key}, Type: {type(random_key)}")
     random_key, split_key = jr.split(random_key)
 
+    # Get the total number of training steps
+    train_steps_per_task = (N * epochs) // (B * T)
+
     # TODO: change this if we want to play with the ModelConfig - maybe make it an argument
     config = ModelConfig(vocab_size=11387)
     train_state, train_step = get_transformer_methods(config, alg, alg_params, split_key)
@@ -137,9 +140,6 @@ def run_experiment_PS_factory_test_reset(alg, alg_params, text, B, T, N, epochs,
 
         # Initialize reset_mask_array
         reset_mask_array = np.zeros((3, int(train_steps_per_task * tasks), int(config.n_embd * 4)), dtype = bool)
-
-    # Get the total number of training steps
-    train_steps_per_task = (N * epochs) // (B * T)
 
     # initialize neuron_ages_array
     if save_neuron_ages:
