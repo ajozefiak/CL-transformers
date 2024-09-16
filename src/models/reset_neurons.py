@@ -139,6 +139,9 @@ def get_reset_methods(config, alg, alg_params):
                     opt_state[0].nu['params'][block]['MLP_0']['Dense_0']['bias'] = opt_state[0].nu['params'][block]['MLP_0']['Dense_0']['bias'] * (1 - reset_mask)
 
                     # Reset incoming neuron weights according to initial distribution
+                    print('kernel shape:', params['params'][block]['MLP_0']['Dense_0']['kernel'].shape)
+                    print('reset_mask shape:', reset_mask.shape)
+                    print('params_rand shape:', params_rand.shape)
                     params['params'][block]['MLP_0']['Dense_0']['kernel'] = (params['params'][block]['MLP_0']['Dense_0']['kernel'] * (1 - reset_mask)) + (params_rand * reset_mask)
                     opt_state[0].mu['params'][block]['MLP_0']['Dense_0']['kernel'] = opt_state[0].mu['params'][block]['MLP_0']['Dense_0']['kernel'] * (1 - reset_mask)
                     opt_state[0].nu['params'][block]['MLP_0']['Dense_0']['kernel'] = opt_state[0].nu['params'][block]['MLP_0']['Dense_0']['kernel'] * (1 - reset_mask)
