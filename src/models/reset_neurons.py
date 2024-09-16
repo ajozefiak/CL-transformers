@@ -201,6 +201,6 @@ def get_reset_methods(config, alg, alg_params):
             return reset_neurons
 
     # TODO 
-    # return init_reset_state, get_reset_neurons(config, alg, alg_params)
-    return init_reset_state, get_reset_neurons
+    return init_reset_state, get_reset_neurons(config, alg, alg_params)
+    # return init_reset_state, get_reset_neurons
      
