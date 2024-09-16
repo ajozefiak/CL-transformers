@@ -131,7 +131,7 @@ def run_experiment_PS_factory_test_reset(alg, alg_params, text, B, T, N, epochs,
     config = ModelConfig(vocab_size=11387)
     train_state, train_step = get_transformer_methods(config, alg, alg_params, split_key)
     neuron_ages = init_neuron_ages(config)
-    if alg == 'ART' or alg = 'ReDO' or alg = 'CBP':
+    if alg == 'ART' or alg == 'ReDO' or alg == 'CBP':
         init_reset_state, reset_neurons = get_reset_methods(config, alg, alg_params)
         reset_state = init_reset_state(config, alg, alg_params)
 
