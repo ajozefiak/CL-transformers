@@ -105,7 +105,7 @@ def get_reset_methods(config, alg, alg_params):
             def reset_neurons(train_state, reset_state, neuron_ages, neuron_pre_activ, key):
                 
                 params = train_state.params
-                opt_state = state.opt_state
+                opt_state = train_state.opt_state
 
                 for block in blocks:
 
