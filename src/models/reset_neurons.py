@@ -164,7 +164,9 @@ def get_reset_methods(config, alg, alg_params):
                 key, split_key = jr.split(key)
                 update_thresholds = jr.bernoulli(split_key, reset_state['reset_freq'])
                 reset_state = jax.lax.cond(update_thresholds, update_thresholds, lambda x: x, reset_state)
-    
+
+                # TODO: Potentially return the reset_mask
+                # We don't need to output the thresholds since we have those already in the experiment loop through reset_states
                 return train_state.replace(params = params, opt_state = opt_state), reset_state, neuron_ages
             
             return reset_neurons
