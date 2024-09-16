@@ -43,9 +43,9 @@ def get_reset_methods(config, alg, alg_params):
         if alg == "CBP":
             # TODO
             reset_state = {
-                'a' = {},
-                'f' = {},
-                'u' = {},
+                'a': {},
+                'f':  {},
+                'u': {},
                 'reset_freq': alg_params['reset_freq']
             }
             for i in range(config.n_layer):
