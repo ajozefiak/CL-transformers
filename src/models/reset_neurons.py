@@ -35,7 +35,7 @@ def get_reset_methods(config, alg, alg_params):
 
             for i in range(config.n_layer):
                 reset_state['thresholds'][blocks[i]] = init_threshold * jnp.ones((config.n_embd*4,), dtype=jnp.uint32)  
-                reset_state['arrivals_sum'][blocks[i]] =  jnp.ones((config.n_embd*4,), dtype=jnp.float32)  
+                reset_state['arrivals_sum'][blocks[i]] =  jnp.ones((config.n_embd*4,), dtype=jnp.uint32)  
                 reset_state['arrivals_count'][blocks[i]] = jnp.ones((config.n_embd*4,), dtype=jnp.uint32)  
             
             return reset_state
@@ -92,11 +92,11 @@ def get_reset_methods(config, alg, alg_params):
                     expansion_mask = thresholds <= threshold_percentiles
 
                     # update thresholds:
-                    thresholds = ((gamma * thresholds) * expansion_mask) + (threshold_percentiles * (1 - expansion_mask))
+                    thresholds = jnp.ceil(((gamma * thresholds) * expansion_mask) + (threshold_percentiles * (1 - expansion_mask))).astype(jnp.uint32)
                     
                     reset_state['thresholds'][block] = thresholds
-                    reset_state['arrivals_count'][block] = 0 * reset_state['arrivals_count'][block] + 1
-                    reset_state['arrivals_sum'][block] = 0 * reset_state['arrivals_sum'][block] + 1
+                    reset_state['arrivals_count'][block] = (0 * reset_state['arrivals_count'][block] + 1).astype(jnp.uint32)
+                    reset_state['arrivals_sum'][block] = (0 * reset_state['arrivals_sum'][block] + 1).astype(jnp.uint32)
                 return reset_state
             
             # This function updates neuron_ages, therefore, do not need to call update neuron_ages in the training loop 
