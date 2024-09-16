@@ -63,8 +63,6 @@ def get_reset_methods(config, alg, alg_params):
 
             return reset_state
 
-
-    @jax.jit
     def get_reset_neurons(config, alg, alg_params):
         
         # Initialize the new parameters. 
