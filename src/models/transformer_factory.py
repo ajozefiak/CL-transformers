@@ -146,7 +146,7 @@ def get_transformer_methods(config, alg, alg_params, key):
     # Initialize the model
     train_state = init_train_state(key, config)
 
-    # Vanilla Algorithm 
+    # Vanilla Algorithm (including reset based algorithms: ART, CBP, ReDO) 
     if alg == 'Vanilla' or alg == 'ART' or alg == 'CBP' or alg == 'ReDO':
         @jax.jit
         def train_step(state: TrainState, x: jnp.ndarray, y: jnp.ndarray, key: jr.PRNGKey) -> Tuple[jnp.ndarray, TrainState]:
