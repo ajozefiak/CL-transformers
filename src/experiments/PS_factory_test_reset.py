@@ -129,10 +129,6 @@ def run_experiment_PS_factory_test_reset(alg, alg_params, text, B, T, N, epochs,
 
     # TODO: change this if we want to play with the ModelConfig - maybe make it an argument
     config = ModelConfig(vocab_size=11387)
-    print(type(config))
-    print(type(alg))
-    print(type(alg_params))
-    print(type(split_key))
     train_state, train_step = get_transformer_methods(config, alg, alg_params, split_key)
     neuron_ages = init_neuron_ages(config)
     if alg == 'ART' or alg == 'ReDO' or alg == 'CBP':
@@ -166,6 +162,7 @@ def run_experiment_PS_factory_test_reset(alg, alg_params, text, B, T, N, epochs,
         # data_loader API is unchanged.
         ###############
         for step in range(train_steps_per_task):
+            print(f"time step {t}")
             
             ###############
             # COMMON APPLICATION of DATA LOADER
