@@ -175,7 +175,7 @@ def get_reset_methods(config, alg, alg_params):
         if alg == 'ReDO':
 
             @jax.jit
-            def ReDO_reset(train_state, reset_state, neuron_ages, neuron_ages_pre_activ, key)
+            def ReDO_reset(train_state, reset_state, neuron_ages, neuron_ages_pre_activ, key):
                 # TODO 
                 return train_state
             
