@@ -160,8 +160,8 @@ def get_reset_methods(config, alg, alg_params):
 
                 # TODO: Potentially make this deterministic
                 key, split_key = jr.split(key)
-                update_thresholds = jr.bernoulli(split_key, reset_state['reset_freq'])
-                reset_state = jax.lax.cond(update_thresholds, update_thresholds, lambda x: x, reset_state)
+                update_thresholds_cond = jr.bernoulli(split_key, reset_state['reset_freq'])
+                reset_state = jax.lax.cond(update_thresholds_cond, update_thresholds, lambda x: x, reset_state)
 
                 # TODO: Potentially return the reset_mask
                 # We don't need to output the thresholds since we have those already in the experiment loop through reset_states
