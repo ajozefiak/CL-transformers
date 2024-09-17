@@ -117,7 +117,7 @@ def get_dataloader(text):
     
     return DataLoaderPermuteText   
 
-def run_experiment_PS_factory_test_reset(alg, alg_params, text, B, T, N, epochs, tasks, seed, save_neuron_ages, save_results, save_path, verbose, print_freq):
+def run_experiment_PS_factory_test_reset(alg, alg_params, text, B, T, N, epochs, tasks, seed, save_neuron_ages, save_results, save_path, verbose, print_freq, save_weights, save_weights_freq):
     
     # Get the data_loader_class
     data_loader_class = get_dataloader(text)
@@ -144,6 +144,11 @@ def run_experiment_PS_factory_test_reset(alg, alg_params, text, B, T, N, epochs,
     # initialize neuron_ages_array
     if save_neuron_ages:
         neuron_ages_array = np.zeros((3, int(train_steps_per_task * tasks), int(config.n_embd * 4)), dtype = np.uint32)
+
+    #  Initialize params_list
+    if save_weights:
+        params_list = []
+        probs_list = []
 
     # Iniitialize loss_array
     loss_array = np.zeros(train_steps_per_task * tasks)
@@ -192,6 +197,18 @@ def run_experiment_PS_factory_test_reset(alg, alg_params, text, B, T, N, epochs,
                 neuron_ages = update_neuron_ages(neuron_ages, neuron_pre_activ)  
             ###############
             ###############
+
+            ###############
+            # Save Weights
+            ###############
+            if save_weights & (t % save_weights_freq == 0):
+                params_list.append(train_state.params)
+                
+                temp_probs = []
+                temp_probs.append(neuron_pre_activ['intermediates']['Block_0']['CausalSelfAttention_0']['probs'])
+                temp_probs.append(neuron_pre_activ['intermediates']['Block_1']['CausalSelfAttention_0']['probs'])
+                temp_probs.append(neuron_pre_activ['intermediates']['Block_2']['CausalSelfAttention_0']['probs'])
+                probs_list.append(temp_probs)
             
             # Update loss_array and neuron_ages_array for logigng purposes
             loss_array[t] = loss
@@ -217,11 +234,23 @@ def run_experiment_PS_factory_test_reset(alg, alg_params, text, B, T, N, epochs,
         loss_path = os.path.join(save_path, "loss_array.pkl")
         ages_path = os.path.join(save_path, "neuron_ages_array.pkl")
         reset_mask_path = os.path.join(save_path, "reset_mask_array.pkl")
+        weights_path = os.path.join(save_path, "params_list.pkl")
+        probs_path = os.path.join(save_path, "probs_list.pkl")
 
         # Save the loss_array to a pickle file
         with open(loss_path, 'wb') as f:
             pickle.dump(loss_array, f)
             print(f"Saved loss_array to {loss_path}")
+
+        # Save the params_list
+        if save_weights:
+            with open(weights_path, 'wb') as f:
+                pickle.dump(params_list, f)
+                print(f"Saved params_list to {weights_path}")
+            with open(probs_path, 'wb') as f:
+                pickle.dump(probs_list, f)
+                print(f"Saved params_list to {weights_path}")
+
 
         if save_neuron_ages:
             # Save the neuron_ages_array to a pickle file

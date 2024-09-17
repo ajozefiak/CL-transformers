@@ -60,6 +60,8 @@ def get_transformer_methods(config, alg, alg_params, key):
             mask  = jnp.tril(attn)
             attn  = jnp.where(mask[:,:,:l,:l], attn, float("-inf"))
             probs = jax.nn.softmax(attn, axis=-1)
+            # Sow the probability distributions
+            self.sow('intermediates', 'probs', probs)
             y     = jnp.matmul(probs, v)
             y     = jnp.reshape(y, (b,l,d))
             y     = nn.Dense(self.config.n_embd)(y)
