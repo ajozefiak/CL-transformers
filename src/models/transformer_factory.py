@@ -34,6 +34,39 @@ def get_transformer_methods(config, alg, alg_params, key):
         p = alg_params['p']
         sigma = alg_params['sigma']
 
+    # class CausalSelfAttention(nn.Module):
+
+    #     config: ModelConfig
+
+    #     @nn.compact
+    #     def __call__(self, x, deterministic=True):
+
+    #         assert len(x.shape) == 3
+
+    #         b, l, d = x.shape
+
+    #         q     = nn.Dense(self.config.n_embd)(x)
+    #         k     = nn.Dense(self.config.n_embd)(x)
+    #         v     = nn.Dense(self.config.n_embd)(x)
+    #         # q*k / sqrt(dim) -> softmax -> @v
+    #         q     = jnp.reshape(q, (b, l, d//self.config.n_head , self.config.n_head))
+    #         k     = jnp.reshape(k, (b, l, d//self.config.n_head , self.config.n_head))
+    #         v     = jnp.reshape(v, (b, l, d//self.config.n_head , self.config.n_head))
+    #         norm  = jnp.sqrt(list(jnp.shape(k))[-1])
+    #         attn  = jnp.matmul(q,jnp.transpose(k, (0,1,3,2))) / norm
+    #         # My added line below to deal with Jax rounding QK^T => 0.0
+    #         attn += 1e-6
+    #         #
+    #         mask  = jnp.tril(attn)
+    #         attn  = jnp.where(mask[:,:,:l,:l], attn, float("-inf"))
+    #         probs = jax.nn.softmax(attn, axis=-1)
+    #         # Sow the probability distributions
+    #         self.sow('intermediates', 'probs', probs)
+    #         y     = jnp.matmul(probs, v)
+    #         y     = jnp.reshape(y, (b,l,d))
+    #         y     = nn.Dense(self.config.n_embd)(y)
+            # return y
+
     class CausalSelfAttention(nn.Module):
 
         config: ModelConfig
@@ -44,27 +77,35 @@ def get_transformer_methods(config, alg, alg_params, key):
             assert len(x.shape) == 3
 
             b, l, d = x.shape
+            n_head = self.config.n_head
+            d_head = d // n_head
 
-            q     = nn.Dense(self.config.n_embd)(x)
-            k     = nn.Dense(self.config.n_embd)(x)
-            v     = nn.Dense(self.config.n_embd)(x)
-            # q*k / sqrt(dim) -> softmax -> @v
-            q     = jnp.reshape(q, (b, l, d//self.config.n_head , self.config.n_head))
-            k     = jnp.reshape(k, (b, l, d//self.config.n_head , self.config.n_head))
-            v     = jnp.reshape(v, (b, l, d//self.config.n_head , self.config.n_head))
-            norm  = jnp.sqrt(list(jnp.shape(k))[-1])
-            attn  = jnp.matmul(q,jnp.transpose(k, (0,1,3,2))) / norm
-            # My added line below to deal with Jax rounding QK^T => 0.0
-            attn += 1e-6
-            #
-            mask  = jnp.tril(attn)
-            attn  = jnp.where(mask[:,:,:l,:l], attn, float("-inf"))
-            probs = jax.nn.softmax(attn, axis=-1)
-            # Sow the probability distributions
+            q = nn.Dense(self.config.n_embd)(x)
+            k = nn.Dense(self.config.n_embd)(x)
+            v = nn.Dense(self.config.n_embd)(x)
+
+            # Correct reshaping and transposing
+            q = q.reshape(b, l, n_head, d_head).transpose(0, 2, 1, 3)  # (b, n_head, l, d_head)
+            k = k.reshape(b, l, n_head, d_head).transpose(0, 2, 1, 3)
+            v = v.reshape(b, l, n_head, d_head).transpose(0, 2, 1, 3)
+
+            # Compute attention scores
+            norm = jnp.sqrt(d_head)
+            attn = jnp.matmul(q, k.transpose(0, 1, 3, 2)) / norm  # (b, n_head, l, l)
+
+            # Apply causal mask
+            causal_mask = jnp.tril(jnp.ones((l, l)))
+            attn = jnp.where(causal_mask, attn, float("-inf"))
+
+            probs = jax.nn.softmax(attn, axis=-1)  # Shape: (b, n_head, l, l)
+
+            # Log the attention distributions
             self.sow('intermediates', 'probs', probs)
-            y     = jnp.matmul(probs, v)
-            y     = jnp.reshape(y, (b,l,d))
-            y     = nn.Dense(self.config.n_embd)(y)
+
+            # Compute attention output
+            y = jnp.matmul(probs, v)  # (b, n_head, l, d_head)
+            y = y.transpose(0, 2, 1, 3).reshape(b, l, d)  # (b, l, d)
+            y = nn.Dense(self.config.n_embd)(y)
             return y
 
     class MLP(nn.Module):
