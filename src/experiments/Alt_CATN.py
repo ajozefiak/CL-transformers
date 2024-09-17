@@ -166,66 +166,68 @@ def run_experiment_Alt_CATN(alg, alg_params, datasets_A, datasets_B, B, T, art_p
     # TODO: Delete the line below
     # for task in range(tasks):
     for i in range(months):
+
+        task_1_tokens, task_2_tokens = create_two_tasks(datasets_A[i], datasets_B[i], 'tokens_129', art_per_task)
+
         # Alternate between the two tasks of each month
         for j in range(2):
             if verbose:
                 print(f"Task {j} of Month {i}")
             if j == 0:
                 # TODO: perhaps create datasets_A and datasets_B in this function
-                ds = datasets_A[i]
+                tokens = task_1_tokens
             else:
-                ds = datasets_B[i]
+                tokens = task_2_tokens
 
 
-        # OLD CODE: 
-
-        # Split the random key
-        random_key, split_key = jr.split(random_key)
-        dataloader = DataLoader(B=B, T=T, tokens=ds[:art_per_task]['tokens_129'], col='tokens_129', key=split_key)
-        
-        ###############
-        # In principle, we should be able to copy the for loop below to other experiments as long as the 
-        # data_loader API is unchanged.
-        ###############
-        for step in range(train_steps_per_task):
-            
-            ###############
-            # COMMON APPLICATION of DATA LOADER
-            ###############
-            x,y = data_loader.next_batch()
-            
-            ###############
-            # COMMON TRAINING LOOP:
-            # (1) maps x,y -> (new) train_state (and reset_state)
-            # (2) outputs loss and neuron_ages for logging purposes
-            # In practice, it should be the case that this code can be copied to every experiment
-            ###############
-            neuron_pre_activ = get_neuron_pre_activ(train_state, x)
+            # OLD CODE: 
+            # Split the random key
             random_key, split_key = jr.split(random_key)
-            loss, train_state = train_step(train_state, x, y, split_key)
-            # Perform reset step and 
-            if alg == 'ART' or alg == 'ReDO' or alg == 'CBP':
-                random_key, split_key = jr.split(random_key)
-                train_state, reset_state, neuron_ages, reset_mask = reset_neurons(train_state, reset_state, neuron_ages, neuron_pre_activ, split_key)
-                # Store reset_mask in reset_mask_array
-                reset_mask_array[0,t,:] = reset_mask['Block_0']
-                reset_mask_array[1,t,:] = reset_mask['Block_1']
-                reset_mask_array[2,t,:] = reset_mask['Block_2']
-            else:
-                neuron_ages = update_neuron_ages(neuron_ages, neuron_pre_activ)  
-            ###############
-            ###############
+            dataloader = DataLoader(B=B, T=T, tokens=ds[:art_per_task]['tokens_129'], col='tokens_129', key=split_key)
             
-            # Update loss_array and neuron_ages_array for logigng purposes
-            loss_array[t] = loss
-            if save_neuron_ages:
-                neuron_ages_array[0,t,:] = neuron_ages['Block_0']
-                neuron_ages_array[1,t,:] = neuron_ages['Block_1']
-                neuron_ages_array[2,t,:] = neuron_ages['Block_2']
-            t += 1
+            ###############
+            # In principle, we should be able to copy the for loop below to other experiments as long as the 
+            # data_loader API is unchanged.
+            ###############
+            for step in range(train_steps_per_task):
+                
+                ###############
+                # COMMON APPLICATION of DATA LOADER
+                ###############
+                x,y = data_loader.next_batch()
+                
+                ###############
+                # COMMON TRAINING LOOP:
+                # (1) maps x,y -> (new) train_state (and reset_state)
+                # (2) outputs loss and neuron_ages for logging purposes
+                # In practice, it should be the case that this code can be copied to every experiment
+                ###############
+                neuron_pre_activ = get_neuron_pre_activ(train_state, x)
+                random_key, split_key = jr.split(random_key)
+                loss, train_state = train_step(train_state, x, y, split_key)
+                # Perform reset step and 
+                if alg == 'ART' or alg == 'ReDO' or alg == 'CBP':
+                    random_key, split_key = jr.split(random_key)
+                    train_state, reset_state, neuron_ages, reset_mask = reset_neurons(train_state, reset_state, neuron_ages, neuron_pre_activ, split_key)
+                    # Store reset_mask in reset_mask_array
+                    reset_mask_array[0,t,:] = reset_mask['Block_0']
+                    reset_mask_array[1,t,:] = reset_mask['Block_1']
+                    reset_mask_array[2,t,:] = reset_mask['Block_2']
+                else:
+                    neuron_ages = update_neuron_ages(neuron_ages, neuron_pre_activ)  
+                ###############
+                ###############
+                
+                # Update loss_array and neuron_ages_array for logigng purposes
+                loss_array[t] = loss
+                if save_neuron_ages:
+                    neuron_ages_array[0,t,:] = neuron_ages['Block_0']
+                    neuron_ages_array[1,t,:] = neuron_ages['Block_1']
+                    neuron_ages_array[2,t,:] = neuron_ages['Block_2']
+                t += 1
 
-            if verbose & (step % print_freq == 0):
-                print(f"step {step}/{train_steps_per_task} | loss {loss:.4f} |")
+                if verbose & (step % print_freq == 0):
+                    print(f"step {step}/{train_steps_per_task} | loss {loss:.4f} |")
 
     print(f"Time to complete experiment: {time.time() - t0}")
 
