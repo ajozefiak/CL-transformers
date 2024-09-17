@@ -167,7 +167,7 @@ def run_experiment_Alt_CATN(alg, alg_params, datasets_A, datasets_B, B, T, art_p
     # for task in range(tasks):
     for i in range(months):
 
-        task_1_tokens, task_2_tokens = create_two_tasks(datasets_A[i], datasets_B[i], 'tokens_129', art_per_task)
+        task_1_tokens, task_2_tokens = create_two_tasks(datasets_A[i], datasets_B[i], 'tokens_129', art_per_task, percent_mixing)
 
         # Alternate between the two tasks of each month
         for j in range(2):
