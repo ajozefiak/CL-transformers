@@ -249,7 +249,7 @@ def run_experiment_PS_factory_test_reset(alg, alg_params, text, B, T, N, epochs,
                 print(f"Saved params_list to {weights_path}")
             with open(probs_path, 'wb') as f:
                 pickle.dump(probs_list, f)
-                print(f"Saved params_list to {weights_path}")
+                print(f"Saved probs_list to {probs_path}")
 
 
         if save_neuron_ages:
