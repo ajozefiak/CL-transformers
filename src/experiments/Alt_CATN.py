@@ -151,14 +151,14 @@ def run_experiment_Alt_CATN(alg, alg_params, datasets_A, datasets_B, B, T, art_p
         reset_state = init_reset_state(config, alg, alg_params)
 
         # Initialize reset_mask_array
-        reset_mask_array = np.zeros((3, int(train_steps_per_task * tasks), int(config.n_embd * 4)), dtype = bool)
+        reset_mask_array = np.zeros((3, int(train_steps_per_task * months * 2), int(config.n_embd * 4)), dtype = bool)
 
     # initialize neuron_ages_array
     if save_neuron_ages:
-        neuron_ages_array = np.zeros((3, int(train_steps_per_task * tasks), int(config.n_embd * 4)), dtype = np.uint32)
+        neuron_ages_array = np.zeros((3, int(train_steps_per_task * months * 2), int(config.n_embd * 4)), dtype = np.uint32)
 
     # Iniitialize loss_array
-    loss_array = np.zeros(train_steps_per_task * tasks)
+    loss_array = np.zeros(train_steps_per_task * months * 2)
     t = 0
 
     
