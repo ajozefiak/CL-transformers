@@ -183,7 +183,7 @@ def run_experiment_Alt_CATN(alg, alg_params, datasets_A, datasets_B, B, T, art_p
             # OLD CODE: 
             # Split the random key
             random_key, split_key = jr.split(random_key)
-            dataloader = DataLoader(B=B, T=T, tokens=tokens, col='tokens_129', key=split_key)
+            data_loader = DataLoader(B=B, T=T, tokens=tokens, col='tokens_129', key=split_key)
             
             ###############
             # In principle, we should be able to copy the for loop below to other experiments as long as the 
