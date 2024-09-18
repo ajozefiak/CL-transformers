@@ -117,7 +117,8 @@ def get_dataloader(text):
     
     return DataLoaderPermuteText   
 
-def run_experiment_PS_factory_test_reset(alg, alg_params, text, B, T, N, epochs, tasks, seed, save_neuron_ages, save_results, save_path, verbose, print_freq, save_weights, save_weights_freq):
+# Add model config
+def run_experiment_PS_factory_test_reset(config, alg, alg_params, text, B, T, N, epochs, tasks, seed, save_neuron_ages, save_results, save_path, verbose, print_freq, save_weights, save_weights_freq):
     
     # Get the data_loader_class
     data_loader_class = get_dataloader(text)
@@ -131,7 +132,8 @@ def run_experiment_PS_factory_test_reset(alg, alg_params, text, B, T, N, epochs,
     train_steps_per_task = (N * epochs) // (B * T)
 
     # TODO: change this if we want to play with the ModelConfig - maybe make it an argument
-    config = ModelConfig(vocab_size=11387)
+    if not config:
+        config = ModelConfig(vocab_size=11387)
     train_state, train_step = get_transformer_methods(config, alg, alg_params, split_key)
     neuron_ages = init_neuron_ages(config)
     if alg == 'ART' or alg == 'ReDO' or alg == 'CBP':
