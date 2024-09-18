@@ -9,7 +9,9 @@ def init_neuron_ages(config):
   return neuron_ages
 
 # TODO: get blocks programatically
-blocks = ['Block_0', 'Block_1', 'Block_2']
+# blocks = ['Block_0', 'Block_1', 'Block_2']
+blocks = ['Block_0', 'Block_1']
+
 
 # This function is updated so that neuron ages are in units of batches, not number of examples
 # Algorithmically, there is no difference since the "number of batches" is in multiples of batch_size * context_window
