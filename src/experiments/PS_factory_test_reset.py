@@ -194,7 +194,7 @@ def run_experiment_PS_factory_test_reset(config, alg, alg_params, text, B, T, N,
                 # Store reset_mask in reset_mask_array
                 reset_mask_array[0,t,:] = reset_mask['Block_0']
                 reset_mask_array[1,t,:] = reset_mask['Block_1']
-                reset_mask_array[2,t,:] = reset_mask['Block_2']
+                # reset_mask_array[2,t,:] = reset_mask['Block_2']
             else:
                 neuron_ages = update_neuron_ages(neuron_ages, neuron_pre_activ)  
             ###############
@@ -209,7 +209,7 @@ def run_experiment_PS_factory_test_reset(config, alg, alg_params, text, B, T, N,
                 temp_probs = []
                 temp_probs.append(neuron_pre_activ['intermediates']['Block_0']['CausalSelfAttention_0']['probs'])
                 temp_probs.append(neuron_pre_activ['intermediates']['Block_1']['CausalSelfAttention_0']['probs'])
-                temp_probs.append(neuron_pre_activ['intermediates']['Block_2']['CausalSelfAttention_0']['probs'])
+                # temp_probs.append(neuron_pre_activ['intermediates']['Block_2']['CausalSelfAttention_0']['probs'])
                 probs_list.append(temp_probs)
             
             # Update loss_array and neuron_ages_array for logigng purposes
@@ -217,7 +217,7 @@ def run_experiment_PS_factory_test_reset(config, alg, alg_params, text, B, T, N,
             if save_neuron_ages:
                 neuron_ages_array[0,t,:] = neuron_ages['Block_0']
                 neuron_ages_array[1,t,:] = neuron_ages['Block_1']
-                neuron_ages_array[2,t,:] = neuron_ages['Block_2']
+                # neuron_ages_array[2,t,:] = neuron_ages['Block_2']
             t += 1
 
             if verbose & (step % print_freq == 0):
