@@ -1,5 +1,5 @@
 #!/bin/bash                                                                     
-#SBATCH --job-name=PS_091824                                                    
+#SBATCH --job-name=PS_091924                                                    
 #SBATCH --output=out_PS_091924_%A_%a.txt  # %A is the job array ID, %a is the task ID
 #SBATCH --error=err_PS_091924_%A_%a.txt                                             
 #SBATCH -p sched_mit_sloan_gpu_r8                                               
