@@ -19,7 +19,7 @@ def get_reset_methods(config, alg, alg_params):
         blocks.append('Block_'+str(i))
 
     def init_reset_state(config, alg, alg_params):
-        if alg == "ART" or alg == 'ART-L2:
+        if alg == "ART" or alg == 'ART-L2':
             reset_state = {
                 'thresholds': {},
                 'threshold_expansion_factor': 2,
