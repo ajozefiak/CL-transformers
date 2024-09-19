@@ -69,6 +69,5 @@ for epochs in epochs_list:
                     'reset_percentile': 0.95,
                     'reset_freq': (1e-4 * (epochs / 100)),
                     'reg_str': reg_str}  
-        alg_params = {'reg_str': reg_str}
         save_path = save_path_root + f'/epochs_{epochs}/' + alg + '_' + str(reg_str) + '/'
         res = CL_transformers.run_experiment_PS_factory_test_reset(config, alg, alg_params, text, B, T, N, epochs, tasks, seed, save_neuron_ages, save_results, save_path, verbose, print_freq, save_weights, save_weights_freq)
