@@ -18,6 +18,7 @@ class ModelConfig:
   n_layer: int = 3
   n_head: int = 4 
   n_embd: int = 64
+  n_neurons: int = 256
   dropout_rate: float = 0.0
   gradient_accumulation_steps: int = 1
 
@@ -114,14 +115,14 @@ def get_transformer_methods(config, alg, alg_params, key):
 
         @nn.compact
         def __call__(self, x, deterministic=True):
-            x = nn.Dense(self.config.n_embd*4)(x)
+            x = nn.Dense(self.config.n_neurons)(x)
             # x = nn.gelu(x, approximate=True)
             # sow the features so that we can observe neuron death
             self.sow('intermediates', 'features', x)
             x = nn.relu(x)
-            x = nn.Dropout(rate=self.config.dropout_rate)(x, deterministic=deterministic)
+            # x = nn.Dropout(rate=self.config.dropout_rate)(x, deterministic=deterministic)
             x = nn.Dense(self.config.n_embd)(x)
-            x = nn.Dropout(rate=self.config.dropout_rate)(x, deterministic=deterministic)
+            # x = nn.Dropout(rate=self.config.dropout_rate)(x, deterministic=deterministic)
             return x
 
     class Block(nn.Module):
@@ -134,7 +135,8 @@ def get_transformer_methods(config, alg, alg_params, key):
             x = x + CausalSelfAttention(self.config)(x)
 
             x = nn.LayerNorm()(x)
-            x = x + MLP(self.config)(x)
+            # x = x + MLP(self.config)(x)
+            x = MLP(self.config)(x)
             return x
 
     class GPT(nn.Module):
