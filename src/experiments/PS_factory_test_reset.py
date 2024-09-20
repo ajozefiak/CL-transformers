@@ -133,7 +133,10 @@ def run_experiment_PS_factory_test_reset(config, alg, alg_params, text, B, T, N,
 
     # TODO: change this if we want to play with the ModelConfig - maybe make it an argument
     if not config:
+        print("USING DEFAULT MODEL CONFIG")
         config = ModelConfig(vocab_size=11387)
+    else:
+        print('USING CUSTOM MODEL CONFIG')
     train_state, train_step = get_transformer_methods(config, alg, alg_params, split_key)
     neuron_ages = init_neuron_ages(config)
     if alg == 'ART' or alg == 'ReDO' or alg == 'CBP':
