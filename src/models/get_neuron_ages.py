@@ -5,7 +5,7 @@ from .transformer import *
 def init_neuron_ages(config):
   neuron_ages = {}
   for i in range(config.n_layer):
-    neuron_ages[f'Block_{i}'] = jnp.zeros((config.n_embd * 4,), dtype=jnp.uint32)
+    neuron_ages[f'Block_{i}'] = jnp.zeros((config.n_neurons,), dtype=jnp.uint32)
   return neuron_ages
 
 # TODO: get blocks programatically
