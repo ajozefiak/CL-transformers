@@ -118,7 +118,7 @@ def get_dataloader(text):
     return DataLoaderPermuteText   
 
 # Add model config
-def run_experiment_PS_factory_test_reset(config, alg, alg_params, text, B, T, N, epochs, tasks, seed, save_neuron_ages, save_results, save_path, verbose, print_freq, save_weights, save_weights_freq):
+def run_experiment_PS_factory_test_reset(config, alg, alg_params, text, B, T, N, epochs, tasks, seed, save_neuron_ages, save_results, save_path, verbose, print_freq, save_weights, save_weights_freq, percent_firing):
     
     # Get the data_loader_class
     data_loader_class = get_dataloader(text)
@@ -137,7 +137,7 @@ def run_experiment_PS_factory_test_reset(config, alg, alg_params, text, B, T, N,
     train_state, train_step = get_transformer_methods(config, alg, alg_params, split_key)
     neuron_ages = init_neuron_ages(config)
     if alg == 'ART' or alg == 'ReDO' or alg == 'CBP':
-        init_reset_state, reset_neurons = get_reset_methods(config, alg, alg_params)
+        init_reset_state, reset_neurons = get_reset_methods(config, alg, alg_params, percent_firing)
         reset_state = init_reset_state(config, alg, alg_params)
 
         # Initialize reset_mask_array
