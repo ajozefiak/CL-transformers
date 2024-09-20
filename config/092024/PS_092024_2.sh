@@ -13,4 +13,4 @@
 source /etc/profile.d/modules.sh                                                
 module load sloan/python/3.11.4
 
-python3 PS_092024.py $SLURM_ARRAY_TASK_ID
+python3 PS_092024_2.py $SLURM_ARRAY_TASK_ID
