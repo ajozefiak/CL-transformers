@@ -280,3 +280,57 @@ def get_transformer_methods(config, alg, alg_params, key):
             return loss, new_state
         
         return train_state, train_step
+
+    # ART-L2* 
+    if alg == 'ART-L2*':
+
+        # Specify the exact paths to exclude as tuples of keys
+        exclude_keys = [
+                        ('params', 'Block_0', 'MLP_0', 'Dense_0', 'kernel'),
+                        ('params', 'Block_0', 'MLP_0', 'Dense_0', 'bias'),
+                        ('params', 'Block_1', 'MLP_0', 'Dense_0', 'kernel'),
+                        ('params', 'Block_1', 'MLP_0', 'Dense_0', 'bias'),
+                        ('params', 'Block_2', 'MLP_0', 'Dense_0', 'kernel'),
+                        ('params', 'Block_2', 'MLP_0', 'Dense_0', 'bias')
+                        ]
+
+        def mask_params(params):
+            def mask_fn(path, leaf):
+                # Convert the DictKey objects in the path to plain strings for comparison
+                path_as_str = tuple(k.key for k in path)
+        
+                # Check if the current path matches any path in exclude_keys
+                if path_as_str in exclude_keys:
+                    # print(path_as_str)
+                    return jnp.zeros_like(leaf)  # Zero out this parameter
+                else:
+                    return leaf  # Keep the parameter
+
+            return jax.tree_util.tree_map_with_path(mask_fn, params)
+
+        @jax.jit
+        def l2_loss_fn(params):
+            # Apply mask to exclude specific parameters
+            masked_params = mask_params(params)
+    
+            # Compute L2 loss only for the remaining (non-excluded) parameters
+            return sum(jnp.sum(jnp.square(p)) for p in jax.tree_util.tree_leaves(masked_params))
+
+        @jax.jit
+        def train_step(state: TrainState, x: jnp.ndarray, y: jnp.ndarray, key: jr.PRNGKey) -> Tuple[jnp.ndarray, TrainState]:
+
+            def loss_fn(params: FrozenDict) -> jnp.ndarray:
+                logits = state.apply_fn(params, x, False)
+                loss = optax.softmax_cross_entropy_with_integer_labels(logits, y).mean() 
+                l2_loss = l2_loss_fn(params)
+                loss_reg = loss + reg_str * l2_loss
+                return loss_reg, loss
+
+            loss, grads = jax.value_and_grad(loss_fn, has_aux=True)(state.params)
+            # Return the true loss
+            loss = loss[1]
+            new_state = state.apply_gradients(grads=grads)
+
+            return loss, new_state
+        
+        return train_state, train_step
