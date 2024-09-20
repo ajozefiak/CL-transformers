@@ -134,7 +134,9 @@ def get_transformer_methods(config, alg, alg_params, key):
             x = x + CausalSelfAttention(self.config)(x)
 
             x = nn.LayerNorm()(x)
-            x = x + MLP(self.config)(x)
+            # x = x + MLP(self.config)(x)
+            # We remove the residual connection
+            x = MLP(self.config)(x)
             return x
 
     class GPT(nn.Module):
