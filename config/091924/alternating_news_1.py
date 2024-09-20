@@ -41,7 +41,7 @@ save_weights = False
 
 
 alg = 'Vanilla'
-save_path = save_path_root + '/' + alg
+save_path = save_path_root + f'/epochs_{epochs}/' + alg
 alg_params = {}
 res = CL_transformers.run_experiment_Alt_CATN(alg, alg_params, datasets_CNN, datasets_People, B, T, art_per_task, epochs, months, percent_mixing, seed, save_neuron_ages, save_results, save_path, verbose, print_freq, save_weights, save_weights_freq)
 
@@ -49,21 +49,21 @@ alg = 'ART'
 alg_params = {'threshold': 16,
               'reset_freq': 0.0,
               'reset_percentile': 0.95}
-save_path = save_path_root + '/ART_Fixed_16' 
+save_path = save_path_root + f'/epochs_{epochs}/' + 'ART_Fixed_16' 
 res = CL_transformers.run_experiment_Alt_CATN(alg, alg_params, datasets_CNN, datasets_People, B, T, art_per_task, epochs, months, percent_mixing, seed, save_neuron_ages, save_results, save_path, verbose, print_freq, save_weights, save_weights_freq)
 
 alg = 'ART'
 alg_params = {'threshold': 1,
               'reset_freq': 0.0,
               'reset_percentile': 0.95}
-save_path = save_path_root + '/ART_Fixed_1' 
+save_path = save_path_root + f'/epochs_{epochs}/' + '/RT_Fixed_1' 
 res = CL_transformers.run_experiment_Alt_CATN(alg, alg_params, datasets_CNN, datasets_People, B, T, art_per_task, epochs, months, percent_mixing, seed, save_neuron_ages, save_results, save_path, verbose, print_freq, save_weights, save_weights_freq)
 
 alg = 'ART'
 alg_params = {'threshold': 16,
                 'reset_percentile': 0.95,
                 'reset_freq': (1e-4 * (epochs / 100))}
-save_path = save_path_root + '/ART_Adaptive_16' 
+save_path = save_path_root + f'/epochs_{epochs}/' + 'ART_Adaptive_16' 
 res = CL_transformers.run_experiment_Alt_CATN(alg, alg_params, datasets_CNN, datasets_People, B, T, art_per_task, epochs, months, percent_mixing, seed, save_neuron_ages, save_results, save_path, verbose, print_freq, save_weights, save_weights_freq)
 
 reg_strs = [1e-3, 1e-4, 1e-5]
