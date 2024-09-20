@@ -30,6 +30,7 @@ config = False
 save_results = True
 save_neuron_ages = False
 save_weights = False
+save_weights_freq = 1e-4
 
 
 seed = int(sys.argv[1])
