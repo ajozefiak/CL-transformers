@@ -120,7 +120,7 @@ def get_reset_methods(config, alg, alg_params):
                     pre_neuron_ages = neuron_ages[block]
 
                     # Update neuron_ages, without considering resets (yet)
-                    is_neuron_dead_on_batch = jnp.all(neuron_pre_activ['intermediates'][block]['MLP_0']['features'][0] < 0.0, axis=(0,1))
+                    is_neuron_dead_on_batch = jnp.mean(neuron_pre_activ['intermediates'][block]['MLP_0']['features'][0] < 0.0, axis=(0,1)) >= 0.75
                     neuron_ages[block] = (neuron_ages[block] + 1) * is_neuron_dead_on_batch
 
                     # Get firing_mask
