@@ -44,8 +44,8 @@ save_path_root = f'Results/PS_092024_constrained_5/seed_{seed}/'
 #               'reset_percentile': 0.95,
 #               'reset_freq': (1e-4 * (epochs / 100))}  
 
-save_path = save_path_root + f'/epochs_{epochs}/' + alg + '/'
-res = CL_transformers.run_experiment_PS_factory_test_reset(config, alg, alg_params, text, B, T, N, epochs, tasks, seed, save_neuron_ages, save_results, save_path, verbose, print_freq, save_weights, save_weights_freq)
+# save_path = save_path_root + f'/epochs_{epochs}/' + alg + '/'
+# res = CL_transformers.run_experiment_PS_factory_test_reset(config, alg, alg_params, text, B, T, N, epochs, tasks, seed, save_neuron_ages, save_results, save_path, verbose, print_freq, save_weights, save_weights_freq)
 
 reg_strs = [1e-3, 1e-4, 1e-5, 1e-6]
 for reg_str in reg_strs:
