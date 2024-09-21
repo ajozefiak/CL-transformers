@@ -72,7 +72,7 @@ def get_reset_methods(config, alg, alg_params):
         # Create function that generates layers of the MLP according to the prior distribution
         @jax.jit
         def generate_layer(key):
-            return initializer(key, (n_embd, 4*n_embd), jnp.float32)
+            return initializer(key, (n_embd, config.n_neurons), jnp.float32)
 
         if alg == 'ART' or alg == 'ART-L2' or alg == 'ART-L2*':
 
