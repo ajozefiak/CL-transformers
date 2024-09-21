@@ -21,6 +21,7 @@ class ModelConfig:
   n_neurons: int = 256
   dropout_rate: float = 0.0
   gradient_accumulation_steps: int = 1
+  use_resid: bool = False
 
 # alg is a string specifiying the algorithm:
 # L2, L2Init, S&P, ART, CBP, ReDO
@@ -135,8 +136,10 @@ def get_transformer_methods(config, alg, alg_params, key):
             x = x + CausalSelfAttention(self.config)(x)
 
             x = nn.LayerNorm()(x)
-            # x = x + MLP(self.config)(x)
-            x = MLP(self.config)(x)
+            if config.use_resid:
+                x = x + MLP(self.config)(x)
+            else:
+                x = MLP(self.config)(x)
             return x
 
     class GPT(nn.Module):
