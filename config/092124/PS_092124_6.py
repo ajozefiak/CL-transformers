@@ -23,14 +23,14 @@ epochs = 100
 verbose = True
 print_freq = int(200)
 
-# Fourth Pass: Increase Task Count to 200, use two heads with n_embd = 32, n_neurons = 256
+# Sixth Pass: Increase Task Count to 200, use two heads with n_embd = 32, (d_head = 16), n_neurons = 256
 # Here we run this with the residual connections as an ablation
 config = CL_transformers.ModelConfig(vocab_size = 11387, n_head = 2, n_layer = 1, n_embd = 32, n_neurons = 256, use_resid=True)
 
 seed = int(sys.argv[1])
 print(f"Seed: {seed}")
 # CLUSTER SAVE_PATH_ROOT
-save_path_root = f'Results/PS_092024_constrained_5/seed_{seed}/'
+save_path_root = f'Results/PS_092024_constrained_6/seed_{seed}/'
 
 # TODO: toggle save_neuron_ages, save_weights
 save_results = True
