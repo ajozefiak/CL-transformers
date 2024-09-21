@@ -19,7 +19,7 @@ def get_reset_methods(config, alg, alg_params):
         blocks.append('Block_'+str(i))
 
     def init_reset_state(config, alg, alg_params):
-        if alg == "ART" or alg == 'ART-L2':
+        if alg == 'ART' or alg == 'ART-L2' or alg == 'ART-L2*':
             reset_state = {
                 'thresholds': {},
                 'threshold_expansion_factor': 2,
@@ -34,9 +34,9 @@ def get_reset_methods(config, alg, alg_params):
             init_threshold = alg_params['threshold']
 
             for i in range(config.n_layer):
-                reset_state['thresholds'][blocks[i]] = init_threshold * jnp.ones((config.n_embd*4,), dtype=jnp.uint32)  
-                reset_state['arrivals_sum'][blocks[i]] =  jnp.ones((config.n_embd*4,), dtype=jnp.uint32)  
-                reset_state['arrivals_count'][blocks[i]] = jnp.ones((config.n_embd*4,), dtype=jnp.uint32)  
+                reset_state['thresholds'][blocks[i]] = init_threshold * jnp.ones((config.n_neurons,), dtype=jnp.uint32)  
+                reset_state['arrivals_sum'][blocks[i]] =  jnp.ones((config.n_neurons,), dtype=jnp.uint32)  
+                reset_state['arrivals_count'][blocks[i]] = jnp.ones((config.n_neurons,), dtype=jnp.uint32)  
             
             return reset_state
         
@@ -49,9 +49,9 @@ def get_reset_methods(config, alg, alg_params):
                 'reset_freq': alg_params['reset_freq']
             }
             for i in range(config.n_layer):
-                reset_state['a'][blocks[i]] = jnp.zeros((config.n_embd*4,), dtype=jnp.float32)  
-                reset_state['f'][blocks[i]] = jnp.zeros((config.n_embd*4,), dtype=jnp.float32)  
-                reset_state['u'][blocks[i]] = jnp.zeros((config.n_embd*4,), dtype=jnp.float32) 
+                reset_state['a'][blocks[i]] = jnp.zeros((config.n_neurons,), dtype=jnp.float32)  
+                reset_state['f'][blocks[i]] = jnp.zeros((config.n_neurons,), dtype=jnp.float32)  
+                reset_state['u'][blocks[i]] = jnp.zeros((config.n_neurons,), dtype=jnp.float32) 
 
             return reset_state
 
@@ -74,7 +74,7 @@ def get_reset_methods(config, alg, alg_params):
         def generate_layer(key):
             return initializer(key, (n_embd, 4*n_embd), jnp.float32)
 
-        if alg == 'ART':
+        if alg == 'ART' or alg == 'ART-L2' or alg == 'ART-L2*':
 
             @jax.jit
             def update_thresholds(reset_state):
