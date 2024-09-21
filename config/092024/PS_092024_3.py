@@ -38,7 +38,7 @@ save_weights_freq = 1e-4
 seed = int(sys.argv[1])
 print(f"Seed: {seed}")
 # CLUSTER SAVE_PATH_ROOT
-save_path_root = f'Results/PS_092024_constrained_2/seed_{seed}/'
+save_path_root = f'Results/PS_092024_constrained_3/seed_{seed}/'
 
 # No Intervention
 alg = 'Vanilla'
