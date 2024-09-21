@@ -30,7 +30,7 @@ config = CL_transformers.ModelConfig(vocab_size = 11387, n_head = 2, n_layer = 1
 save_results = True
 save_neuron_ages = False
 save_weights = False
-save_weights_freq = 1e-4
+save_weights_freq = 3200
 
 
 seed = int(sys.argv[1])
