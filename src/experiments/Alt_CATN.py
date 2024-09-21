@@ -146,7 +146,7 @@ def run_experiment_Alt_CATN(alg, alg_params, datasets_A, datasets_B, B, T, art_p
     config = ModelConfig(vocab_size=50257)
     train_state, train_step = get_transformer_methods(config, alg, alg_params, split_key)
     neuron_ages = init_neuron_ages(config)
-    if alg == 'ART' or alg == 'ReDO' or alg == 'CBP':
+    if alg == 'ART' or alg == 'ART-L2' or alg == 'ART-L2*' or alg == 'ReDO' or alg == 'CBP':
         init_reset_state, reset_neurons = get_reset_methods(config, alg, alg_params)
         reset_state = init_reset_state(config, alg, alg_params)
 
@@ -211,7 +211,7 @@ def run_experiment_Alt_CATN(alg, alg_params, datasets_A, datasets_B, B, T, art_p
                 random_key, split_key = jr.split(random_key)
                 loss, train_state = train_step(train_state, x, y, split_key)
                 # Perform reset step and 
-                if alg == 'ART' or alg == 'ReDO' or alg == 'CBP':
+                if alg == 'ART' or alg == 'ART-L2' or alg == 'ART-L2*' or alg == 'ReDO' or alg == 'CBP':
                     random_key, split_key = jr.split(random_key)
                     train_state, reset_state, neuron_ages, reset_mask = reset_neurons(train_state, reset_state, neuron_ages, neuron_pre_activ, split_key)
                     # Store reset_mask in reset_mask_array
@@ -282,7 +282,7 @@ def run_experiment_Alt_CATN(alg, alg_params, datasets_A, datasets_B, B, T, art_p
                 pickle.dump(neuron_ages_array, f)
                 print(f"Saved neuron_ages_array to {ages_path}")
         
-        if alg == 'ART' or alg == 'ReDO' or alg == 'CBP':
+        if alg == 'ART' or alg == 'ART-L2' or alg == 'ART-L2*' or alg == 'ReDO' or alg == 'CBP':
             # Save the reset_mask_array to a pkl file
             with open(reset_mask_path, 'wb') as f:
                 pickle.dump(reset_mask_array, f)
@@ -290,12 +290,12 @@ def run_experiment_Alt_CATN(alg, alg_params, datasets_A, datasets_B, B, T, art_p
 
     # Return results in case we want to analyze/plot immediately
     if save_neuron_ages:
-        if alg == 'ART' or alg == 'ReDO' or alg == 'CBP':
+        if alg == 'ART' or alg == 'ART-L2' or alg == 'ART-L2*' or alg == 'ReDO' or alg == 'CBP':
             return loss_array, neuron_ages_array, reset_mask_array
         else:
             return loss_array, neuron_ages_array
     else:
-        if alg == 'ART' or alg == 'ReDO' or alg == 'CBP':
+        if alg == 'ART' or alg == 'ART-L2' or alg == 'ART-L2*' or alg == 'ReDO' or alg == 'CBP':
             return loss_array, reset_mask_array
         else:
             return loss_array
