@@ -144,7 +144,7 @@ def run_experiment_PS_factory_test_reset(config, alg, alg_params, text, B, T, N,
         reset_state = init_reset_state(config, alg, alg_params)
 
         # Initialize reset_mask_array
-        reset_mask_array = np.zeros((3, int(train_steps_per_task * tasks), int(config.n_embd * 4)), dtype = bool)
+        reset_mask_array = np.zeros((3, int(train_steps_per_task * tasks), int(config.n_neurons)), dtype = bool)
 
     # initialize neuron_ages_array
     if save_neuron_ages:
