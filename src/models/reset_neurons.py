@@ -19,7 +19,7 @@ def get_reset_methods(config, alg, alg_params, percent_firing):
         blocks.append('Block_'+str(i))
 
     def init_reset_state(config, alg, alg_params):
-        if alg == "ART" or alg == 'ART-L2':
+        if alg == 'ART' or alg == 'ART-L2' or alg == 'ART-L2*' or alg == 'ART-L2':
             reset_state = {
                 'thresholds': {},
                 'threshold_expansion_factor': 2,
@@ -74,7 +74,7 @@ def get_reset_methods(config, alg, alg_params, percent_firing):
         def generate_layer(key):
             return initializer(key, (n_embd, 4*n_embd), jnp.float32)
 
-        if alg == 'ART':
+        if alg == 'ART' or alg == 'ART-L2' or alg == 'ART-L2*':
 
             @jax.jit
             def update_thresholds(reset_state):
