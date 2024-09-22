@@ -119,9 +119,9 @@ def get_transformer_methods(config, alg, alg_params, key):
             # sow the features so that we can observe neuron death
             self.sow('intermediates', 'features', x)
             x = nn.relu(x)
-            x = nn.Dropout(rate=self.config.dropout_rate)(x, deterministic=deterministic)
+            # x = nn.Dropout(rate=self.config.dropout_rate)(x, deterministic=deterministic)
             x = nn.Dense(self.config.n_embd)(x)
-            x = nn.Dropout(rate=self.config.dropout_rate)(x, deterministic=deterministic)
+            # x = nn.Dropout(rate=self.config.dropout_rate)(x, deterministic=deterministic)
             return x
 
     class Block(nn.Module):
