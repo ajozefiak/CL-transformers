@@ -119,6 +119,7 @@ def get_dataloader(text):
             # Reshape back to 1D token list
             self.tokens = jnp.reshape(shuffled_blocks, -1)
 
+        @jax.jit
         def next_batch(self):
             B,T = self.B, self.T
             buf = self.tokens[self.current_position:self.current_position+B*T+1]
