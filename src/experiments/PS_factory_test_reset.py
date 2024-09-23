@@ -87,6 +87,7 @@ def get_dataloader(text):
             self.B = B
             self.T = T
             self.N = N
+            self.key = key
 
             enc = tiktoken.get_encoding("gpt2")
 
@@ -105,6 +106,18 @@ def get_dataloader(text):
             self.tokens = jnp.array(tokens_lv)
             print(f"loaded {len(self.tokens)} tokens in the datasets" )
             print(f" 1 epoch = {len(self.tokens)//(B*T)} batches")
+        
+        def shuffle_tokens(self):
+            # Split the tokens into contiguous blocks of size T and shuffle the blocks
+            num_blocks = len(self.tokens) // self.T
+            tokens_reshaped = jnp.reshape(self.tokens, (num_blocks, self.T))
+        
+            # Shuffle the blocks, not individual tokens
+            self.key, subkey = jax.random.split(self.key)
+            shuffled_blocks = jax.random.permutation(subkey, tokens_reshaped)
+        
+            # Reshape back to 1D token list
+            self.tokens = jnp.reshape(shuffled_blocks, -1)
 
         def next_batch(self):
             B,T = self.B, self.T
@@ -113,6 +126,7 @@ def get_dataloader(text):
             self.current_position += B*T
             if self.current_position + B*T+1 > len(self.tokens):
                 self.current_position = 0
+                self.shuffle_tokens()
             return x,y
     
     return DataLoaderPermuteText   
