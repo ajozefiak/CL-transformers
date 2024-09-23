@@ -1,1 +1,1 @@
-squeue -p sched_mit_sloan_gpu_r8 -t R   # Queued joba
+squeue -p sched_mit_sloan_gpu_r8 -t R   # Queued jobs
