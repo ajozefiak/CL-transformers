@@ -125,6 +125,7 @@ def run_experiment_PS_factory_test_reset(config, alg, alg_params, text, B, T, N,
 
     # Initialize the random key
     random_key = jr.PRNGKey(seed)
+    task_random_key = jr.PRNGKey(seed)
     print(f"Initial key: {random_key}, Type: {type(random_key)}")
     random_key, split_key = jr.split(random_key)
 
@@ -167,8 +168,8 @@ def run_experiment_PS_factory_test_reset(config, alg, alg_params, text, B, T, N,
             print(f"Task: {task}")
 
         # Split the random key
-        random_key, split_key = jr.split(random_key)
-        data_loader = data_loader_class(text=text, B=B, T=T, N=N, key=split_key)
+        task_random_key, task_split_key = jr.split(task_random_key)
+        data_loader = data_loader_class(text=text, B=B, T=T, N=N, key=task_split_key)
         
         ###############
         # In principle, we should be able to copy the for loop below to other experiments as long as the 
