@@ -223,6 +223,9 @@ def run_experiment_PS_factory_test_reset(config, alg, alg_params, text, B, T, N,
                 # neuron_ages_array[1,t,:] = neuron_ages['Block_1']
                 # neuron_ages_array[2,t,:] = neuron_ages['Block_2']
             t += 1
+            if t <= 2:
+                print(f"Task {task}, time {t}")
+                print(x[0:3,0:3])
 
             if verbose & (step % print_freq == 0):
                 print(f"step {step}/{train_steps_per_task} | loss {loss:.4f} |")
