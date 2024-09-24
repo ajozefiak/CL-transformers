@@ -76,7 +76,7 @@ class DataLoader:
 
             key, split_key = jr.split(self.key)
             self.key = key
-            self. tokens = permute_rows(self.tokens, T, split_key)
+            self.tokens = permute_rows(self.tokens, T, split_key)
 
         return x,y
 
