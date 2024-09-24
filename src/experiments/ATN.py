@@ -123,11 +123,11 @@ def run_experiment_ATN(config, alg, alg_params, ds, B, T, art_per_task, epochs, 
         reset_state = init_reset_state(config, alg, alg_params)
 
         # Initialize reset_mask_array
-        reset_mask_array = np.zeros((config.n_layer, int(train_steps_per_task * tasks), config.n_neurons, dtype = bool)
+        reset_mask_array = np.zeros((config.n_layer, int(train_steps_per_task * tasks), config.n_neurons, dtype = bool))
 
     # initialize neuron_ages_array
     if save_neuron_ages:
-        neuron_ages_array = np.zeros((config.n_layer, int(train_steps_per_task * tasks), config.n_neurons, dtype = np.uint32)
+        neuron_ages_array = np.zeros((config.n_layer, int(train_steps_per_task * tasks), config.n_neurons, dtype = np.uint32))
 
     #  Initialize params_list
     if save_weights:
