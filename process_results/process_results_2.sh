@@ -13,4 +13,4 @@
 source /etc/profile.d/modules.sh                                                
 module load sloan/python/3.11.4
 
-python3 process_results_ATN.py
+python3 process_results_ATN_2.py
