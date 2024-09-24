@@ -46,7 +46,7 @@ for i in range(len(path_subroots)):
         with open(path + 'L2_0.0001/loss_array.pkl', 'rb') as f:
             loss_array_L2 = pickle.load(f)
             print(path)
-            print(np.mean(loss_array))
+            print(np.mean(loss_array_L2))
 
         avg_loss_fin_epoch_reset += compute_avg_loss_final_epoch(loss_array_reset, num_tasks, epochs, time_steps_per_epoch)
         avg_loss_fin_epoch_L2 += compute_avg_loss_final_epoch(loss_array_L2, num_tasks, epochs, time_steps_per_epoch)
