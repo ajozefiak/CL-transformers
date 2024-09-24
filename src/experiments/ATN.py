@@ -60,7 +60,7 @@ class DataLoader:
         self.tokens = jnp.array(np.concatenate(tokens))
         key, split_key = jr.split(self.key)
         self.key = key
-        self. tokens = permute_rows(self.tokens, T, split_key)
+        self.tokens = permute_rows(self.tokens, T, split_key)
 
         print(f"loaded {len(self.tokens)} tokens in the datasets" )
         print(f" 1 epoch = {len(self.tokens)//(B*T)} batches")
