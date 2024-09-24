@@ -13,9 +13,9 @@ ds = load_from_disk(ds_path)
 # Experiment Parameters
 B = 8
 T = 128+1
-art_per_task = B * 64
-tasks = 2
-epochs = 2
+art_per_task = B * 32
+tasks = 1000
+epochs = 50
 verbose = True
 print_freq = int(200)
 
@@ -30,7 +30,7 @@ save_weights = True
 save_weights_freq = 32*epochs*2
 
 # CLUSTER SAVE_PATH_ROOT
-save_path_root = f'/nobackup1/jozefiak/CL/Results/ATN/ATN_092324_1/seed_{seed}/'
+save_path_root = f'/nobackup1/jozefiak/CL/Results/ATN/ATN_092324_large_50/seed_{seed}/'
 
 # Run the experiment
 reg_strs = [1e-4]
