@@ -6,7 +6,7 @@ seed = int(sys.argv[1])
 print(f"Seed: {seed}")
 
 # Load Dataset given the seed
-ds_path f'/nobackup1/jozefiak/CL/Data/ATN/256k_tokenized/256K_tokenized_{seed}.hf'
+ds_path = f'/nobackup1/jozefiak/CL/Data/ATN/256k_tokenized/256K_tokenized_{seed}.hf'
 ds = load_from_disk(ds_path)
 
 
