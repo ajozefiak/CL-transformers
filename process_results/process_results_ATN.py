@@ -35,6 +35,9 @@ for i in range(len(path_subroots)):
     avg_loss_fin_epoch_reset = np.zeros(num_tasks)
     avg_loss_fin_epoch_L2 = np.zeros(num_tasks)
 
+    avg_loss_reset = np.zeros(num_tasks * epochs * time_steps_per_epoch)
+    avg_loss_L2 = np.zeros(num_tasks * epochs * time_steps_per_epoch)
+
     for seed in seeds:
         path = path_root + path_subroot + f'/seed_{seed}/epochs_{epochs}/'
         with open(path + 'ART-L2_0.0001/loss_array.pkl', 'rb') as f:
@@ -45,6 +48,9 @@ for i in range(len(path_subroots)):
 
         avg_loss_fin_epoch_reset += compute_avg_loss_final_epoch(loss_array_reset, num_tasks, epochs, time_steps_per_epoch)
         avg_loss_fin_epoch_L2 += compute_avg_loss_final_epoch(loss_array_L2, num_tasks, epochs, time_steps_per_epoch)
+
+        avg_loss_reset += loss_array_reset
+        avg_loss_L2 += loss_array_L2
 
     avg_loss_fin_epoch_reset = avg_loss_fin_epoch_reset / len(seeds)
     avg_loss_fin_epoch_L2 = avg_loss_fin_epoch_L2 / len(seeds)
@@ -68,6 +74,21 @@ for i in range(len(path_subroots)):
     plt.plot(cumulative_avg_reset, label="Reset-L2")
     plt.title("Cumulative Average Loss on Final Epoch")
     plt.xlabel("Task")
+    plt.ylabel("Cumulative Average Loss")
+    plt.legend()
+    plt.show()
+    plt.savefig(path_root + path_subroot+ "_cumulative_avg_loss_final_epoch.png")
+    plt.clf()
+
+    # Compute the cumulative averages
+    cumulative_avg_reset = np.cumsum(avg_loss_reset) / np.arange(1, len(avg_loss_reset) + 1)
+    cumulative_avg_L2 = np.cumsum(avg_loss_L2) / np.arange(1, len(avg_loss_L2) + 1)
+
+    # Plot the cumulative averages
+    plt.plot(cumulative_avg_L2, label="L2")
+    plt.plot(cumulative_avg_reset, label="Reset-L2")
+    plt.title("Cumulative Average Loss over All Time Steps")
+    plt.xlabel("Time Step")
     plt.ylabel("Cumulative Average Loss")
     plt.legend()
     plt.show()
