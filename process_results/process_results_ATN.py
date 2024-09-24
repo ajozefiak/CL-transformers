@@ -90,7 +90,6 @@ for i in range(len(path_subroots)):
     plt.title("Cumulative Average Loss over All Time Steps")
     plt.xlabel("Time Step")
     plt.ylabel("Cumulative Average Loss")
-    plt.ylim(0,5)
     plt.legend()
     plt.show()
     plt.savefig(path_root + path_subroot+ "_cumulative_avg_loss.png")
