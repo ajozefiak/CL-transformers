@@ -71,7 +71,7 @@ for i in range(len(path_subroots)):
     plt.ylabel("Cumulative Average Loss")
     plt.legend()
     plt.show()
-    plt.savefig(path_root + path_subroot+ "_avg_loss_final_epoch.png")
+    plt.savefig(path_root + path_subroot+ "_cumulative_avg_loss_final_epoch.png")
     plt.clf()
 
 
