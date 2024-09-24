@@ -64,8 +64,8 @@ for i in range(len(path_subroots)):
     cumulative_avg_L2 = np.cumsum(avg_loss_fin_epoch_L2) / np.arange(1, len(avg_loss_fin_epoch_L2) + 1)
 
     # Plot the cumulative averages
-    plt.plot(cumulative_avg_reset, label="Reset-L2")
     plt.plot(cumulative_avg_L2, label="L2")
+    plt.plot(cumulative_avg_reset, label="Reset-L2")
     plt.title("Cumulative Average Loss on Final Epoch")
     plt.xlabel("Task")
     plt.ylabel("Cumulative Average Loss")
