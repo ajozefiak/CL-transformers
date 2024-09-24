@@ -142,6 +142,7 @@ def run_experiment_ATN(config, alg, alg_params, ds, B, T, art_per_task, epochs, 
     t0 = time.time()
     for task in range(tasks):
 
+        print(f"Task: {task}")
         tokens = get_tokens_next_task(ds, task, art_per_task)
         task_key, task_split_key = jr.split(task_key)
         data_loader = DataLoader(B=B, T=T, tokens=tokens, key=task_split_key)
