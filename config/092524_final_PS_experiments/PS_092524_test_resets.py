@@ -40,7 +40,7 @@ save_weights_freq = 3200*5
 
 reg_strs = [1e-4]
 # for alg in ['L2', 'ART-L2', 'Vanilla', 'L2Init']:
-for alg in ['ART-L2']
+for alg in ['ART-L2']:
   for reg_str in reg_strs:
     for reset_percentile in [0.9, 0.95, 0.97, 0.99, 0.999]:
       alg_params = {'threshold': 16,
