@@ -5,12 +5,14 @@ import pickle
 path_root = '/nobackup1/jozefiak/CL/Results/ATN/'
 path_subroots = ['ATN_092324_large',
                 'ATN_092324_large_50',
-                'ATN_092324_small'
+                'ATN_092324_small,
+                'ATN_092324_small_50_1',
+                'ATN_092324_small_50_2
 ]
 
-epochs_list = [100, 50, 100]
-num_tasks_list = [1000, 1000, 1000]
-time_steps_per_epoch_list = [32 ,32, 32]
+epochs_list = [100, 50, 100, 50, 50]
+num_tasks_list = [1000, 1000, 1000, 250, 500]
+time_steps_per_epoch_list = [32 ,32, 32, 128, 64]
 
 seeds = [1,2,3,4,5,6]
 
