@@ -5,9 +5,9 @@ import pickle
 path_root = '/nobackup1/jozefiak/CL/Results/ATN/'
 path_subroots = ['ATN_092324_large',
                 'ATN_092324_large_50',
-                'ATN_092324_small,
+                'ATN_092324_small',
                 'ATN_092424_small_50_1',
-                'ATN_092424_small_50_2
+                'ATN_092424_small_50_2'
 ]
 
 epochs_list = [100, 50, 100, 50, 50]
