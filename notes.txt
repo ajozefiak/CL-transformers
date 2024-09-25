@@ -1,2 +1,3 @@
 squeue -p sched_mit_sloan_gpu_r8 -t R   # Queued jobs
-scp jozefiak@eofe8.mit.edu:/nobackup1/jozefiak/CL/Results/ATN/*.png .
+squeue -p sched_mit_sloan_batch_r8 -t R   # Queued jobs
+noglob scp jozefiak@eofe8.mit.edu:/nobackup1/jozefiak/CL/Results/ATN/*.png .
