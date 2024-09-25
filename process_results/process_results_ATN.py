@@ -11,9 +11,9 @@ path_subroots = ['ATN_092324_large',
                 'ATN_092424_medium_50_1'
 ]
 
-epochs_list = [100, 50, 100, 50, 50]
-num_tasks_list = [1000, 1000, 1000, 250, 500]
-time_steps_per_epoch_list = [32 ,32, 32, 128, 64]
+epochs_list = [100, 50, 100, 50, 50, 50]
+num_tasks_list = [1000, 1000, 1000, 250, 500, 250]
+time_steps_per_epoch_list = [32 ,32, 32, 128, 64, 128]
 
 seeds = [1,2,3,4,5,6]
 
