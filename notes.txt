@@ -4,3 +4,6 @@ noglob scp jozefiak@eofe8.mit.edu:/nobackup1/jozefiak/CL/Results/ATN/*.png .
 
 # Check the memory of the current directory
 du -sh .
+
+# Delete any file or file in a subdirectory 
+find . -name "reset_mask_array.pkl" -type f -delete
