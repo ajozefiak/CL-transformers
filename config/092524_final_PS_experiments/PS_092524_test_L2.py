@@ -29,7 +29,8 @@ config = CL_transformers.ModelConfig(vocab_size = 11387, n_head = 2, n_layer = 1
 seed = int(sys.argv[1])
 print(f"Seed: {seed}")
 # CLUSTER SAVE_PATH_ROOT
-save_path_root = f'/nobackup1/jozefiak/CL/Results/PS/PS_092524_test_L2/seed_{seed}/'
+# save_path_root = f'/nobackup1/jozefiak/CL/Results/PS/PS_092524_test_L2/seed_{seed}/'
+save_path_root = f'/home/jozefiak/CL/Experiments/PS/Results/test_L2/seed_{seed}/'
 
 # TODO: toggle save_neuron_ages, save_weights
 save_results = True
