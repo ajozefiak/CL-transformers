@@ -132,12 +132,14 @@ def get_transformer_methods(config, alg, alg_params, key):
 
         @nn.compact
         def __call__(self, x):
+            residual = x
             x = nn.LayerNorm()(x)
-            x = x + CausalSelfAttention(self.config)(x)
+            x = residual + CausalSelfAttention(self.config)(x)
 
+            residual = x
             x = nn.LayerNorm()(x)
             if config.use_resid:
-                x = x + MLP(self.config)(x)
+                x = residual + MLP(self.config)(x)
             else:
                 x = MLP(self.config)(x)
             return x
