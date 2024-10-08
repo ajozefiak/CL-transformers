@@ -1,6 +1,8 @@
-squeue -p sched_mit_sloan_gpu_r8 -t R   # Queued jobs
+squeue -p sched_mit_sloan_gpu_r8 -t R   # Running jobs
 squeue -p sched_mit_sloan_batch_r8 -t R   # Queued jobs
 noglob scp jozefiak@eofe8.mit.edu:/nobackup1/jozefiak/CL/Results/ATN/*.png .
+
+ssh jozefiak@eofe8.mit.edu
 
 # Check the memory of the current directory
 du -sh .
