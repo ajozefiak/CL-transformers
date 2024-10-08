@@ -1,5 +1,6 @@
-# 09/19/24
-# We run the adaptive resets for 100 epochs on PS 
+# 10/07/24
+# We are running the final 500-task experiment from the paper that I submitted, however, the only change is that we have 
+# fixed the use of layer norm so that we are using pre-LN correctly. The goal is to see if anything changes with this fix.
 import sys
 import CL_transformers
 
