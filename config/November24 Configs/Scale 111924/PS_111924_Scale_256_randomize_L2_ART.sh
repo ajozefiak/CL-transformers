@@ -5,7 +5,7 @@
 #SBATCH -p sched_mit_sloan_gpu_r8                                               
 #SBATCH --ntasks=1                                                              
 #SBATCH --cpus-per-task=2                                                       
-#SBATCH --mem-per-cpu=256GB                                                      
+#SBATCH --mem-per-cpu=64GB                                                      
 #SBATCH --time=24:00:00                                                         
 #SBATCH --gres=gpu:1  
 #SBATCH --array=0-5      
