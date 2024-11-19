@@ -29,20 +29,20 @@ T = 128+1
 batches = int(32 * (scale ** (0.74)))
 N = int(B * T * batches)
 
+# We reduce the problem size substantially
 tasks = 50
-epochs = 50
+epochs = 100
 
 verbose = True
 print_freq = int(epochs * batches - 1)
 
-# We use 256 neurons and run this experiment for 1000 tasks
 # vocab_size = 21013 for scale-256 of shakespeare_and_dickens.txt 
 config = CL_transformers.ModelConfig(vocab_size = 18539, n_head = int(2 * width_factor), n_layer = 1, n_embd = 32, n_neurons = int(256 * width_factor), use_resid=True)
 
 seed = int(sys.argv[1])
 print(f"Seed: {seed}")
 # CLUSTER SAVE_PATH_ROOT
-save_path_root = f'/pool001/jozefiak/CL/Results/112024/PS_112024_scale_256_epochs_50_randomize/seed_{seed}/'
+save_path_root = f'/pool001/jozefiak/CL/Results/112024/PS_112024_scale_256_epochs_100_randomize/seed_{seed}/'
 
 # TODO: toggle save_neuron_ages, save_weights
 save_results = True
@@ -55,7 +55,7 @@ save_weights_freq = int(epochs*batches)
 
 reg_strs = [1e-4]
 # for alg in ['L2', 'ART-L2', 'Vanilla', 'L2Init', 'ART']:
-for alg in ['L2']:
+for alg in ['ART-L2']:
   for reg_str in reg_strs:
     alg_params = {'threshold': 16,
                     'reset_percentile': 0.95,

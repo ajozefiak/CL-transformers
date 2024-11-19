@@ -30,7 +30,7 @@ batches = int(32 * (scale ** (0.74)))
 N = int(B * T * batches)
 
 tasks = 50
-epochs = 50
+epochs = 100
 
 verbose = True
 print_freq = int(epochs * batches - 1)
@@ -42,7 +42,7 @@ config = CL_transformers.ModelConfig(vocab_size = 18539, n_head = int(2 * width_
 seed = int(sys.argv[1])
 print(f"Seed: {seed}")
 # CLUSTER SAVE_PATH_ROOT
-save_path_root = f'/pool001/jozefiak/CL/Results/112024/PS_112024_scale_256_epochs_50_randomize/seed_{seed}/'
+save_path_root = f'/pool001/jozefiak/CL/Results/112024/PS_112024_scale_256_epochs_100_randomize/seed_{seed}/'
 
 # TODO: toggle save_neuron_ages, save_weights
 save_results = True
