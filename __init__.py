@@ -8,6 +8,7 @@ from .src.experiments.PS_factory_test_reset import run_experiment_PS_factory_tes
 from .src.experiments.Alt_CATN import run_experiment_Alt_CATN
 from .src.experiments.ATN import run_experiment_ATN
 from .src.experiments.PS_factory_100724 import run_experiment_PS_100724
+from .src.experiments.PS_factory_112024 import run_experiment_PS_112024
 
 # # Import everything in src/__init__.py __all__
 # from .src import *

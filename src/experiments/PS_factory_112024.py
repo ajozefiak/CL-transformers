@@ -149,7 +149,7 @@ def get_dataloader(text):
     return DataLoaderPermuteText   
 
 # Add model config
-def run_experiment_PS_100724(config, alg, alg_params, text, B, T, N, epochs, tasks, seed, save_neuron_ages, save_results, save_path, verbose, print_freq, save_weights, save_weights_freq):
+def run_experiment_PS_112024(config, alg, alg_params, text, B, T, N, epochs, tasks, seed, save_neuron_ages, save_results, save_path, verbose, print_freq, save_weights, save_weights_freq):
     
     # Get the data_loader_class
     data_loader_class = get_dataloader(text)
