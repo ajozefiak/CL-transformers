@@ -25,7 +25,7 @@ B = 8
 T = 128+1
 
 
-# 695 = ceil(32 * 256^0.74)
+# 1938 = ceil(32 * 256^0.74)
 N = int(B * T * 1938)
 
 # We reduce the problem size substantially
@@ -47,7 +47,7 @@ save_path_root = f'/pool001/jozefiak/CL/Results/111924/PS_111924_scale_256_rando
 save_results = True
 save_neuron_ages = True
 save_weights = True
-save_weights_freq = 1938
+save_weights_freq = int(epochs*1938)
 # Old save_weights_freq which I ran initially
 # save_weights_freq = int((B * 1938) / (T-1))
 
