@@ -32,7 +32,7 @@ tasks = 50
 epochs = 20
 
 verbose = True
-print_freq = int(N*epochs)
+print_freq = int(epochs * 1938)
 
 # We use 256 neurons and run this experiment for 1000 tasks
 # vocab_size = 21013 for scale-256 of shakespeare_and_dickens.txt 
