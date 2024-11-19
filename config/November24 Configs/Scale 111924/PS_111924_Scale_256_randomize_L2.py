@@ -47,7 +47,9 @@ save_path_root = f'/pool001/jozefiak/CL/Results/111924/PS_111924_scale_256_rando
 save_results = True
 save_neuron_ages = True
 save_weights = True
-save_weights_freq = int((B * 1938) / (T-1))
+save_weights_freq = 1938
+# Old save_weights_freq which I ran initially
+# save_weights_freq = int((B * 1938) / (T-1))
 
 
 reg_strs = [1e-4]
