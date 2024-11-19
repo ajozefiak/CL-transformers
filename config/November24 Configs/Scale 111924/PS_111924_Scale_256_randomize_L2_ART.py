@@ -25,15 +25,16 @@ B = 8
 T = 128+1
 
 
-# 1938 = ceil(32 * 256^0.74)
-N = int(B * T * 1938)
+# batches = ceil(32 * 256^0.74)
+batches = int(32 * (scale ** (0.74)))
+N = int(B * T * batches)
 
 # We reduce the problem size substantially
 tasks = 50
 epochs = 20
 
 verbose = True
-print_freq = int(epochs * 1938)
+print_freq = int(epochs * batches)
 
 # vocab_size = 21013 for scale-256 of shakespeare_and_dickens.txt 
 config = CL_transformers.ModelConfig(vocab_size = 21013, n_head = int(2 * width_factor), n_layer = 1, n_embd = 32, n_neurons = int(256 * width_factor), use_resid=True)
@@ -47,9 +48,9 @@ save_path_root = f'/pool001/jozefiak/CL/Results/111924/PS_111924_scale_256_rando
 save_results = True
 save_neuron_ages = True
 save_weights = True
-save_weights_freq = int(epochs*1938 - 1)
+save_weights_freq = int(epochs*batches - 1)
 # Old save_weights_freq which I ran initially
-# save_weights_freq = int((B * 1938) / (T-1))
+# save_weights_freq = int((B * batches) / (T-1))
 
 
 reg_strs = [1e-4]
