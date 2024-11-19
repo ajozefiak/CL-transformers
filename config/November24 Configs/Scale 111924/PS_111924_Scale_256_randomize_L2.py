@@ -48,7 +48,7 @@ save_path_root = f'/pool001/jozefiak/CL/Results/111924/PS_111924_scale_256_rando
 save_results = True
 save_neuron_ages = True
 save_weights = True
-save_weights_freq = int(epochs*batches)
+save_weights_freq = int(epochs*batches - 1)
 # Old save_weights_freq which I ran initially
 # save_weights_freq = int((B * batches) / (T-1))
 

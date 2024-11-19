@@ -34,7 +34,7 @@ tasks = 50
 epochs = 20
 
 verbose = True
-print_freq = int(epochs * batches)
+print_freq = int(epochs * batches - 1)
 
 # vocab_size = 21013 for scale-256 of shakespeare_and_dickens.txt 
 config = CL_transformers.ModelConfig(vocab_size = 18539, n_head = int(2 * width_factor), n_layer = 1, n_embd = 32, n_neurons = int(256 * width_factor), use_resid=True)
