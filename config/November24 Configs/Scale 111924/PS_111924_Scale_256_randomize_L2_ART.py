@@ -37,7 +37,7 @@ verbose = True
 print_freq = int(epochs * batches)
 
 # vocab_size = 21013 for scale-256 of shakespeare_and_dickens.txt 
-config = CL_transformers.ModelConfig(vocab_size = 30863, n_head = int(2 * width_factor), n_layer = 1, n_embd = 32, n_neurons = int(256 * width_factor), use_resid=True)
+config = CL_transformers.ModelConfig(vocab_size = 18539, n_head = int(2 * width_factor), n_layer = 1, n_embd = 32, n_neurons = int(256 * width_factor), use_resid=True)
 
 seed = int(sys.argv[1])
 print(f"Seed: {seed}")
