@@ -19,6 +19,10 @@ scale = 256
 # We increase model scale by doubling width and hence squaring the number of weights
 width_factor = 16
 
+n_head = 2 * width_factor
+n_embd = 32 * width_factor
+n_neurons = 256 * width_factor
+
 # Experiment Parameters
 B = 8
 # Context window T = 128 + 1, to account for a buffer so as to shuffle (x,y) pairs correctly
