@@ -4,3 +4,4 @@ from .Alt_CATN import run_experiment_Alt_CATN
 from .ATN import run_experiment_ATN
 from .PS_factory_100724 import run_experiment_PS_100724
 from .PS_factory_112024 import run_experiment_PS_112024
+from .PS_factory_112024_no_shuffle import run_experiment_PS_112024_no_shuffle

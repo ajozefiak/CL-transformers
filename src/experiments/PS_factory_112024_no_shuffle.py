@@ -3,6 +3,8 @@
 # In addition, we restrict the saving of neuron ages and neuron reset masks so as to save memory. 
 # We toggle saving the above arrays using save_weights
 
+# In this file I want to test what happens if we do not shuffle
+
 import tiktoken
 import jax
 import jax.numpy as jnp
@@ -144,15 +146,16 @@ def get_dataloader(text):
                 self.current_position = 0
                 
                 # Here, we permute the examples
-                key, split_key = jr.split(self.key)
-                self.key = key
-                self.tokens = permute_rows(self.tokens, T, split_key)
+                # No Shuffling. Uncomment below to shuffle
+                # key, split_key = jr.split(self.key)
+                # self.key = key
+                # self.tokens = permute_rows(self.tokens, T, split_key)
             return x,y  
     
     return DataLoaderPermuteText   
 
 # Add model config
-def run_experiment_PS_112024(config, alg, alg_params, text, B, T, N, epochs, tasks, seed, save_neuron_ages, save_results, save_path, verbose, print_freq, save_weights, save_weights_freq):
+def run_experiment_PS_112024_no_shuffle(config, alg, alg_params, text, B, T, N, epochs, tasks, seed, save_neuron_ages, save_results, save_path, verbose, print_freq, save_weights, save_weights_freq):
     
     # Get the data_loader_class
     data_loader_class = get_dataloader(text)
