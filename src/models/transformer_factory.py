@@ -15,6 +15,8 @@ class ModelConfig:
   vocab_size: int = 50257
   block_size: int = 128
 
+  lr: float = 1e-3
+
   n_layer: int = 3
   n_head: int = 4 
   n_embd: int = 64
@@ -179,8 +181,9 @@ def get_transformer_methods(config, alg, alg_params, key):
     def init_train_state(key, config) -> TrainState:
         model = GPT(config)
         params = model.init(key)
+        lr = config.lr
 
-        optimizer = optax.adam(1e-3, b1=0.9, b2=0.999, eps=1e-7)
+        optimizer = optax.adam(lr, b1=0.9, b2=0.999, eps=1e-7)
 
         if config.gradient_accumulation_steps>1:
             optimizer = optax.MultiSteps(
