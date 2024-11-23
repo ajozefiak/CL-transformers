@@ -175,7 +175,7 @@ def get_reset_methods(config, alg, alg_params):
         if alg == 'ReDO-L2':
 
             @jax.jit
-            def ReDO_reset(train_state, reset_state, neuron_ages, neuron_pre_activ, key):
+            def ReDO_reset(train_state, reset_state, neuron_ages, neuron_pre_activ, reset_masks, key):
 
                 params = train_state.params
                 opt_state = train_state.opt_state
@@ -236,23 +236,30 @@ def get_reset_methods(config, alg, alg_params):
             @jax.jit
             def reset_neurons(train_state, reset_state, neuron_ages, neuron_pre_activ, key):
                 
+                reset_mask = jnp.sum(jnp.abs(neuron_pre_activ['intermediates'][block]['MLP_0']['features'][0]), axis=(0,1))
+                reset_masks = {'Block_0': reset_mask < reset_mask}
+
                 # TODO: Potentially make this deterministic
                 key, split_key = jr.split(key)
                 ReDO = jr.bernoulli(split_key, reset_state['reset_freq'])
-                train_state = jax.lax.cond(ReDO, ReDO_reset, lambda a,b,c,d,e: a,  train_state, reset_state, neuron_ages, neuron_pre_activ, key)
+                train_state, reset_state, neuron_ages, reset_masks = jax.lax.cond(ReDO, ReDO_reset, lambda a,b,c,d,e,f: (a,b,c,e), train_state, reset_state, neuron_ages, neuron_pre_activ, reset_masks, key)
 
-                return train_state
+                return train_state, reset_state, neuron_ages, reset_masks
 
             return reset_neurons
 
         if alg == 'CBP-L2':
 
+            def CBP_reset(train_state, reset_state, neuron_ages, neuron_pre_activ, key):
+                # TODO ...
+                return train_state
+
             @jax.jit
             def reset_neurons(train_state, reset_state, neuron_ages, neuron_pre_activ, key):
                 # TODO: Potentially make this deterministic
                 key, split_key = jr.split(key)
-                ReDO = jr.bernoulli(split_key, reset_state['reset_freq'])
-                train_state = jax.lax.cond(ReDO, ReDO_reset, lambda a,b,c,d,e: a,  train_state, reset_state, neuron_ages, neuron_pre_activ, key)
+                CBP = jr.bernoulli(split_key, reset_state['reset_freq'])
+                train_state = jax.lax.cond(CBP, CBP_reset, lambda a,b,c,d,e: a,  train_state, reset_state, neuron_ages, neuron_pre_activ, key)
 
                 return train_state
             
