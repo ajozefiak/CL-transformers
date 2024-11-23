@@ -236,7 +236,7 @@ def get_reset_methods(config, alg, alg_params):
             @jax.jit
             def reset_neurons(train_state, reset_state, neuron_ages, neuron_pre_activ, key):
                 
-                reset_mask = jnp.sum(jnp.abs(neuron_pre_activ['intermediates'][block]['MLP_0']['features'][0]), axis=(0,1))
+                reset_mask = jnp.sum(jnp.abs(neuron_pre_activ['intermediates']['Block_0']['MLP_0']['features'][0]), axis=(0,1))
                 reset_masks = {'Block_0': reset_mask < reset_mask}
 
                 # TODO: Potentially make this deterministic
