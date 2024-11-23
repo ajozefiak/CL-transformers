@@ -174,7 +174,7 @@ def run_experiment_PS_112024(config, alg, alg_params, text, B, T, N, epochs, tas
         print('USING CUSTOM MODEL CONFIG')
     train_state, train_step = get_transformer_methods(config, alg, alg_params, split_key)
     neuron_ages = init_neuron_ages(config)
-    if alg == 'ART' or alg == 'ART-L2' or alg == 'ART-L2*' or alg == 'ReDO' or alg == 'CBP':
+    if alg == 'ART' or alg == 'ART-L2' or alg == 'ART-L2*' or alg == 'ReDO-L2' or alg == 'CBP-L2':
         init_reset_state, reset_neurons = get_reset_methods(config, alg, alg_params)
         reset_state = init_reset_state(config, alg, alg_params)
 
@@ -227,7 +227,7 @@ def run_experiment_PS_112024(config, alg, alg_params, text, B, T, N, epochs, tas
             random_key, split_key = jr.split(random_key)
             loss, train_state = train_step(train_state, x, y, split_key)
             # Perform reset step and 
-            if alg == 'ART' or alg == 'ART-L2' or alg == 'ART-L2*' or alg == 'ReDO' or alg == 'CBP':
+            if alg == 'ART' or alg == 'ART-L2' or alg == 'ART-L2*' or alg == 'ReDO-L2' or alg == 'CBP-L2':
                 random_key, split_key = jr.split(random_key)
                 train_state, reset_state, neuron_ages, reset_mask = reset_neurons(train_state, reset_state, neuron_ages, neuron_pre_activ, split_key)
                 # Store reset_mask in reset_mask_array
@@ -300,7 +300,7 @@ def run_experiment_PS_112024(config, alg, alg_params, text, B, T, N, epochs, tas
                 pickle.dump(neuron_ages_array, f)
                 print(f"Saved neuron_ages_array to {ages_path}")
         
-        if alg == 'ART' or alg == 'ART-L2' or alg == 'ART-L2*' or alg == 'ReDO' or alg == 'CBP':
+        if alg == 'ART' or alg == 'ART-L2' or alg == 'ART-L2*' or alg == 'ReDO-L2' or alg == 'CBP-L2':
             # Save the reset_mask_array to a pkl file
             if save_neuron_ages:
                 with open(reset_mask_path, 'wb') as f:
@@ -309,12 +309,12 @@ def run_experiment_PS_112024(config, alg, alg_params, text, B, T, N, epochs, tas
 
     # Return results in case we want to analyze/plot immediately
     if save_neuron_ages:
-        if alg == 'ART' or alg == 'ART-L2' or alg == 'ART-L2*' or alg == 'ReDO' or alg == 'CBP':
+        if alg == 'ART' or alg == 'ART-L2' or alg == 'ART-L2*' or alg == 'ReDO-L2' or alg == 'CBP-L2':
             return loss_array, neuron_ages_array, reset_mask_array
         else:
             return loss_array, neuron_ages_array
     else:
-        if alg == 'ART' or alg == 'ART-L2' or alg == 'ART-L2*' or alg == 'ReDO' or alg == 'CBP':
+        if alg == 'ART' or alg == 'ART-L2' or alg == 'ART-L2*' or alg == 'ReDO-L2' or alg == 'CBP-L2':
             if save_neuron_ages:
                 return loss_array, reset_mask_array
             else:
