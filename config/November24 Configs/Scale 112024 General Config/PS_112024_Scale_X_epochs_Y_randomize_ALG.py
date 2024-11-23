@@ -73,14 +73,21 @@ save_weights_freq = int(epochs*batches)
 
 reg_strs = [1e-4 / width_factor]
 lr = 1e-3 / width_factor
+# TODO: Change the ReDO parameters once the hyperparameter sweep is finished
+ReDO_reset_freq = 1 / (1 * epochs * batches)
+ReDO_threshold = 0.01
 
-# for alg in ['L2', 'ART-L2', 'Vanilla', 'L2Init', 'ART']:
+# for alg in ['L2', 'ART-L2', 'Vanilla', 'L2Init', 'ART', 'ReDO-L2']:
 
 for reg_str in reg_strs:
   alg_params = {'threshold': 16,
                   'reset_percentile': 0.95,
                   'reset_freq': (1e-4 * (epochs / 20)),
                   'reg_str': reg_str,
-                  'lr': lr}  
+                  'lr': lr,
+                  'ReDO_reset_freq': ReDO_reset_freq,
+                  'ReDO_threshold': ReDO_threshold}  
   save_path = save_path_root + f'/epochs_{epochs}/' + alg + '_' + str(reg_str) + '/'
+  if alg == 'ReDO-L2':
+    save_path = save_path_root + f'/epochs_{epochs}/' + alg + '_' + str(reg_str) + f'_threshold_{ReDO_threshold}_reset_freq_{ReDO_reset_freq}/'
   res = CL_transformers.run_experiment_PS_112024(config, alg, alg_params, text, B, T, N, epochs, tasks, seed, save_neuron_ages, save_results, save_path, verbose, print_freq, save_weights, save_weights_freq)
