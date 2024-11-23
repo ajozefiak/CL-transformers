@@ -27,49 +27,17 @@ class ModelConfig:
 
 # alg is a string specifiying the algorithm:
 # L2, L2Init, S&P, ART, CBP, ReDO
+# ReDO-L2, CBP-L2
 # alg_params is dictionary with hyperparameters
 def get_transformer_methods(config, alg, alg_params, key):
 
-    if alg == 'L2' or alg == 'ART-L2' or alg == 'ART-L2*':
+    if alg == 'L2' or alg == 'ART-L2' or alg == 'ART-L2*' or alg == 'ReDO-L2' or alg == 'CBP-L2':
         reg_str = alg_params['reg_str']
     if alg == 'L2Init':
         reg_str = alg_params['reg_str']
     if alg == 'S&P':
         p = alg_params['p']
         sigma = alg_params['sigma']
-
-    # class CausalSelfAttention(nn.Module):
-
-    #     config: ModelConfig
-
-    #     @nn.compact
-    #     def __call__(self, x, deterministic=True):
-
-    #         assert len(x.shape) == 3
-
-    #         b, l, d = x.shape
-
-    #         q     = nn.Dense(self.config.n_embd)(x)
-    #         k     = nn.Dense(self.config.n_embd)(x)
-    #         v     = nn.Dense(self.config.n_embd)(x)
-    #         # q*k / sqrt(dim) -> softmax -> @v
-    #         q     = jnp.reshape(q, (b, l, d//self.config.n_head , self.config.n_head))
-    #         k     = jnp.reshape(k, (b, l, d//self.config.n_head , self.config.n_head))
-    #         v     = jnp.reshape(v, (b, l, d//self.config.n_head , self.config.n_head))
-    #         norm  = jnp.sqrt(list(jnp.shape(k))[-1])
-    #         attn  = jnp.matmul(q,jnp.transpose(k, (0,1,3,2))) / norm
-    #         # My added line below to deal with Jax rounding QK^T => 0.0
-    #         attn += 1e-6
-    #         #
-    #         mask  = jnp.tril(attn)
-    #         attn  = jnp.where(mask[:,:,:l,:l], attn, float("-inf"))
-    #         probs = jax.nn.softmax(attn, axis=-1)
-    #         # Sow the probability distributions
-    #         self.sow('intermediates', 'probs', probs)
-    #         y     = jnp.matmul(probs, v)
-    #         y     = jnp.reshape(y, (b,l,d))
-    #         y     = nn.Dense(self.config.n_embd)(y)
-            # return y
 
     class CausalSelfAttention(nn.Module):
 
