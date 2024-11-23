@@ -48,9 +48,6 @@ print(f"Seed: {seed}")
 # CLUSTER SAVE_PATH_ROOT
 save_path_root = f'/pool001/jozefiak/CL/Results/112324/PS_112324_test_ReDO_reduced/seed_{seed}/'
 
-ReDO_thresholds = [0.01, 0.02, 0.04, 0.08]
-ReDO_reset_freqs = [1 / (i * epochs * batches) for i in [0.25,0.5,1,2,4]]
-
 # TODO: toggle save_neuron_ages, save_weights
 save_results = True
 save_neuron_ages = False
@@ -65,8 +62,8 @@ lr = 1e-3 / width_factor
 
 alg = 'ReDO-L2'
 
-ReDO_thresholds = [0.0, 0.01, 0.02, 0.04, 0.08, 0.16]
-ReDO_reset_freqs = [1 / (i * epochs * batches) for i in [0.25,0.5,1,2,4,8]]
+ReDO_thresholds = [0.01, 0.02, 0.04, 0.08]
+ReDO_reset_freqs = [1 / (i * epochs * batches) for i in [0.25,0.5,1,2,4]]
 
 reset_freq = 1 / (3 * epochs * batches)
 
