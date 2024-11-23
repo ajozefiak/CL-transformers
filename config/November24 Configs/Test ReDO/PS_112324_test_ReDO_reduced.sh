@@ -8,7 +8,7 @@
 #SBATCH --mem-per-cpu=64GB                                                      
 #SBATCH --time=24:00:00                                                         
 #SBATCH --gres=gpu:1  
-#SBATCH --array=0-2     
+#SBATCH --array=3-8     
 
 source /etc/profile.d/modules.sh                                                
 module load sloan/python/3.11.4
