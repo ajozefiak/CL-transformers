@@ -185,7 +185,7 @@ def get_transformer_methods(config, alg, alg_params, key):
         return train_state, train_step
 
     # L2 Algorithm 
-    if alg == 'L2' or alg == 'ART-L2':
+    if alg == 'L2' or alg == 'ART-L2' or alg == 'ReDO-L2' or alg == 'CBP-L2':
         @jax.jit
         def train_step(state: TrainState, x: jnp.ndarray, y: jnp.ndarray, key: jr.PRNGKey) -> Tuple[jnp.ndarray, TrainState]:
 
