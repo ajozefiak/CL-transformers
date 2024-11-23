@@ -40,7 +40,7 @@ def get_reset_methods(config, alg, alg_params):
             
             return reset_state
         
-        if alg == "CBP":
+        if alg == "CBP-L2":
             # TODO
             reset_state = {
                 'a': {},
@@ -175,7 +175,7 @@ def get_reset_methods(config, alg, alg_params):
         if alg == 'ReDO-L2':
 
             @jax.jit
-            def ReDO_reset(train_state, reset_state, neuron_ages, neuron_ages_pre_activ, key):
+            def ReDO_reset(train_state, reset_state, neuron_ages, neuron_pre_activ, key):
 
                 params = train_state.params
                 opt_state = train_state.opt_state
@@ -193,9 +193,16 @@ def get_reset_methods(config, alg, alg_params):
 
                     # Compute Neuron scores on the current batch
                     # That is, the s^l_i variables from the Sokar et al. paper.
-                    sum_abs_activations = jnp.sum(jnp.abs(neuron_pre_activ['intermediates'][block]['MLP_0']['features'][0]), axis=(0,1))
-                    normalization_constant = jnp.sum(sum_abs_activations)
-                    neuron_scores = sum_abs_activations / normalization_constant
+                    # sum_abs_activations = jnp.sum(jnp.abs(neuron_pre_activ['intermediates'][block]['MLP_0']['features'][0]), axis=(0,1))
+
+                    sum_activations = jnp.sum(
+                        jnp.where(neuron_pre_activ['intermediates'][block]['MLP_0']['features'][0] > 0, 
+                                neuron_pre_activ['intermediates'][block]['MLP_0']['features'][0], 
+                                0), 
+                        axis=(0, 1)
+                    )
+                    normalization_constant = jnp.sum(sum_activations)
+                    neuron_scores = sum_activations / normalization_constant
 
                     # Get reset_mask
                     # Reset Criteria is simply neuron_scores (s^l_i) <= threshold
@@ -232,18 +239,22 @@ def get_reset_methods(config, alg, alg_params):
                 # TODO: Potentially make this deterministic
                 key, split_key = jr.split(key)
                 ReDO = jr.bernoulli(split_key, reset_state['reset_freq'])
-                train_state = jax.lax.cond(ReDO, ReDO_reset, lambda a,b,c,d,e: a,  train_state, reset_state, neuron_ages, neuron_ages_pre_activ, key)
+                train_state = jax.lax.cond(ReDO, ReDO_reset, lambda a,b,c,d,e: a,  train_state, reset_state, neuron_ages, neuron_pre_activ, key)
 
                 return train_state
 
             return reset_neurons
 
-        if alg == 'CBP':
+        if alg == 'CBP-L2':
 
             @jax.jit
             def reset_neurons(train_state, reset_state, neuron_ages, neuron_pre_activ, key):
-                # TODO
-                return ...
+                # TODO: Potentially make this deterministic
+                key, split_key = jr.split(key)
+                ReDO = jr.bernoulli(split_key, reset_state['reset_freq'])
+                train_state = jax.lax.cond(ReDO, ReDO_reset, lambda a,b,c,d,e: a,  train_state, reset_state, neuron_ages, neuron_pre_activ, key)
+
+                return train_state
             
             return reset_neurons
 
