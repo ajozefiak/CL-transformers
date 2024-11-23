@@ -73,9 +73,10 @@ save_weights_freq = int(epochs*batches)
 
 reg_strs = [1e-4 / width_factor]
 lr = 1e-3 / width_factor
-# TODO: Change the ReDO parameters once the hyperparameter sweep is finished
-ReDO_reset_freq = 1 / (1 * epochs * batches)
-ReDO_threshold = 0.01
+# NOTE: These ReDO hyperparams are from a hyperparam sweep on the scale-1 10-task problem over 8 seeds, 
+# and choosing the hyperparams that achieve the smallest terminal (last epoch) loss over the last 5 tasks.
+ReDO_reset_freq = 1 / (0.5 * epochs * batches)
+ReDO_threshold = 0.04
 
 # for alg in ['L2', 'ART-L2', 'Vanilla', 'L2Init', 'ART', 'ReDO-L2']:
 
