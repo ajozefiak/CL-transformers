@@ -9,3 +9,6 @@ du -sh .
 
 # Delete any file or file in a subdirectory 
 find . -name "reset_mask_array.pkl" -type f -delete
+
+# Check the runtime of jobs in the last 7 days
+sacct --user=$USER --format=JobID,JobName,State,Elapsed --starttime=$(date -d '7 days ago' +%Y-%m-%d)
