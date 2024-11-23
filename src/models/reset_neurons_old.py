@@ -55,10 +55,10 @@ def get_reset_methods(config, alg, alg_params):
 
             return reset_state
 
-        if alg == "ReDO-L2":
+        if alg == "ReDO":
             reset_state = {
-                'threshold': alg_params['ReDO_threshold'],
-                'reset_freq': alg_params['ReDO_reset_freq']
+                'threshold': alg_params['threshold'],
+                'reset_freq': alg_params['reset_freq']
             }
 
             return reset_state
@@ -172,57 +172,12 @@ def get_reset_methods(config, alg, alg_params):
             return reset_neurons
 
 
-        if alg == 'ReDO-L2':
+        if alg == 'ReDO':
 
             @jax.jit
             def ReDO_reset(train_state, reset_state, neuron_ages, neuron_ages_pre_activ, key):
-
-                params = train_state.params
-                opt_state = train_state.opt_state
-                reset_masks = {}
-
-                # ReDO has onlya single threshold
-                threshold = reset_state['threshold']
-
-                for block in blocks:
-
-                    # Generate random parameters for reset
-                    key, split_key = jr.split(key)
-                    params_rand = generate_layer(split_key)
-
-
-                    # Compute Neuron scores on the current batch
-                    # That is, the s^l_i variables from the Sokar et al. paper.
-                    sum_abs_activations = jnp.sum(jnp.abs(neuron_pre_activ['intermediates'][block]['MLP_0']['features'][0]), axis=(0,1))
-                    normalization_constant = jnp.sum(sum_abs_activations)
-                    neuron_scores = sum_abs_activations / normalization_constant
-
-                    # Get reset_mask
-                    # Reset Criteria is simply neuron_scores (s^l_i) <= threshold
-                    reset_mask = neuron_scores <= threshold         
-                    reset_masks[block] = reset_mask
-
-                    ####################
-                    # Reset Neurons and Reset Adam Optimizer Parameters
-                    # MLP to MLP Adam Standard Reset based off reset_mask
-                    # Reset bias terms to zero
-                    params['params'][block]['MLP_0']['Dense_0']['bias'] = params['params'][block]['MLP_0']['Dense_0']['bias'] * (1 - reset_mask)
-                    opt_state[0].mu['params'][block]['MLP_0']['Dense_0']['bias'] = opt_state[0].mu['params'][block]['MLP_0']['Dense_0']['bias'] * (1 - reset_mask)
-                    opt_state[0].nu['params'][block]['MLP_0']['Dense_0']['bias'] = opt_state[0].nu['params'][block]['MLP_0']['Dense_0']['bias'] * (1 - reset_mask)
-
-                    # Reset incoming neuron weights according to initial distribution
-                    params['params'][block]['MLP_0']['Dense_0']['kernel'] = (params['params'][block]['MLP_0']['Dense_0']['kernel'] * (1 - reset_mask)) + (params_rand * reset_mask)
-                    opt_state[0].mu['params'][block]['MLP_0']['Dense_0']['kernel'] = opt_state[0].mu['params'][block]['MLP_0']['Dense_0']['kernel'] * (1 - reset_mask)
-                    opt_state[0].nu['params'][block]['MLP_0']['Dense_0']['kernel'] = opt_state[0].nu['params'][block]['MLP_0']['Dense_0']['kernel'] * (1 - reset_mask)
-                    
-                    # Reset outgoing weights to zero
-                    params['params'][block]['MLP_0']['Dense_1']['kernel'] = (1 - reset_mask)[:,None] * params['params'][block]['MLP_0']['Dense_1']['kernel']
-                    opt_state[0].mu['params'][block]['MLP_0']['Dense_1']['kernel'] = (1 - reset_mask)[:,None] * opt_state[0].mu['params'][block]['MLP_0']['Dense_1']['kernel'] 
-                    opt_state[0].nu['params'][block]['MLP_0']['Dense_1']['kernel'] = (1 - reset_mask)[:,None] * opt_state[0].nu['params'][block]['MLP_0']['Dense_1']['kernel'] 
-                    ####################                 
-
-                return train_state.replace(params = params, opt_state = opt_state), reset_state, neuron_ages, reset_masks
-            
+                # TODO 
+                return train_state
             
             # This function updates neuron_ages, therefore, do not need to call update neuron_ages in the training loop 
             # of the experiment
