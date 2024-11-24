@@ -290,12 +290,12 @@ def get_reset_methods(config, alg, alg_params):
             # Check if noise is below reset_freq
             @jax.jit
             def get_reset_mask_CBP_min(a, u_hat, age_threshold, reset_freq, noise):
-                return lax.cond(noise <= reset_freq, get_reset_mask_CBP_min_, lambda v,w,x,y,z: v == -1, a, u_hat, age_threshold, reset_freq, noise)
+                return jax.lax.cond(noise <= reset_freq, get_reset_mask_CBP_min_, lambda v,w,x,y,z: v == -1, a, u_hat, age_threshold, reset_freq, noise)
                 
             @jax.jit
             def get_reset_mask_CBP(a, u_hat, age_threshold, reset_freq, noise):
                 reset_freq_ = reset_freq * u_hat.shape[0]
-                return lax.cond(reset_freq_ > 1, get_reset_mask_CBP_multi, get_reset_mask_CBP_min, a, u_hat, age_threshold, reset_freq_, noise)
+                return jax.lax.cond(reset_freq_ > 1, get_reset_mask_CBP_multi, get_reset_mask_CBP_min, a, u_hat, age_threshold, reset_freq_, noise)
 
             @jax.jit
             def reset_neurons(train_state, reset_state, neuron_ages, neuron_pre_activ, key):
