@@ -345,6 +345,7 @@ def get_reset_methods(config, alg, alg_params):
                     key, split_key = jr.split(key)
                     noise = jr.uniform(split_key)
                     reset_mask = get_reset_mask_CBP(a[block], u_hat, age_threshold, reset_freq, noise)
+                    reset_masks[block] = reset_mask
 
                     a[block] = a[block] * (1 - reset_mask.astype(jnp.int32))
                     u[block] = u[block] * (1 - reset_mask.astype(jnp.int32))
