@@ -298,7 +298,7 @@ def get_reset_methods(config, alg, alg_params):
                 return lax.cond(reset_freq_ > 1, get_reset_mask_CBP_multi, get_reset_mask_CBP_min, a, u_hat, age_threshold, reset_freq_, noise)
 
             @jax.jit
-            def reset_neurons(train_state, reset_state, neuron_ages, neuron_pre_activ, reset_masks, key):
+            def reset_neurons(train_state, reset_state, neuron_ages, neuron_pre_activ, key):
                 
                 params = train_state.params
                 opt_state = train_state.opt_state
@@ -391,7 +391,7 @@ def get_reset_methods(config, alg, alg_params):
 
             #     return train_state, reset_state, neuron_ages, reset_masks
             
-            return reset_neurons
+            # return reset_neurons
 
     # TODO 
     return init_reset_state, get_reset_neurons(config, alg, alg_params)
