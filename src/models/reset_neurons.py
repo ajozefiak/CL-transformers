@@ -314,10 +314,9 @@ def get_reset_methods(config, alg, alg_params):
 
                 for block in blocks:
 
-                    ####
-                    # TODOS
-                    # Compute: state.params[next_layer]
-                    #####
+                    # Generate random parameters for reset
+                    key, split_key = jr.split(key)
+                    params_rand = generate_layer(split_key)
             
                     # Increment neuron_ages
                     a[block] += 1
