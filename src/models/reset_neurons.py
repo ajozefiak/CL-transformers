@@ -391,7 +391,7 @@ def get_reset_methods(config, alg, alg_params):
 
             #     return train_state, reset_state, neuron_ages, reset_masks
             
-            # return reset_neurons
+            return reset_neurons
 
     # TODO 
     return init_reset_state, get_reset_neurons(config, alg, alg_params)
