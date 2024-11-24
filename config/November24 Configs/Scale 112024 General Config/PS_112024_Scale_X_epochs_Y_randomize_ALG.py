@@ -75,8 +75,8 @@ reg_strs = [1e-4 / width_factor]
 lr = 1e-3 / width_factor
 # NOTE: These ReDO hyperparams are from a hyperparam sweep on the scale-1 10-task problem over 8 seeds, 
 # and choosing the hyperparams that achieve the smallest terminal (last epoch) loss over the last 5 tasks.
-ReDO_reset_freq = 1 / (0.5 * epochs * batches)
-ReDO_threshold = 0.04
+ReDO_reset_freq = 1 / (4 * epochs * batches)
+ReDO_threshold = 0.01
 
 # for alg in ['L2', 'ART-L2', 'Vanilla', 'L2Init', 'ART', 'ReDO-L2']:
 
