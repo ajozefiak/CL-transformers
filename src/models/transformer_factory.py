@@ -260,7 +260,7 @@ def get_transformer_methods(config, alg, alg_params, key):
         return train_state, train_step
 
     # ART-L2* 
-    if alg == 'ART-L2*':
+    if alg == 'ART-L2*' or alg == 'L2*':
 
         # Specify the exact paths to exclude as tuples of keys
         exclude_keys = [
