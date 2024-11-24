@@ -46,7 +46,9 @@ def get_reset_methods(config, alg, alg_params):
                 'a': {},
                 'f':  {},
                 'u': {},
-                'reset_freq': alg_params['reset_freq']
+                'reset_freq': alg_params['CBP_reset_freq'],
+                'decay_rate': 0.99,
+                'age_threshold': 100
             }
             for i in range(config.n_layer):
                 reset_state['a'][blocks[i]] = jnp.zeros((config.n_neurons,), dtype=jnp.float32)  
@@ -236,6 +238,7 @@ def get_reset_methods(config, alg, alg_params):
             @jax.jit
             def reset_neurons(train_state, reset_state, neuron_ages, neuron_pre_activ, key):
                 
+                # Create a dummy reset_masks for jax compilation purposes
                 reset_mask = jnp.sum(jnp.abs(neuron_pre_activ['intermediates']['Block_0']['MLP_0']['features'][0]), axis=(0,1))
                 reset_masks = {'Block_0': reset_mask < reset_mask}
 
@@ -249,19 +252,143 @@ def get_reset_methods(config, alg, alg_params):
             return reset_neurons
 
         if alg == 'CBP-L2':
-
-            def CBP_reset(train_state, reset_state, neuron_ages, neuron_pre_activ, key):
-                # TODO ...
-                return train_state
+            
+            @jax.jit
+            def kmin(x, k):
+                # Argsort x and get the index of k smalelst element
+                idx = jnp.argsort(x)[k-1]
+                # Get the value of the k smallest element
+                k_min = x[idx]
+                return k_min
 
             @jax.jit
-            def reset_neurons(train_state, reset_state, neuron_ages, neuron_pre_activ, key):
-                # TODO: Potentially make this deterministic
-                key, split_key = jr.split(key)
-                CBP = jr.bernoulli(split_key, reset_state['reset_freq'])
-                train_state = jax.lax.cond(CBP, CBP_reset, lambda a,b,c,d,e: a,  train_state, reset_state, neuron_ages, neuron_pre_activ, key)
+            def get_reset_mask_CBP_multi(a, u_hat, age_threshold, reset_freq, noise):
+                mask = (a >= age_threshold)
+                mask_complement = 1 - mask
 
-                return train_state
+                k = jnp.round(reset_freq).astype(jnp.int32)
+                u_hat_old = (u_hat * mask) + (u_hat.max() * mask_complement)
+                k_value = kmin(u_hat_old, k)
+                # Multiplying by mask in the line below guards against degenerate cases in which 
+                # mask == True everywhere or mask == False everywhere
+                reset_mask = (u_hat_old <= k_value) * mask
+                return reset_mask
+                
+
+            # Determine smallest eligible neuron
+            @jax.jit
+            def get_reset_mask_CBP_min_(a, u_hat, age_threshold, reset_freq, noise):
+                mask = (a >= age_threshold)
+                mask_complement = 1 - mask
+
+                u_hat_old = (u_hat * mask) + (u_hat.max() * mask_complement)
+                # Multiplying by mask in the line below guards against degenerate cases in which 
+                # mask == True everywhere or mask == False everywhere
+                reset_mask = (u_hat_old == u_hat_old.min()) * mask
+                return reset_mask
+
+            # Check if noise is below reset_freq
+            @jax.jit
+            def get_reset_mask_CBP_min(a, u_hat, age_threshold, reset_freq, noise):
+                return lax.cond(noise <= reset_freq, get_reset_mask_CBP_min_, lambda v,w,x,y,z: v == -1, a, u_hat, age_threshold, reset_freq, noise)
+                
+            @jax.jit
+            def get_reset_mask_CBP(a, u_hat, age_threshold, reset_freq, noise):
+                reset_freq_ = reset_freq * u_hat.shape[0]
+                return lax.cond(reset_freq_ > 1, get_reset_mask_CBP_multi, get_reset_mask_CBP_min, a, u_hat, age_threshold, reset_freq_, noise)
+
+            @jax.jit
+            def reset_neurons(train_state, reset_state, neuron_ages, neuron_pre_activ, reset_masks, key):
+                
+                params = train_state.params
+                opt_state = train_state.opt_state
+                reset_masks = {}
+
+                # Get CBP params
+                reset_freq = reset_state['reset_freq']
+                a = reset_state['a']
+                f = reset_state['f']
+                u = reset_state['u']
+                decay_rate = reset_state['decay_rate']
+                age_threshold = reset_state['age_threshold']
+
+                for block in blocks:
+
+                    ####
+                    # TODOS
+                    # Compute: state.params[next_layer]
+                    #####
+            
+                    # Increment neuron_ages
+                    a[block] += 1
+                    bias_correction = (1 - decay_rate ** a[block])
+
+                    activations = jnp.mean(
+                        jnp.where(neuron_pre_activ['intermediates'][block]['MLP_0']['features'][0] > 0, 
+                                neuron_pre_activ['intermediates'][block]['MLP_0']['features'][0], 
+                                0), 
+                        axis=(0, 1)
+                    )
+                    f_hat = f[block] / bias_correction
+                    f[block] = decay_rate * f[block] + (1 - decay_rate) * activations
+                    
+                    # TODO: Update the following lines for the transformer
+                    # y_numerator = jnp.abs(f_hat - activations) * jnp.sum(jnp.abs(state.params[next_layer]['kernel']), axis = 1)
+                    # y_denominator = jnp.sum(jnp.abs(state.params[layer]['kernel']), axis = 0)
+                    y_numerator = jnp.abs(f_hat - activations) * jnp.sum(jnp.abs(params['params'][block]['MLP_0']['Dense_1']['kernel']), axis = 1)
+                    y_denominator =  jnp.sum(jnp.abs(params['params'][block]['MLP_0']['Dense_0']['kernel']), axis = 0)
+                    y = y_numerator / y_denominator
+
+                    u_hat = u[block] / bias_correction 
+                    u[block] = decay_rate * u[block] + (1 - decay_rate) * y
+
+                    key, split_key = jr.split(key)
+                    noise = jr.uniform(split_key)
+                    reset_mask = get_reset_mask_CBP(a[block], u_hat, age_threshold, reset_freq, noise)
+
+                    a[block] = a[block] * (1 - reset_mask.astype(jnp.int32))
+                    u[block] = u[block] * (1 - reset_mask.astype(jnp.int32))
+                    f[block] = f[block] * (1 - reset_mask.astype(jnp.int32))
+
+                    ####################
+                    # Reset Neurons and Reset Adam Optimizer Parameters
+                    # MLP to MLP Adam Standard Reset based off reset_mask
+                    # Reset bias terms to zero
+                    params['params'][block]['MLP_0']['Dense_0']['bias'] = params['params'][block]['MLP_0']['Dense_0']['bias'] * (1 - reset_mask)
+                    opt_state[0].mu['params'][block]['MLP_0']['Dense_0']['bias'] = opt_state[0].mu['params'][block]['MLP_0']['Dense_0']['bias'] * (1 - reset_mask)
+                    opt_state[0].nu['params'][block]['MLP_0']['Dense_0']['bias'] = opt_state[0].nu['params'][block]['MLP_0']['Dense_0']['bias'] * (1 - reset_mask)
+
+                    # Reset incoming neuron weights according to initial distribution
+                    params['params'][block]['MLP_0']['Dense_0']['kernel'] = (params['params'][block]['MLP_0']['Dense_0']['kernel'] * (1 - reset_mask)) + (params_rand * reset_mask)
+                    opt_state[0].mu['params'][block]['MLP_0']['Dense_0']['kernel'] = opt_state[0].mu['params'][block]['MLP_0']['Dense_0']['kernel'] * (1 - reset_mask)
+                    opt_state[0].nu['params'][block]['MLP_0']['Dense_0']['kernel'] = opt_state[0].nu['params'][block]['MLP_0']['Dense_0']['kernel'] * (1 - reset_mask)
+                    
+                    # Reset outgoing weights to zero
+                    params['params'][block]['MLP_0']['Dense_1']['kernel'] = (1 - reset_mask)[:,None] * params['params'][block]['MLP_0']['Dense_1']['kernel']
+                    opt_state[0].mu['params'][block]['MLP_0']['Dense_1']['kernel'] = (1 - reset_mask)[:,None] * opt_state[0].mu['params'][block]['MLP_0']['Dense_1']['kernel'] 
+                    opt_state[0].nu['params'][block]['MLP_0']['Dense_1']['kernel'] = (1 - reset_mask)[:,None] * opt_state[0].nu['params'][block]['MLP_0']['Dense_1']['kernel'] 
+                    ####################    
+
+                # Update reset state
+                reset_state['a'] = a             
+                reset_state['f'] = f
+                reset_state['u'] = u
+            
+                return train_state.replace(params = params, opt_state = opt_state), reset_state, neuron_ages, reset_masks
+
+            # @jax.jit
+            # def reset_neurons(train_state, reset_state, neuron_ages, neuron_pre_activ, key):
+                
+            #     # Create a dummy reset_masks
+            #     reset_mask = jnp.sum(jnp.abs(neuron_pre_activ['intermediates']['Block_0']['MLP_0']['features'][0]), axis=(0,1))
+            #     reset_masks = {'Block_0': reset_mask < reset_mask}
+                
+            #     # TODO: Potentially make this deterministic
+            #     key, split_key = jr.split(key)
+            #     CBP = jr.bernoulli(split_key, reset_state['reset_freq'])
+            #     train_state, reset_state, neuron_ages, reset_masks = jax.lax.cond(CBP, CBP_reset, lambda a,b,c,d,e: (a,b,c,e),  train_state, reset_state, neuron_ages, neuron_pre_activ, reset_masks, key)
+
+            #     return train_state, reset_state, neuron_ages, reset_masks
             
             return reset_neurons
 
