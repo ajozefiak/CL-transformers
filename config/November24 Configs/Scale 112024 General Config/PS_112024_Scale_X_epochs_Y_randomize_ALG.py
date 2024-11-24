@@ -77,6 +77,7 @@ lr = 1e-3 / width_factor
 # and choosing the hyperparams that achieve the smallest terminal (last epoch) loss over the last 5 tasks.
 ReDO_reset_freq = 1 / (4 * epochs * batches)
 ReDO_threshold = 0.01
+CBP_reset_freq = 1e-6
 
 # for alg in ['L2', 'ART-L2', 'Vanilla', 'L2Init', 'ART', 'ReDO-L2']:
 
@@ -87,7 +88,8 @@ for reg_str in reg_strs:
                   'reg_str': reg_str,
                   'lr': lr,
                   'ReDO_reset_freq': ReDO_reset_freq,
-                  'ReDO_threshold': ReDO_threshold}  
+                  'ReDO_threshold': ReDO_threshold,
+                  'CBP_reset_freq': CBP_reset_freq}  
   save_path = save_path_root + f'/epochs_{epochs}/' + alg + '_' + str(reg_str) + '/'
   if alg == 'ReDO-L2':
     save_path = save_path_root + f'/epochs_{epochs}/' + alg + '_' + str(reg_str) + f'_threshold_{ReDO_threshold}_reset_freq_{ReDO_reset_freq}/'
