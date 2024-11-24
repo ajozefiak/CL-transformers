@@ -31,7 +31,7 @@ class ModelConfig:
 # alg_params is dictionary with hyperparameters
 def get_transformer_methods(config, alg, alg_params, key):
 
-    if alg == 'L2' or alg == 'ART-L2' or alg == 'ART-L2*' or alg == 'ReDO-L2' or alg == 'CBP-L2':
+    if alg == 'L2' or alg == 'ART-L2' or alg == 'ART-L2*' or alg == 'ReDO-L2' or alg == 'CBP-L2' or alg == 'L2*':
         reg_str = alg_params['reg_str']
     if alg == 'L2Init':
         reg_str = alg_params['reg_str']
