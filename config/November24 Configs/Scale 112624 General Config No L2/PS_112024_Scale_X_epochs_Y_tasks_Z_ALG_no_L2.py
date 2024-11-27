@@ -93,5 +93,5 @@ for reg_str in reg_strs:
                   'CBP_reset_freq': CBP_reset_freq}  
   save_path = save_path_root + f'/epochs_{epochs}/' + alg + '_' + str(reg_str) + '/'
   if alg == 'ReDO-L2':
-    save_path = save_path_root + f'/epochs_{epochs}/' + alg + '_' + str(reg_str)/'
+    save_path = save_path_root + f'/epochs_{epochs}/' + alg + '_' + str(reg_str) + '/'
   res = CL_transformers.run_experiment_PS_112024(config, alg, alg_params, text, B, T, N, epochs, tasks, seed, save_neuron_ages, save_results, save_path, verbose, print_freq, save_weights, save_weights_freq)
