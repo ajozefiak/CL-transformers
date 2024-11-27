@@ -6,8 +6,8 @@ import math
 import CL_transformers
 
 # Check arguments
-if len(sys.argv) != 5:
-    print("Usage: python3 PS_112024_Scale_X_epochs_Y_randomize_ALG.py <seed> <scale> <epochs> <alg>")
+if len(sys.argv) != 6:
+    print("Usage: python3 PS_112024_Scale_X_epochs_Y_randomize_ALG.py <seed> <scale> <epochs> <task> <alg>")
     sys.exit(1)
 
 # Read arguments
