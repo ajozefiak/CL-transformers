@@ -65,7 +65,7 @@ save_path_root = f'/pool001/jozefiak/CL/Results/112624_General/PS_112624_scale_{
 
 # TODO: toggle save_neuron_ages, save_weights
 save_results = True
-save_neuron_ages = False
+save_neuron_ages = True
 save_weights = True
 save_weights_freq = int(epochs*batches)
 # Old save_weights_freq which I ran initially
