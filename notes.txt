@@ -15,3 +15,5 @@ sacct --user=$USER --format=JobID,JobName,State,Elapsed --starttime=$(date -d '7
 
 # Check priorities of users with pending jobs
 squeue -p sched_mit_sloan_gpu_r8 -t PD -o "%.8u %.10Q" | tail -n +2 | sort | awk '{arr[$1]+=$2; count[$1]++} END {for (u in arr) printf "%-8s Total_Priority: %-10d Pending_Jobs: %d\n", u, arr[u], count[u]}'
+
+ssh jozefiak@eofe8.mit.edu 
