@@ -1,0 +1,12 @@
+120425:
+
+I noticed that my scale 256 experiments were running out of memory, this started to happen once I created new .py and .sh files that take the learning rate as an argument. These files are in the December24 configs for PS_120124...
+
+As an example, this is one of these new jobs that required me to increase the number of CPUs by a facrtor of 2, doubling the memory consumption. But now, too many resources are being expended on these experiments and it is clogging the cluster.
+sbatch PS_120124_Scale_X_epochs_Y_tasks_Z_ALG_lr_LR.sh 256 100 50 L2 1e-3
+
+My suspision is that either something changed with the cluster, or my new experiment is generating too much memory for some reason.
+
+In response, I am running an old job to see if this runs out of memory
+sbatch PS_112024_Scale_X_epochs_Y_tasks_Z_ALG.sh 256 100 50 ART-L2*
+Submitted batch job 60770007
