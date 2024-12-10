@@ -61,3 +61,13 @@ But it looks like one of the jobs saved the results, so I'm not sure what happen
 
 NOET: I am updating the config file to use 10 CPUs (out of the 40 for a single node)
 and to use a totla 128 GB (out of the total of 515 GB total)
+
+Howoever, only 3 out of 4 possible jobs are being allocated onto a node, so this is wasteful.
+In response I am running sbatch PS_120124_Scale_X_epochs_Y_tasks_Z_ALG_lr_LR.sh 256 100 50 ART-L2* 0.0011
+which requires 10 CPUs and 64GB of memory. Submitted batch job 60840193.
+- I am able to fit 3 jobs requireing 10 CPUs with 128GB and one job rquiring 10 CPUs and 64 GB onto a single node.
+Let's now see what happens.
+
+Jobs with 10 CPUs and 128 GB: 60839969, 60839964, 
+Jobs with 10 CPUs and 64 GB: 60840193
+Let's see if these run to completion and do not get an OOM exception. It may have in fact been the issue with too few CPUs. 
