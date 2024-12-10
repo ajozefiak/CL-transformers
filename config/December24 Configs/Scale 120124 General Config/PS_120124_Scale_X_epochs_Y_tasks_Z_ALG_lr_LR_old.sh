@@ -3,9 +3,9 @@
 #SBATCH --output=out_PS_120124_%A_%a.txt  # %A is the job array ID, %a is the task ID
 #SBATCH --error=err_PS_120124_%A_%a.txt                                             
 #SBATCH -p sched_mit_sloan_gpu_r8                                               
-#SBATCH --ntasks=1         
-#SBATCH --cpus-per-task=10
-#SBATCH --mem=128GB
+#SBATCH --ntasks=1                                                              
+#SBATCH --cpus-per-task=2                                                       
+#SBATCH --mem-per-cpu=64GB                                                   
 #SBATCH --time=24:00:00                                                         
 #SBATCH --gres=gpu:1  
 #SBATCH --array=0-4      

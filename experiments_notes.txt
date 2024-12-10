@@ -26,15 +26,38 @@ I don't think that I have changed anything with my code, especially with this ol
 - look into the code and see if there is anywhere that we are losing memory
 - rerun the experiment, but with marginally more memory to see if we only need to increase memory marginally. This currently running
 
-2 x 70 GB: Job 60828687
-2 x 80 GB: Job 60828693
-2 x 90 GB: Job 60828710
-2 x 100 GB: Job 60828714
-2 x 110 GB: Job 60828715
-2 x 120 GB: Job 60828760
+2 x 70 GB: Job 60828687 => OOM
+2 x 80 GB: Job 60828693 => OOM
+2 x 90 GB: Job 60828710 => OOM
+2 x 100 GB: Job 60828714 =>  A different memory error when dumping data
+2 x 110 GB: Job 60828715 => OOM
+2 x 120 GB: Job 60828760 => OOM
 
 I will then see what happens in a few days.
 
 Based on my investigations thus far, it appears that something may have changed with the settings in the cluster and I am generating more memory or garbage collection isn't working as usual.
 
 I am also saving only about 5.4G of results, so there must be some unneccessary accumulation of data in my experiments. I should somehow measure this.
+
+12/10/24 Update
+
+This is a different error for Job 2X100 GB: 60828714
+
+Traceback (most recent call last):
+  File "/nfs/home/jozefiak/CL/Experiments/PS_fixed_111924/PS_120124_Scale_X_epo\
+chs_Y_tasks_Z_ALG_lr_LR.py", line 99, in <module>
+    res = CL_transformers.run_experiment_PS_112024(config, alg, alg_params, tex\
+t, B, T, N, epochs, tasks, seed, save_neuron_ages, save_results, save_path, ver\
+bose, print_freq, save_weights, save_weights_freq)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/nfs/home/jozefiak/CL/Experiments/PS_fixed_111924/CL_transformers/src/e\
+xperiments/PS_factory_112024.py", line 300, in run_experiment_PS_112024
+    pickle.dump(neuron_ages_array, f)
+MemoryError
+
+But it looks like one of the jobs saved the results, so I'm not sure what happened.
+
+NOET: I am updating the config file to use 10 CPUs (out of the 40 for a single node)
+and to use a totla 128 GB (out of the total of 515 GB total)
