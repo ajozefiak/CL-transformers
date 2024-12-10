@@ -10,3 +10,31 @@ My suspision is that either something changed with the cluster, or my new experi
 In response, I am running an old job to see if this runs out of memory
 sbatch PS_112024_Scale_X_epochs_Y_tasks_Z_ALG.sh 256 100 50 ART-L2*
 Submitted batch job 60770007
+
+12/09/24 Update:
+
+I have looked into job 60770007 and it also appears to have suffered on OOM error:
+
+/var/spool/slurmd/job60778278/slurm_script: line 31: 3509085 Killed            \
+      python3 PS_112024_Scale_X_epochs_Y_tasks_Z_ALG.py $SLURM_ARRAY_TASK_ID $s\
+cale $epochs $tasks $alg
+slurmstepd: error: Detected 1 oom-kill event(s) in StepId=60778278.batch. Some \
+of your processes may have been killed by the cgroup out-of-memory handler.
+
+I don't think that I have changed anything with my code, especially with this older code. To remedy this I will:
+- investigate how much memory was used to save the results: This is only about 5.4G.
+- look into the code and see if there is anywhere that we are losing memory
+- rerun the experiment, but with marginally more memory to see if we only need to increase memory marginally. This currently running
+
+2 x 70 GB: Job 60828687
+2 x 80 GB: Job 60828693
+2 x 90 GB: Job 60828710
+2 x 100 GB: Job 60828714
+2 x 110 GB: Job 60828715
+2 x 120 GB: Job 60828760
+
+I will then see what happens in a few days.
+
+Based on my investigations thus far, it appears that something may have changed with the settings in the cluster and I am generating more memory or garbage collection isn't working as usual.
+
+I am also saving only about 5.4G of results, so there must be some unneccessary accumulation of data in my experiments. I should somehow measure this.
