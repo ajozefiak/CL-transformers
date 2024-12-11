@@ -77,4 +77,9 @@ Update in the evening of 12/10/24: Jobs of the form 60840193 where exceeding mem
 I am trying the following with garbage collection being called at the begining of each task: 10 CPUs, 64 GB
 
 [jozefiak@eofe8 PS_fixed_111924]$ sbatch PS_120124_Scale_X_epochs_Y_tasks_Z_ALG_lr_LR.sh 256 100 50 ART-L2* 0.00111
-Submitted batch job 60845048
+Submitted batch job 60845048 => this garbage collection has not helped at all and we still ran out of memory at time 4-5 hours,
+which is in line with the earlier experiment that ocnsumed 64GB in 4 hours
+
+Update again, later in the evening. The jobs 60839969, 60839964 are also getting OOM errors after about 9 hours. I have no idea why this is occurring.
+
+My conclusion, it looks like a linear growth in memory consumption, so the memory is due to the repeated tasks. Something is being allocated and not deleted.
