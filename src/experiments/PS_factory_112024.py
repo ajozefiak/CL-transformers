@@ -11,6 +11,7 @@ import time
 import pickle
 import os
 import numpy as np
+import gc
 
 # TODO verify that this works
 from ..models import *
@@ -198,6 +199,8 @@ def run_experiment_PS_112024(config, alg, alg_params, text, B, T, N, epochs, tas
     
     t0 = time.time()
     for task in range(tasks):
+
+        gc.collect()
     
         if verbose:
             print(f"Task: {task}")
