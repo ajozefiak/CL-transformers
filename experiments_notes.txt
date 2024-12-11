@@ -71,3 +71,10 @@ Let's now see what happens.
 Jobs with 10 CPUs and 128 GB: 60839969, 60839964, 
 Jobs with 10 CPUs and 64 GB: 60840193
 Let's see if these run to completion and do not get an OOM exception. It may have in fact been the issue with too few CPUs. 
+
+Update in the evening of 12/10/24: Jobs of the form 60840193 where exceeding memory after 4 hours and 50 minutes, and then throwing an OOM error
+
+I am trying the following with garbage collection being called at the begining of each task: 10 CPUs, 64 GB
+
+[jozefiak@eofe8 PS_fixed_111924]$ sbatch PS_120124_Scale_X_epochs_Y_tasks_Z_ALG_lr_LR.sh 256 100 50 ART-L2* 0.00111
+Submitted batch job 60845048
