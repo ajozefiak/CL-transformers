@@ -135,13 +135,13 @@ for step in range(batches_train):
     train_losses.append(loss)
 
 test_save_dir = "/pool001/jozefiak/CL/SL/test/name"
-test_save_path = save_dir + name
+test_save_path = test_save_dir + name
 
 train_save_dir = "/pool001/jozefiak/CL/SL/train/name"
-train_save_path = save_dir + name
+train_save_path = train_save_dir + name
 
-with open(test_path, 'wb') as f:
+with open(test_save_path, 'wb') as f:
     pickle.dump(test_losses, f)
 
-with open(train_path, 'wb') as f:
+with open(train_save_path, 'wb') as f:
     pickle.dump(train_losses, f)
