@@ -24,7 +24,7 @@ D = int(float(sys.argv[5]))
 alg = sys.argv[6]
 lr = float(sys.argv[7])
 name = sys.argv[8]
-log_freq = int(sys.arv[9])
+log_freq = int(sys.argv[9])
 
 # No regularization so far
 # TODO: move this to the actual transformer file
