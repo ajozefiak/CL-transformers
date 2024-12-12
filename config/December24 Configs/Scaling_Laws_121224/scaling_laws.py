@@ -38,14 +38,15 @@ def loss_fn(train_state,x,y):
 batch_size = 8
 context_window = 128
 
-batches_train = D // (batch_size * context_window)
-batches_test = len(val_data) // (batch_size * context_window)
-test_freq = batches_train // log_freq
-
 # Load into RAM
 data_dir = '/home/jozefiak/CL/Experiments/PS_fixed_111924'
 train_data = jnp.array(np.memmap(os.path.join(data_dir, 'train.bin'), dtype=np.uint16, mode='r'))
 val_data = jnp.array(np.memmap(os.path.join(data_dir, 'val.bin'), dtype=np.uint16, mode='r'))
+
+batches_train = D // (batch_size * context_window)
+batches_test = len(val_data) // (batch_size * context_window)
+test_freq = batches_train // log_freq
+
 
 # Dataloader class
 class DataLoader:
