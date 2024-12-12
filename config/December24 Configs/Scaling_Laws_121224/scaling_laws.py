@@ -141,7 +141,7 @@ train_save_dir = "/pool001/jozefiak/CL/SL/train/name"
 train_save_path = save_dir + name
 
 with open(test_path, 'wb') as f:
-    pickle.dump(test_loss, f)
+    pickle.dump(test_losses, f)
 
 with open(train_path, 'wb') as f:
-    pickle.dump(train_loss, f)
+    pickle.dump(train_losses, f)
