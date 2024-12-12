@@ -22,7 +22,7 @@ n_head = int(sys.argv[3])
 n_layer = int(sys.argv[4])
 D = int(sys.argv[5])
 alg = sys.argv[6]
-lr= = float(sys.argv[7])
+lr = float(sys.argv[7])
 name = sys.argv[8]
 log_freq = int(sys.arv[9])
 
