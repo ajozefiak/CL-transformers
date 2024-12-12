@@ -17,9 +17,9 @@ if len(sys.argv) != 10:
     sys.exit()
 
 seed = int(sys.argv[1])
-n_embd= int(sys.argv[2])
-n_head= int(sys.argv[3])
-n_layer= = int(sys.argv[4])
+n_embd = int(sys.argv[2])
+n_head = int(sys.argv[3])
+n_layer = int(sys.argv[4])
 D = int(sys.argv[5])
 alg = sys.argv[6]
 lr= = float(sys.argv[7])
