@@ -134,10 +134,10 @@ for step in range(batches_train):
     loss, train_state = train_step(train_state, x, y, split_key)
     train_losses.append(loss)
 
-test_save_dir = "/pool001/jozefiak/CL/SL/test/name"
+test_save_dir = "/pool001/jozefiak/CL/SL/test/"
 test_save_path = test_save_dir + name
 
-train_save_dir = "/pool001/jozefiak/CL/SL/train/name"
+train_save_dir = "/pool001/jozefiak/CL/SL/train/"
 train_save_path = train_save_dir + name
 
 with open(test_save_path, 'wb') as f:
