@@ -137,7 +137,7 @@ for step in range(batches_train):
 test_save_dir = "/pool001/jozefiak/CL/SL/test/name"
 test_save_path = save_dir + name
 
-train_save_dir = "/pool001/jozefiak/CL/SL/test/name"
+train_save_dir = "/pool001/jozefiak/CL/SL/train/name"
 train_save_path = save_dir + name
 
 with open(test_path, 'wb') as f:
