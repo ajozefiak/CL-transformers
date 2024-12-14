@@ -130,7 +130,7 @@ for step in range(batches_train):
 
     x,y = dataloader_train.next_batch()
 
-    key, split_key = jr.split(key)
+    key, split_key = jrlan.split(key)
     loss, train_state = train_step(train_state, x, y, split_key)
     train_losses.append(loss)
 
