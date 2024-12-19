@@ -270,7 +270,7 @@ for epoch in range(epochs):
           
             for _ in range(test_batches_small):
                 x,y = dataloader_test_small.next_batch()
-                _, loss = loss_fn(train_state, x, y)
+                loss = loss_fn(train_state, x, y)
                 test_loss += loss
             test_loss /= test_batches_small
             test_losses.append(test_loss)
