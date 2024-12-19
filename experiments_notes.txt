@@ -83,3 +83,32 @@ which is in line with the earlier experiment that ocnsumed 64GB in 4 hours
 Update again, later in the evening. The jobs 60839969, 60839964 are also getting OOM errors after about 9 hours. I have no idea why this is occurring.
 
 My conclusion, it looks like a linear growth in memory consumption, so the memory is due to the repeated tasks. Something is being allocated and not deleted.
+
+12/19/24:
+
+- I have sepnt the last week reading about scaling laws. There are:
+- The Kaplan paper.
+- The Chinchilla paper.
+- Scaling Laws under the microscope (authors from Israel)
+- Scaling Laws for constrained data (i.e. multiple epochs). This one uses a similar scaling law as that of the CHinchilla paper.
+
+Overall these scaling laws are in terms of:
+- N (number of non-embedding parameters)
+- D (or D_U as I would call it) number of (unique) tokens in the dataset
+- D_P (number of tokens processeed) or S (steps)
+- C is compute where C = \Theta(ND) or C = \Theta(NS)
+
+Kaplan et al. claims that models are "trained to convergence" but there largest experiments train for 5X tokens than are present in their dataset WebText2.
+This implies that Kapal et al., for a fixed D (eitehr D_U or D_P) are training until convergence which includes multiple epochs.
+The scaling laws under the microscope paper confirms this and the constrained scaling laws paper clearly trains over multiple epochs. 
+However, when decomposing the scaling law in terms of compute, it is unclear how the models are fit exactly.
+Does D become D_U or D_P? This is the only thing that I am confused by, and is somewhat limiting the connection of my work to the scaling laws papers.
+
+Results are in /pool001/jozefiak/CL/SL/test/ and /pool001/jozefiak/CL/SL/train/
+
+- thin_XX.pkl and wide_XX.pkl are results from late last week that I am not too happy with.
+- Recent results are of the form:
+- scale_3_D_1M_freq_60 which means: 3 layers with aspect ratio 32, learning ratio of 0.001, D_U = 1M, logging test loss every 60 steps. 
+- I ran these from scale 2 to 10 and from 1M, 10M, to 100M datasets. All logged every 60 steps. I used a batch size of 128 and context window of 128.
+
+- scale_2_D_10M_freq_15_CL.pkl Is the same experiment as above, except the dataset is split into 10 tasks, each of 1M tokens and the model being trained for 5 epochs on each task.
