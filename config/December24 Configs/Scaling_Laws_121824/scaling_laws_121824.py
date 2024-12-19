@@ -16,7 +16,7 @@ import queue
 
 
 # Check arguments
-if len(sys.argv) != 10:
+if len(sys.argv) != 9:
     print("Not enough arguments")
     sys.exit()
 
