@@ -169,3 +169,10 @@ def train_step(state: train_state.TrainState, x: jnp.ndarray, y: jnp.ndarray, ke
     loss, grads = jax.value_and_grad(loss_fn)(state.params)
     new_state = state.apply_gradients(grads=grads)
     return loss, new_state
+
+# New Functions
+@jax.jit
+def accuracy(state, images, labels):
+    logits = state.apply_fn(state.params, images, deterministic=True)
+    predicted_labels = jnp.argmax(logits, axis=-1)
+    return jnp.mean(predicted_labels == labels)
