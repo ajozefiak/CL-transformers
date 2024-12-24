@@ -10,18 +10,16 @@ import numpy as np
 from ..models import *
 from ..data import *
 
-# TODO: Define Necessary Functions
-
-# Default Experimental Parameters
-batch_size = 100
-images_per_class = 600
-epochs = 10
-tasks = 500
-
 # Implementation of CI-R1 experiment
 # i.e. running through the dataset once
 # save_path is the base directory in which we save the results
 def run_CI_ViT_R1_experiment(config, alg, alg_params, seed, save_path, cluster, experiment_config={}):
+    
+    # Default Experimental Parameters
+    batch_size = 100
+    images_per_class = 600
+    epochs = 10
+    tasks = 500
     
     # Extract Experiment Config Data
     if 'batch_size' in experiment_config:
