@@ -8,4 +8,4 @@ from .PS_factory_112024_no_shuffle import run_experiment_PS_112024_no_shuffle
 
 from .PS_factory_112024_cold_start import run_experiment_PS_112024_cold_start
 
-from .CI-ViT-V1 import run_CI_ViT_R1_experiment
+from .CI_ViT_V1 import run_CI_ViT_R1_experiment
