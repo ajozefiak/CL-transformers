@@ -189,6 +189,6 @@ def get_ViT_methods(config, alg, alg_params, key):
             new_state = state.apply_gradients(grads=grads)
             return loss, new_state
 
-        return train_state, train_step, accuracy
+        return state, train_step, accuracy
 
 
