@@ -1,3 +1,24 @@
 12/23/24
 
-- Here I am creating 
+- Here I am creating a notes section.
+- Some of this will be moved to a .tex file on Overleaf for ease of presentation and eventual merging into my paper.
+
+- For now I will work with the CI-R1 experiment. The Contiual ImageNet experiment with 1 pass though the dataset.
+
+TODO META: 
+- I need to figure out how and where to log results.
+- Master Directory:
+- /pool001/jozefiak/CI_ViT/
+- ../experiment_name/alg_h-params/seed_i/
+- /lr_sweep/ 
+- /test_acc.pkl
+- /train_acc.pkl
+- /train_loss.pkl
+- e.g. - /pool001/jozefiak/CI_ViT/lr_sweep/Vanilla_lr_1e-1/seed_0/test_acc.pkl
+- TODO: make a function that saves to disk and creates the necessary directory if it does not experiments
+
+
+TODO 1:
+- I will begin by performing a learning rate sweep for 5 seeds.
+- I should record the train loss, train accuracy, and train error.
+- I could record other covarites, but perhaps that should be done later.

@@ -1,6 +1,9 @@
 # Models
 from .src.models import *
 
+# Data
+from .src.data import *
+
 # from .src.experiments import *
 from .src.experiments.PS import run_experiment_PS
 from .src.experiments.PS_factory import run_experiment_PS_factory
