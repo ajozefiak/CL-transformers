@@ -191,4 +191,25 @@ def get_ViT_methods(config, alg, alg_params, key):
 
         return state, train_step, accuracy
 
+    # TODO: Double check that this is correct
+    if alg == 'L2':
 
+        reg_str = alg_params['reg_str']
+
+        @jax.jit
+        def train_step(state: train_state.TrainState, x: jnp.ndarray, y: jnp.ndarray, key: jr.PRNGKey) -> Tuple[jnp.ndarray, train_state.TrainState]:
+            def loss_fn(params):
+                logits = state.apply_fn(params, x, deterministic=False)
+                loss = optax.softmax_cross_entropy_with_integer_labels(logits, y).mean()
+                l2_loss = sum(jnp.sum(jnp.square(p)) for p in jax.tree_util.tree_leaves(params))
+                loss_reg = loss + reg_str * l2_loss
+                return loss_reg, loss
+
+            loss, grads = jax.value_and_grad(loss_fn, has_aux=True)(state.params)
+            new_state = state.apply_gradients(grads=grads)
+
+            # Return the loss for only the objective, discarding the regularization component
+            loss = loss[1]
+            return loss, new_state
+
+        return state, train_step, accuracy
