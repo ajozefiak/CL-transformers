@@ -49,7 +49,7 @@ def run_CI_ViT_R1_experiment(config, alg, alg_params, seed, save_path, cluster, 
 
     # Load the ImageNet-32 Dataset
     if cluster:
-        CI_dir = ''
+        CI_dir = '/home/jozefiak/CL/Experiments/PS_fixed_111924/ImageNet_dataset/'
     else:
         CI_dir = '/content/drive/MyDrive/ML_Data/'
     # Takes 51 second to load
