@@ -27,4 +27,4 @@ for lr in learning_rates:
     # TODO:
     save_path = f'/pool001/jozefiak/CI_ViT/lr_sweep/{alg}_L{num_layers}_lr_{lr}/seed_{seed}/'
 
-    res = CL_transformers.run_CI_ViT_R1_experiment(config, alg, alg_params, seed, save_path, cluster, experimental_config)
+    res = CL_transformers.run_CI_ViT_R1_experiment(config, alg, alg_params, seed, save_path, cluster, experiment_config)
