@@ -20,7 +20,7 @@ def run_CI_ViT_R1_experiment(config, alg, alg_params, seed, save_path, cluster, 
     images_per_class = 600
     epochs = 10
     tasks = 500
-    
+
     # Extract Experiment Config Data
     if 'batch_size' in experiment_config:
         batch_size = experiment_config['batch_size']
@@ -45,7 +45,7 @@ def run_CI_ViT_R1_experiment(config, alg, alg_params, seed, save_path, cluster, 
     
     # Get the state, and train_step, accuracy functions
     key, split_key = jr.split(key)
-    train_state, train_step, accuracy = get_ViT_methods(config, alg, alg_params, split_key)
+    state, train_step, accuracy = get_ViT_methods(config, alg, alg_params, split_key)
 
     # Load the ImageNet-32 Dataset
     if cluster:
