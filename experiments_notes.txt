@@ -112,3 +112,4 @@ Results are in /pool001/jozefiak/CL/SL/test/ and /pool001/jozefiak/CL/SL/train/
 - I ran these from scale 2 to 10 and from 1M, 10M, to 100M datasets. All logged every 60 steps. I used a batch size of 128 and context window of 128.
 
 - scale_2_D_10M_freq_15_CL.pkl Is the same experiment as above, except the dataset is split into 10 tasks, each of 1M tokens and the model being trained for 5 epochs on each task.
+
