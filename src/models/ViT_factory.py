@@ -89,6 +89,7 @@ def get_ViT_methods(config, alg, alg_params, key):
         def __call__(self, x, deterministic=True):
             hidden_dim = int(self.config.hidden_dim * self.config.mlp_ratio)
             x = nn.Dense(hidden_dim)(x)
+            self.sow('intermediates', 'features', x)
             x = nn.relu(x)
             x = nn.Dense(self.config.hidden_dim)(x)
             return x
