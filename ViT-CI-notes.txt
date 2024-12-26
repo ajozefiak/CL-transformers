@@ -30,3 +30,5 @@ TODO 1:
 
 TODO 2: I am now implementing and running the hyperparameter sweeps.
 - I am running the sweeps for L2 and L2Init from 1e-1 to 1e-7
+- I have just launched a Shrink and Perturb sweep. 
+- These leaves me with implementing the reset based algorithms, then the *-algorithms.
