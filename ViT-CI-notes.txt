@@ -27,3 +27,6 @@ TODO 1:
 - For 3 layers, lr = 1e-3 is better initially and has clear plasticity loss while lr = 1e-4 performs better eventually.
 - For 12 layers, lr = 1e-4 is clearly better htroughout and shows minimal plasticity train_loss
 - For 12 layers, lr = 1e-3 shows clear plasticity loss and is better than lr = 1e-5 initially, which seems to improve over time.
+
+TODO 2: I am now implementing and running the hyperparameter sweeps.
+- I am running the sweeps for L2 and L2Init from 1e-1 to 1e-7

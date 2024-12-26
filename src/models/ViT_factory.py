@@ -239,4 +239,37 @@ def get_ViT_methods(config, alg, alg_params, key):
         
         return state, train_step, accuracy
 
+    # S&P Algorithm
+    if alg == 'S&P':
+
+        p = alg_params['p']
+        sigma = alg_params['sigma']
+
+        @jax.jit
+        def train_step(state: train_state.TrainState, x: jnp.ndarray, y: jnp.ndarray, key: jr.PRNGKey) -> Tuple[jnp.ndarray, train_state.TrainState]:
+            
+            def loss_fn(params):
+                logits = state.apply_fn(params, x, deterministic=False)
+                loss = optax.softmax_cross_entropy_with_integer_labels(logits, y).mean()
+                return loss
+
+            # sample noise
+            noise_params = init_train_state(key, config).params
+
+            loss, grads = jax.value_and_grad(loss_fn, has_aux=False)(state.params)
+            new_state = state.apply_gradients(grads=grads)
+            
+            # new_state = p * new_state + sigma * noise
+            new_state = new_state.replace(
+                params=jax.tree_util.tree_map(
+                    lambda param, noise_param: p * param + sigma * noise_param,
+                    new_state.params,
+                    noise_params
+                )
+            )
+
+            return loss, new_state
+        
+        return state, train_step, accuracy
+
     # TODO: S&P, SNR, SNR-L2?, L2*?, SNR-L2*?, ReDO, CBP
