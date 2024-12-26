@@ -221,7 +221,7 @@ def get_ViT_methods(config, alg, alg_params, key):
         reg_str = alg_params['reg_str']
 
         @jax.jit
-        def train_step(state: TrainState, x: jnp.ndarray, y: jnp.ndarray, key: jr.PRNGKey) -> Tuple[jnp.ndarray, TrainState]:
+        def train_step(state: train_state.TrainState, x: jnp.ndarray, y: jnp.ndarray, key: jr.PRNGKey) -> Tuple[jnp.ndarray, train_state.TrainState]:
 
             def loss_fn(params: FrozenDict) -> jnp.ndarray:
                 logits = state.apply_fn(params, x, False)
@@ -238,3 +238,5 @@ def get_ViT_methods(config, alg, alg_params, key):
             return loss, new_state
         
         return state, train_step, accuracy
+
+    # TODO: S&P, SNR, SNR-L2?, L2*?, SNR-L2*?, ReDO, CBP
