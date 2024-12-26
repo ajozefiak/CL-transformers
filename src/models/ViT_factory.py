@@ -218,6 +218,7 @@ def get_ViT_methods(config, alg, alg_params, key):
     if alg == 'L2Init':
 
         init_params = state.params
+        reg_str = alg_params['reg_str']
 
         @jax.jit
         def train_step(state: TrainState, x: jnp.ndarray, y: jnp.ndarray, key: jr.PRNGKey) -> Tuple[jnp.ndarray, TrainState]:

@@ -22,3 +22,8 @@ TODO 1:
 - I will begin by performing a learning rate sweep for 5 seeds.
 - I should record the train loss, train accuracy, and train error.
 - I could record other covarites, but perhaps that should be done later.
+
+- I have completed TODO 1.
+- For 3 layers, lr = 1e-3 is better initially and has clear plasticity loss while lr = 1e-4 performs better eventually.
+- For 12 layers, lr = 1e-4 is clearly better htroughout and shows minimal plasticity train_loss
+- For 12 layers, lr = 1e-3 shows clear plasticity loss and is better than lr = 1e-5 initially, which seems to improve over time.
