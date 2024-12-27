@@ -10,10 +10,10 @@ import numpy as np
 from ..models import *
 from ..data import *
 
-# Implementation of CI-R1 experiment
+# Implementation of CI-R1 experiment with additional logic for resets
 # i.e. running through the dataset once
 # save_path is the base directory in which we save the results
-def run_CI_ViT_R1_experiment(config, alg, alg_params, seed, save_path, cluster, experiment_config={}):
+def run_CI_ViT_R1_reset_experiment(config, alg, alg_params, seed, save_path, cluster, experiment_config={}):
     
     # Default Experimental Parameters
     batch_size = 100
@@ -46,6 +46,14 @@ def run_CI_ViT_R1_experiment(config, alg, alg_params, seed, save_path, cluster, 
     # Get the state, and train_step, accuracy functions
     key, split_key = jr.split(key)
     state, train_step, accuracy = get_ViT_methods(config, alg, alg_params, split_key)
+    train_state, train_step = get_transformer_methods(config, alg, alg_params, split_key)
+    
+    # Initialize data structures associated with resets and neuron_ages
+    update_neuron_ages, get_neuron_pre_activ = get_neurons_ages_functions_ViT(config)
+    neuron_ages = init_neuron_ages_ViT(config)
+    if alg == 'SNR' or alg == 'CBP' or alg == 'ReDO':
+        init_reset_state, reset_neurons = get_reset_methods_ViT(config, alg, alg_params)
+        reset_state = init_reset_state(config, alg, alg_params)
 
     # Load the ImageNet-32 Dataset
     if cluster:
@@ -76,8 +84,30 @@ def run_CI_ViT_R1_experiment(config, alg, alg_params, seed, save_path, cluster, 
                 x_batch = X_train_[batch_start:batch_end]
                 y_batch = y_train_[batch_start:batch_end]
 
+                ###############
+                # COMMON TRAINING LOOP:
+                # (1) maps x,y -> (new) train_state (and reset_state)
+                # (2) outputs loss and neuron_ages for logging purposes
+                # In practice, it should be the case that this code can be copied to every experiment
+                ###############
+                neuron_pre_activ = get_neuron_pre_activ(state, x)
+
                 key, split_key = jr.split(key)
                 loss, state = train_step(state, x_batch, y_batch, split_key)
+
+                # Perform reset step and 
+                if alg == 'SNR' or alg == 'CBP' or alg == 'ReDO':
+                    key, split_key = jr.split(key)
+                    state, reset_state, neuron_ages, reset_mask = reset_neurons(state, reset_state, neuron_ages, neuron_pre_activ, split_key)
+                    # Store reset_mask in reset_mask_array
+                    # if save_neuron_ages:
+                    #     reset_mask_array[0,t,:] = reset_mask['Block_0']
+                        # reset_mask_array[1,t,:] = reset_mask['Block_1']
+                        # reset_mask_array[2,t,:] = reset_mask['Block_2']
+                else:
+                    neuron_ages = update_neuron_ages(neuron_ages, neuron_pre_activ)  
+                ###############
+                ###############
                 
                 # Log training loss
                 train_loss.append(loss)

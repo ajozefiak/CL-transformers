@@ -2,7 +2,7 @@
 
 # Creates a dictionary that stores neuron ages.
 # A neuron's age is the number of batches since it last fired.
-def init_neuron_ages(config):
+def init_neuron_ages_ViT(config):
   neuron_ages = {}
   for i in range(config.n_layer):
     neuron_ages[f'ViTBlock_{i}'] = jnp.zeros((config.n_neurons,), dtype=jnp.uint32)
@@ -10,7 +10,6 @@ def init_neuron_ages(config):
 
 
 def get_neurons_ages_functions_ViT(config):
-    
     
     blocks = []
     for i in range(config.n_layer):
@@ -34,6 +33,8 @@ def get_neurons_ages_functions_ViT(config):
     return update_neuron_ages, get_neuron_pre_activ
 
     # EXAMPLE USAGE
+
+    # update_neuron_ages, get_neuron_pre_activ = get_neurons_ages_functions_ViT(config)
 
     # neuron_ages = init_neuron_ages(config)
     # neuron_pre_activ = get_neuron_pre_activ(train_state,x)

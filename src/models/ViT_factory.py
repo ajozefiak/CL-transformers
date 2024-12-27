@@ -21,9 +21,11 @@ class ModelConfigViT:
     dropout_rate: float = 0.0
     lr: float = 1e-3
     gradient_accumulation_steps: int = 1
+    # TODO
+    n_neurons: int = mlp_ratio * hidden_dim
 
 # alg is a string specifiying the algorithm:
-# L2, L2Init, S&P, ART, CBP, ReDO
+# L2, L2Init, S&P, SNR, CBP, ReDO
 # ReDO-L2, CBP-L2
 # alg_params is dictionary with hyperparameters
 def get_ViT_methods(config, alg, alg_params, key):
