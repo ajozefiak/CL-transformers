@@ -19,4 +19,4 @@ lr=$2
 
 echo "Scale: $layers, lr: $lr"
 
-python3 L2_sweep.py $SLURM_ARRAY_TASK_ID $layers $lr
+python3 CBP_sweep.py $SLURM_ARRAY_TASK_ID $layers $lr
