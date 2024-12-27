@@ -100,6 +100,7 @@ def run_CI_ViT_R1_reset_experiment(config, alg, alg_params, seed, save_path, clu
                     key, split_key = jr.split(key)
                     state, reset_state, neuron_ages, reset_mask = reset_neurons(state, reset_state, neuron_ages, neuron_pre_activ, split_key)
                     # Store reset_mask in reset_mask_array
+                    # TODO: Make this programatic, perhaps as a function, so that we do not need to do this manually
                     # if save_neuron_ages:
                     #     reset_mask_array[0,t,:] = reset_mask['Block_0']
                         # reset_mask_array[1,t,:] = reset_mask['Block_1']
