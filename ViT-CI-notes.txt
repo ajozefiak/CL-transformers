@@ -39,4 +39,7 @@ TODO 3: Reset Algorithms:
 
 
 - Note: For S&P I did not fix the use of the random number generator and I was using the same key throughout an epoch.
-- This may have caused some issues, so I should look into it later potentially
+- This may have caused some issues, so I should look into it later potentially. But there are 500*10 epochs, so perhaps this is not too concerning for now.
+
+12/30/24 Update: I am back from my trip. I will begin today with implementing and testing the reset algorithms. Then I will run the massive hyperparameter sweep.
+
