@@ -2,8 +2,9 @@
 
 - Here I am creating a notes section.
 - Some of this will be moved to a .tex file on Overleaf for ease of presentation and eventual merging into my paper.
-
 - For now I will work with the CI-R1 experiment. The Contiual ImageNet experiment with 1 pass though the dataset.
+- I have implemented this experiment as CI_ViT_V1.py and CI_ViT_V1_resets.py
+- So far, all config files are in config/December24 Configs/ViT
 
 TODO META: 
 - I need to figure out how and where to log results.
