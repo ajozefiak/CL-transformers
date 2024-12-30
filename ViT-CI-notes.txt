@@ -43,4 +43,9 @@ TODO 3: Reset Algorithms:
 - This may have caused some issues, so I should look into it later potentially. But there are 500*10 epochs, so perhaps this is not too concerning for now.
 
 12/30/24 Update: I am back from my trip. I will begin today with implementing and testing the reset algorithms. Then I will run the massive hyperparameter sweep.
+- CI_ViT_V1_resets.py looks good, but I need to run it to be sure.
+- get_neuron_ages_ViT.py looks reasonable, but I should double check that this one works.
+- reset_neurons_ViT.py seems to look correct for CBP, though I really need to test it
+
+- TODO: I just need to change the configs to account for the number of neurons due to scaling: n_neurons = 4 * hidden_dim
 

@@ -7,7 +7,7 @@ import jax.random as jr
 # and create another function, or inside the above function, reset the appropriate weights in the Adam optimizer.
 # It may make sense to move this into the Transformer factory function in order to deal with arbitrary architectures.
 
-# Then create function/datastructures for ART/ReDO/CBP
+# Then create function/datastructures for SNR/ReDO/CBP
 
 def get_reset_methods_ViT(config, alg, alg_params):
 
@@ -68,6 +68,7 @@ def get_reset_methods_ViT(config, alg, alg_params):
 
             return reset_state
 
+    # NOTE: I have only checked CBP here, TODO: need to look at SNR and ReDO
     def get_reset_neurons(config, alg, alg_params):
         
         # Initialize the new parameters. 
@@ -177,7 +178,7 @@ def get_reset_methods_ViT(config, alg, alg_params):
             
             return reset_neurons
 
-
+        # TODO: Need to look at this
         if alg == 'ReDO-L2':
 
             @jax.jit
