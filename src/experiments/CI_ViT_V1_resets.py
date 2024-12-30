@@ -46,7 +46,6 @@ def run_CI_ViT_R1_reset_experiment(config, alg, alg_params, seed, save_path, clu
     # Get the state, and train_step, accuracy functions
     key, split_key = jr.split(key)
     state, train_step, accuracy = get_ViT_methods(config, alg, alg_params, split_key)
-    train_state, train_step = get_transformer_methods(config, alg, alg_params, split_key)
     
     # Initialize data structures associated with resets and neuron_ages
     update_neuron_ages, get_neuron_pre_activ = get_neurons_ages_functions_ViT(config)
