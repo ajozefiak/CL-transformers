@@ -1,4 +1,6 @@
 # from .transformer import *
+import jax
+import jax.numpy as jnp
 
 # Creates a dictionary that stores neuron ages.
 # A neuron's age is the number of batches since it last fired.
