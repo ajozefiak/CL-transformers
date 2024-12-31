@@ -14,7 +14,7 @@ def get_reset_methods_ViT(config, alg, alg_params):
     
     # NOTE: This is updated
     blocks = []
-    for i in range(config.n_layer):
+    for i in range(config.num_layers):
         blocks.append('ViTBlock_'+str(i))
 
     # NOTE: This does not appear to need more updating
@@ -34,7 +34,7 @@ def get_reset_methods_ViT(config, alg, alg_params):
             # Get initial threshold
             init_threshold = alg_params['threshold']
 
-            for i in range(config.n_layer):
+            for i in range(config.num_layers):
                 reset_state['thresholds'][blocks[i]] = init_threshold * jnp.ones((config.n_neurons,), dtype=jnp.uint32)  
                 reset_state['arrivals_sum'][blocks[i]] =  jnp.ones((config.n_neurons,), dtype=jnp.uint32)  
                 reset_state['arrivals_count'][blocks[i]] = jnp.ones((config.n_neurons,), dtype=jnp.uint32)  
@@ -53,7 +53,7 @@ def get_reset_methods_ViT(config, alg, alg_params):
                 'age_threshold': 100
             }
             
-            for i in range(config.n_layer):
+            for i in range(config.num_layers):
                 reset_state['a'][blocks[i]] = jnp.zeros((config.n_neurons,), dtype=jnp.float32)  
                 reset_state['f'][blocks[i]] = jnp.zeros((config.n_neurons,), dtype=jnp.float32)  
                 reset_state['u'][blocks[i]] = jnp.zeros((config.n_neurons,), dtype=jnp.float32) 

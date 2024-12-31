@@ -4,7 +4,7 @@
 # A neuron's age is the number of batches since it last fired.
 def init_neuron_ages_ViT(config):
   neuron_ages = {}
-  for i in range(config.n_layer):
+  for i in range(config.num_layers):
     neuron_ages[f'ViTBlock_{i}'] = jnp.zeros((config.n_neurons,), dtype=jnp.uint32)
   return neuron_ages
 
@@ -12,7 +12,7 @@ def init_neuron_ages_ViT(config):
 def get_neurons_ages_functions_ViT(config):
     
     blocks = []
-    for i in range(config.n_layer):
+    for i in range(config.num_layers):
         blocks.append('ViTBlock_'+str(i))
 
     # This function is updated so that neuron ages are in units of batches, not number of examples
