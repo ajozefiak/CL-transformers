@@ -150,7 +150,9 @@ def get_ViT_methods(config, alg, alg_params, key):
 
     def init_train_state(key, config: ModelConfigViT) -> train_state.TrainState:
         model = ViT(config)
-        dummy_input = jnp.zeros((1, config.image_size, config.image_size, 3), jnp.float32)
+        # NOTE/TODO: The dummy shape changed from (1,config.image_size, config.image_size, 3) -> (100, config.image_size, config.image_size, 3)
+        # in order to match the batch size and potentially avoid the warnings that I was seeing on the cluster
+        dummy_input = jnp.zeros((100, config.image_size, config.image_size, 3), jnp.float32)
         params = model.init(key, dummy_input)
         optimizer = optax.adam(config.lr, b1=0.9, b2=0.999, eps=1e-7)
 

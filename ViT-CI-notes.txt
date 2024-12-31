@@ -55,8 +55,11 @@ NOTE: So far my crude tests seem to show that CBP is working as expected, I just
 
 Update at 6:20 PM: I have just my CBP sweep for num_layers=3, lr=1e-3, 
 - The script is not saving results after each seed like with S&P, which is a bit strange.
-- I am in the process of implementing ReDO and I will try and run ReDO with at num_layers=3, lr=1e-3 before running the num_layers=12 experiments.
+- This terminated due a typo, I was using x instead of x_batch, but the warning that I am receiving should be independent of this.
+- I am in the process of implementing ReDO and I will try and run ReDO with num_layers=3, lr=1e-3 before running the num_layers=12 experiments.
 - The cluster is now much busier.
+- ReDO looks good to me, but I have not tested it on the Colab yet.
+- I have placed CBP and ReDO jobs on the cluster. They are waiting for priority and resoures.
 
 FUTURE TODOs:
 
