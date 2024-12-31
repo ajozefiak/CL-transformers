@@ -246,7 +246,9 @@ def get_reset_methods_ViT(config, alg, alg_params):
                 
                 # Create a dummy reset_masks for jax compilation purposes
                 reset_mask = jnp.sum(jnp.abs(neuron_pre_activ['intermediates']['ViTBlock_0']['MLP_0']['features'][0]), axis=(0,1))
-                reset_masks = {'ViTBlock_0': reset_mask < reset_mask}
+                reset_masks = {}
+                for block in blocks:
+                    reset_masks[block] = reset_mask < reset_mask
 
                 # TODO: Potentially make this deterministic
                 key, split_key = jr.split(key)
