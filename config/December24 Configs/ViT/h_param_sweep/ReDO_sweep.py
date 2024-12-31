@@ -12,7 +12,8 @@ lr = float(sys.argv[3])
 epochs = 10
 batches = 12
 
-ReDO_thresholds = [0.0, 0.01, 0.02, 0.04, 0.08]
+ReDO_thresholds = [0.0, 0.005, 0.01, 0.02, 0.04, 0.08]
+# The reset frequency is in terms of i resets (in expectation) per task = epochs * batches
 ReDO_reset_freqs = [1 / (i * epochs * batches) for i in [0.25,0.5,1,2,4]]
 
 # Run the experiment for each hyperparameter
