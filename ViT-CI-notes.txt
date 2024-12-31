@@ -23,6 +23,7 @@ TODO 1:
 - I will begin by performing a learning rate sweep for 5 seeds.
 - I should record the train loss, train accuracy, and train error.
 - I could record other covarites, but perhaps that should be done later.
+- The other covariates to record are: neuron activities, neuron ages, entropies of self attention layers, weight magnitudes
 
 - I have completed TODO 1.
 - For 3 layers, lr = 1e-3 is better initially and has clear plasticity loss while lr = 1e-4 performs better eventually.
@@ -45,7 +46,20 @@ TODO 3: Reset Algorithms:
 12/30/24 Update: I am back from my trip. I will begin today with implementing and testing the reset algorithms. Then I will run the massive hyperparameter sweep.
 - CI_ViT_V1_resets.py looks good, but I need to run it to be sure.
 - get_neuron_ages_ViT.py looks reasonable, but I should double check that this one works.
+-- update_neuron_ages, get_neuron_pre_activ CI_ViT_V1_resets appear to be working.
 - reset_neurons_ViT.py seems to look correct for CBP, though I really need to test it
+-- neuron_ages do not appear to be updating correctly, or at all rather from the reset_neurons function for CBP
+-- Actually, it appears that we do not update neuron_ages in CBP
+
+NOTE: So far my crude tests seem to show that CBP is working as expected, I just need to keep in mind the below notes
+
+
+FUTURE TODOs:
 
 - TODO: I just need to change the configs to account for the number of neurons due to scaling: n_neurons = 4 * hidden_dim
+- TODO: For CBP, I may need to lower the age threshold and the perhaps play with the decay factor.
+- At the moment, since we are counting inactivity in terms of units of batches, an age threshold of 100 implies that we 
+- can only reset a neuron after 100 batches which is almost one task. Perhaps this is not too bad for this application.
+- TODO: For CBP, it does not appear that we are updating neuron_ages in the reset_neurons, therefore:
+- for all methods except SNR, we should be manually updating neuron_ages when logging all covariates. 
 
