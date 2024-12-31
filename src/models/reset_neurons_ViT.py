@@ -179,6 +179,7 @@ def get_reset_methods_ViT(config, alg, alg_params):
             return reset_neurons
 
         # TODO: Need to look at this
+        # NOTE: This seems to look good, but I haven't tested this on Colab
         if alg == 'ReDO':
 
             @jax.jit
