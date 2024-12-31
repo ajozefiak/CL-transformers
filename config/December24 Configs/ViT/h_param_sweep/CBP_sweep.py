@@ -28,4 +28,4 @@ for reset_freq in reset_freqs:
     # TODO:
     save_path = f'/pool001/jozefiak/CI_ViT/h_param_sweep/{alg}_L{num_layers}_lr_{lr}_reset_freq_{reset_freq}/seed_{seed}/'
 
-    res = CL_transformers.run_CI_ViT_R1_experiment(config, alg, alg_params, seed, save_path, cluster, experiment_config)
+    res = CL_transformers.run_CI_ViT_R1_reset_experiment(config, alg, alg_params, seed, save_path, cluster, experiment_config)
