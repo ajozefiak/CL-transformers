@@ -53,6 +53,10 @@ TODO 3: Reset Algorithms:
 
 NOTE: So far my crude tests seem to show that CBP is working as expected, I just need to keep in mind the below notes
 
+Update at 6:20 PM: I have just my CBP sweep for num_layers=3, lr=1e-3, 
+- The script is not saving results after each seed like with S&P, which is a bit strange.
+- I am in the process of implementing ReDO and I will try and run ReDO with at num_layers=3, lr=1e-3 before running the num_layers=12 experiments.
+- The cluster is now much busier.
 
 FUTURE TODOs:
 

@@ -89,7 +89,7 @@ def run_CI_ViT_R1_reset_experiment(config, alg, alg_params, seed, save_path, clu
                 # (2) outputs loss and neuron_ages for logging purposes
                 # In practice, it should be the case that this code can be copied to every experiment
                 ###############
-                neuron_pre_activ = get_neuron_pre_activ(state, x)
+                neuron_pre_activ = get_neuron_pre_activ(state, x_batch)
 
                 key, split_key = jr.split(key)
                 loss, state = train_step(state, x_batch, y_batch, split_key)

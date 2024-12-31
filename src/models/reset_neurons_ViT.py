@@ -179,7 +179,7 @@ def get_reset_methods_ViT(config, alg, alg_params):
             return reset_neurons
 
         # TODO: Need to look at this
-        if alg == 'ReDO-L2':
+        if alg == 'ReDO':
 
             @jax.jit
             def ReDO_reset(state, reset_state, neuron_ages, neuron_pre_activ, reset_masks, key):
@@ -257,6 +257,7 @@ def get_reset_methods_ViT(config, alg, alg_params):
             return reset_neurons
 
         # NOTE: This seems to look good, just need to double check neuron_pre_activ
+        # NOTE: neuron_pre_activ looked good to me on Colab
         if alg == 'CBP':
             
             @jax.jit
