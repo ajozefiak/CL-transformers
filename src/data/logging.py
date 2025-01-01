@@ -19,7 +19,7 @@
 # Example usage: get_kernel_norms_flat(state.params)['params', 'ViTBlock_0', 'ViTSelfAttention_0', 'Dense_0', 'kernel']
 # outputs the scalar value for the norm of this kernel matrix.
 
-
+import jax
 from flax.core import FrozenDict
 import jax.numpy as jnp
 
