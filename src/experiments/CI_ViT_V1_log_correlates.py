@@ -32,6 +32,7 @@ def run_CI_ViT_R1_log_correlates(config, alg, alg_params, seed, save_path, clust
 
     # T = number of time steps
     T = int(tasks * epochs * (2 * images_per_class / batch_size))
+    T_test = int(tasks * epochs)
     num_layers = config.num_layers
     n_neurons = config.n_neurons
 
@@ -45,6 +46,10 @@ def run_CI_ViT_R1_log_correlates(config, alg, alg_params, seed, save_path, clust
     neuron_ages_array = np.zeros((T, num_layers, n_neurons), dtype=np.uint32)
     resets_array = np.zeros((T, num_layers, n_neurons), dtype=bool)
     # TODO: store entropies of self attention layers -> compute these as a single average value at each time step or test set or both
+    mean_entropies_train_array = np.zeros((T, num_layers))
+    std_entropies_train_array = np.zeros((T, num_layers))
+    mean_entropies_test_array = np.zeros((T_test, num_layers))
+    std_entropies_test_array = np.zeros((T_test, num_layers))
     # DONE: store weight norms, for each weight matrix of the network
     param_norms = []
 
@@ -140,6 +145,13 @@ def run_CI_ViT_R1_log_correlates(config, alg, alg_params, seed, save_path, clust
                     for l in range(num_layers):
                         resets_array[t_train,l,:] = reset_mask[f'ViTBlock_{l}']
 
+                # Log training entropies
+                for l in range(num_layers):
+                    dists = neuron_pre_activ['intermediates'][f'ViTBlock_{l}']['ViTSelfAttention_0']['probs'][0]
+                    entropies = get_entropies(dists)
+                    mean_entropies_train_array[t_train,l] = jnp.mean(entropies)
+                    std_entropies_train_array[t_train,l] = jnp.std(entropies)
+
                 # Incremenet t_train
                 t_train += 1
 
@@ -150,6 +162,14 @@ def run_CI_ViT_R1_log_correlates(config, alg, alg_params, seed, save_path, clust
 
             # Log parameter norms (after every epoch)
             param_norms.append(get_kernel_norms_flat(state.params))
+
+            # Log test entropies
+            neuron_pre_activ_test = get_neuron_pre_activ(state, X_test_)
+            for l in range(num_layers):
+                dists = neuron_pre_activ_test['intermediates'][f'ViTBlock_{l}']['ViTSelfAttention_0']['probs'][0]
+                entropies = get_entropies(dists)
+                mean_entropies_test_array[t_test,l] = jnp.mean(entropies)
+                std_entropies_test_array[t_test,l] = jnp.std(entropies)
 
             # Incremenet t_test
             t_test += 1
@@ -168,6 +188,10 @@ def run_CI_ViT_R1_log_correlates(config, alg, alg_params, seed, save_path, clust
     neuron_ages_array_path = os.path.join(save_path, "neuron_ages_array.pkl")
     resets_array_path = os.path.join(save_path, "resets_array.pkl")
     param_norms_path = os.path.join(save_path, "param_norms.pkl")
+    mean_entropies_train_array_path = os.path.join(save_path, "mean_entropies_train_array.pkl")
+    std_entropies_train_array_path = os.path.join(save_path, "std_entropies_train_array.pkl")
+    mean_entropies_test_array_path = os.path.join(save_path, "mean_entropies_test_array.pkl")
+    std_entropies_test_array_path = os.path.join(save_path, "std_entropies_test_array.pkl")
 
     # Save the data
     with open(train_loss_path, 'wb') as f:
@@ -187,5 +211,17 @@ def run_CI_ViT_R1_log_correlates(config, alg, alg_params, seed, save_path, clust
 
     with open(param_norms_path, 'wb') as f:
         pickle.dump(param_norms, f)
+
+    with open(mean_entropies_train_array_path, 'wb') as f:
+        pickle.dump(mean_entropies_train_array, f)
+
+    with open(std_entropies_train_array_path, 'wb') as f:
+        pickle.dump(std_entropies_train_array, f)
+
+    with open(mean_entropies_test_array_path, 'wb') as f:
+        pickle.dump(mean_entropies_test_array, f)
+
+    with open(std_entropies_test_array_path, 'wb') as f:
+        pickle.dump(std_entropies_test_array, f)
 
     return train_loss, train_acc, test_acc

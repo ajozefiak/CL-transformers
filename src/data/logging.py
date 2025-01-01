@@ -21,6 +21,7 @@
 
 
 from flax.core import FrozenDict
+import jax.numpy as jnp
 
 def get_kernel_norms_flat(params: FrozenDict) -> dict:
     """
@@ -45,3 +46,20 @@ def get_kernel_norms_flat(params: FrozenDict) -> dict:
 
     traverse(params)
     return kernel_norms
+
+
+
+@jax.jit
+def entropy(probs):
+  """Computes the entropy of a probability distribution.
+
+  Args:
+    probs: A JAX array representing the probability distribution.
+
+  Returns:
+    The entropy of the distribution.
+  """
+  probs = jnp.where(probs == 0, 1e-10, probs) # for numerical stability
+  return -jnp.sum(probs * jnp.log(probs), axis=-1)
+
+get_entropies = jax.jit(jax.vmap(entropy))
