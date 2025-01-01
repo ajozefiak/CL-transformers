@@ -10,3 +10,4 @@ from .PS_factory_112024_cold_start import run_experiment_PS_112024_cold_start
 
 from .CI_ViT_V1 import run_CI_ViT_R1_experiment
 from .CI_ViT_V1_resets import run_CI_ViT_R1_reset_experiment
+from .CI_ViT_V1_log_correlates import run_CI_ViT_R1_log_correlates
