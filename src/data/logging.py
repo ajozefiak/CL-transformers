@@ -16,6 +16,10 @@
 # ('params', 'ViTBlock_i', 'MLP_0', 'Dense_1', 'kernel')
 # Second Dense layer in the i-th ViT block’s MLP (projecting back to the original dimension).
 
+# Example usage: get_kernel_norms_flat(state.params)['params', 'ViTBlock_0', 'ViTSelfAttention_0', 'Dense_0', 'kernel']
+# outputs the scalar value for the norm of this kernel matrix.
+
+
 from flax.core import FrozenDict
 
 def get_kernel_norms_flat(params: FrozenDict) -> dict:

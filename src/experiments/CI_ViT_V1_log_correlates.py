@@ -42,11 +42,11 @@ def run_CI_ViT_R1_log_correlates(config, alg, alg_params, seed, save_path, clust
     train_loss = []
     train_acc = []
     test_acc = []
-    # TODO: store neuron_ages, neuron_resets at each GD update
     neuron_ages_array = np.zeros((T, num_layers, n_neurons), dtype=np.uint32)
     resets_array = np.zeros((T, num_layers, n_neurons), dtype=bool)
     # TODO: store entropies of self attention layers -> compute these as a single average value at each time step or test set or both
-    # TODO: store weight norms, for each weight matrix of the network
+    # DONE: store weight norms, for each weight matrix of the network
+    param_norms = []
 
     # Get random keys
     key = jr.PRNGKey(seed)
@@ -148,6 +148,9 @@ def run_CI_ViT_R1_log_correlates(config, alg, alg_params, seed, save_path, clust
             test_accuracy = accuracy(state, X_test_, y_test_)
             test_acc.append(test_accuracy)
 
+            # Log parameter norms (after every epoch)
+            param_norms.append(get_kernel_norms_flat(state.params))
+
             # Incremenet t_test
             t_test += 1
 
@@ -164,6 +167,7 @@ def run_CI_ViT_R1_log_correlates(config, alg, alg_params, seed, save_path, clust
     test_acc_path = os.path.join(save_path, "test_acc.pkl")
     neuron_ages_array_path = os.path.join(save_path, "neuron_ages_array.pkl")
     resets_array_path = os.path.join(save_path, "resets_array.pkl")
+    param_norms_path = os.path.join(save_path, "param_norms.pkl")
 
     # Save the data
     with open(train_loss_path, 'wb') as f:
@@ -180,5 +184,8 @@ def run_CI_ViT_R1_log_correlates(config, alg, alg_params, seed, save_path, clust
 
     with open(resets_array_path, 'wb') as f:
         pickle.dump(resets_array, f)
+
+    with open(param_norms_path, 'wb') as f:
+        pickle.dump(param_norms, f)
 
     return train_loss, train_acc, test_acc
