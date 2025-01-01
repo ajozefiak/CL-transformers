@@ -61,6 +61,25 @@ Update at 6:20 PM: I have just my CBP sweep for num_layers=3, lr=1e-3,
 - ReDO looks good to me, but I have not tested it on the Colab yet.
 - I have placed CBP and ReDO jobs on the cluster. They are waiting for priority and resoures.
 
+
+Update at 6:20 PM of 12/31/24:
+- I have ran the CBP sweep, the ReDO sweep has completed for L3 and is in progress for L12
+- I have scheduled the SNR sweep. 
+- Next, I need to write an experimental loop for running each optimal hyperparameter choice for 5 new seeds and recording the covariates.
+- I also need to record the optimal hyperparameters.
+- All of this needs to be put into a document, which will be a bit annoying since I need to record all of the experimental details, architectural details and so forth.
+
+Covariates and statistics to record:
+- train loss, train accuracy, test accuracy: We are currently doing this.
+- Magnitudes of weights: I can record this at the end of each opoch (or task)
+- Neuron ages (measures inactivity)
+- Neuron resets
+- entropies of self attention layers.
+
+- I should implement this and run it for the Vanilla algorithm in Colab to confirm that it works.
+- Then I can run this on the cluster or even Colab for every algorithm.
+
+
 FUTURE TODOs:
 
 - TODO: I just need to change the configs to account for the number of neurons due to scaling: n_neurons = 4 * hidden_dim
