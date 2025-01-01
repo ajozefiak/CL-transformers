@@ -78,7 +78,7 @@ def get_ViT_methods(config, alg, alg_params, key):
             attn = nn.softmax(attn, axis=-1)
 
             # Log the attention distributions
-            self.sow('intermediates', 'probs', attn)
+            self.sow('intermediates', 'probs', attn) # (batch_size, n_head, sequence_len, sequence_len)
 
             # Apply attention
             out = jnp.einsum('bhqk,bhkd->bhqd', attn, v)
