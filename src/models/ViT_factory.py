@@ -77,6 +77,9 @@ def get_ViT_methods(config, alg, alg_params, key):
             # For ViT, no causal masking; we allow full attention
             attn = nn.softmax(attn, axis=-1)
 
+            # Log the attention distributions
+            self.sow('intermediates', 'probs', attn)
+
             # Apply attention
             out = jnp.einsum('bhqk,bhkd->bhqd', attn, v)
             out = out.transpose(0, 2, 1, 3).reshape(B, T, D)
