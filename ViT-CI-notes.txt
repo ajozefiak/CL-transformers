@@ -97,8 +97,13 @@ FUTURE TODOs:
 
 - L2: L3: reg_str = 1e-4, L12 w/ lr = 1e-3: reg_str = 1e-3, L12 w/ lr = 1e-4: reg_str = 1e-5
 - L2Init: L3: reg_str = 1e-2, L12 w/ lr = 1e-3: reg_str = 1e-4, L12 w/ lr = 1e-4: reg_str = 1e-2 (last 50) 1e-1 (last 10)
-- S&P:
+
+Note S&P results look quite poor for some reason, I may need to debug and figure out what is going on
+- S&P: L3  w/ lr = 1e-3: p = 0.99, sigma = 1e-2
+- S&P: L12 w/ lr = 1e-3: p = 0.7,  sigma = 1e-1 (last 50), p = 0.99, sigma = 1e-1 (last 10)
+- S&P: L12 w/ lr = 1e-4: p = 0.99, sigma = 1e-2, (last 50) p = 0.975, sigma = 1e-2 (last 10)
+
 - ReDO:
-- CBP:
+- CBP: L3: reset_freq = 1e-2, L12 w/ lr = 1e-3: reset_freq = 1e-2, L12 w/ lr = 1e-4: reset_freq = 1e-2 (last 50) 1e-1 (last 10, barely better)
 - SNR: 
 
