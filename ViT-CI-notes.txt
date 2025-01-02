@@ -159,4 +159,4 @@ Here are the thoughts that I jotted down in a notebook on the cluster when analy
 # Arrive first => compound with previous steps inactivity, but this may just accumulate
 # Arrive last => No accumulation, so neuron inactivity resets with each batch => probably the right thing to do.
 
-
+# All I can say about SNR vs Vanilla is: if you're going to reset neurons, you better reset early enough otherwise you are potenttialy losing out on forward transfer with delayed plasticity gain.
