@@ -122,4 +122,41 @@ L12 lr=1e-4:
 best_reset_percentile: 0.98, best_reset_freq: 0.0020833333333333333, terminal 50 task accuracies: 0.737280011177063
 best_reset_percentile: 0.68, best_reset_freq: 0.0020833333333333333, terminal 10 task accuracies: 0.7029999494552612
 
+Midnight of 1/1/31:
+
+- I realize that when choosing the optimal hyperparameter, I based my choices off the optimal test accuracy over the final 50 epochs,
+- rather than the terminal epoch's test accuracy over the last 50 tasks => so this may require rerunning everything.
+- Results, for L3 so far, look good for everything except SNR.
+- If the issue isn't with the implementation and the hyperparameter sweep, below are some thoughts, but first...
+- Tomorrow, I should spend some time with 1) either quickly setting up experiments or summarizing my work so far
+- Then 2) I should implement the new experiments for SNR
+
+Here are the thoughts that I jotted down in a notebook on the cluster when analyzing intial results for L3:
+# If the SNR implementation is correct, then I suspect two things:
+# 1) Having a large batch size may be causing, some, discrepencies with the earlier results. 
+# Perhas ReDO and CBP can compute more accurate utilities with larger batch sizes and SNR is too late in detecting inactive neurons
+# Here, a batch sonsists of 100 images * 65 tokens/image = 6500 neuron firings per batch
+# This is much larger than the earlier MLP and CNN experiments which had fewer neuron firings per batch
+# 2) It may just be that ReDO and CBP fare better at estimating a neuron's 'utliity'
+# 3) It is also strange that SNR does worse than Vanilla
+# 4) SNR has 36-61X fewer resets than CBP and ReDO over the course of the experiment
+# 5) CBP and ReDO appear to have more dormant neurons, which means that they are also resetting other neurons
+
+
+# I should record my results, somewhere, and simultaneously, I should debug my SNR implementation.
+# Currently, the fact that SNR has fewer inactive neurons matches the expectations. 
+
+# Other note, I find it quite strange that SNR does worse than the Vanilla algorithm,
+# it's almost as though resetting the inactive neurons is worse than not resetting and also worse than overly resetting
+
+# I have two ideas for dealing with SNR in this regime:
+# - allow for \epsilon-death which means that a neuron is inactive if it does not fire for sufficiently many 'inputs'
+# - keep track of inactivity in some continuous manner, so if the neuron does not fire for 80% of neurons
+# then treat it as not firing for 0.8 * batch_size * # of tokens
+# I need to think about this and perhaps probe Chat-GPT.
+# One "greedy" approach is to assume that that the inactivities are continuguous and either arrive first,
+# or arrive last.
+# Arrive first => compound with previous steps inactivity, but this may just accumulate
+# Arrive last => No accumulation, so neuron inactivity resets with each batch => probably the right thing to do.
+
 
