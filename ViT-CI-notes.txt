@@ -82,10 +82,23 @@ Covariates and statistics to record:
 
 FUTURE TODOs:
 
-- TODO: I just need to change the configs to account for the number of neurons due to scaling: n_neurons = 4 * hidden_dim
+- DONE: TODO: I just need to change the configs to account for the number of neurons due to scaling: n_neurons = 4 * hidden_dim
 - TODO: For CBP, I may need to lower the age threshold and the perhaps play with the decay factor.
 - At the moment, since we are counting inactivity in terms of units of batches, an age threshold of 100 implies that we 
 - can only reset a neuron after 100 batches which is almost one task. Perhaps this is not too bad for this application.
-- TODO: For CBP, it does not appear that we are updating neuron_ages in the reset_neurons, therefore:
-- for all methods except SNR, we should be manually updating neuron_ages when logging all covariates. 
+- DONE (see below): TODO: For CBP, it does not appear that we are updating neuron_ages in the reset_neurons, therefore:
+- DONE: for all methods except SNR, we should be manually updating neuron_ages when logging all covariates. 
+
+1/1/25: 
+- Yesterday I have run the SNR algorithms for L3 and L12. The L12 sweeps are still running.
+- I have also implemented the CI_ViT_V1_log_correlates.py file which logs all of the above correlates. 
+- I have run this for Vanilla L3 with lr 1e-3, and L12 with lr 1e-3 and 1e-4
+- I need to now make a notebook on the cluster that goes through each hyperparamter sweep and determines the optimal hyperparameters for each algorithm.
+
+- L2: L3: reg_str = 1e-4, L12 w/ lr = 1e-3: reg_str = 1e-3, L12 w/ lr = 1e-4: reg_str = 1e-5
+- L2Init:
+- S&P:
+- ReDO:
+- CBP:
+- SNR: 
 

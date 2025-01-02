@@ -7,10 +7,14 @@ seed = int(sys.argv[1])
 layers = int(sys.argv[2])
 lr = float(sys.argv[3])
 
+# Optimal choices according to h_param_sweep
 if layers == 3:
-    # Optimal choice according to h_param_sweep
     reg_str = 1e-4
-    
+if layers == 12 and lr == 1e-3:
+    reg_str = 1e-3  
+if layers == 12 and lr == 1e-4:
+    reg_str = 1e-5
+
 # config:
 num_layers = layers
 hidden_dim = int(num_layers * 16)
