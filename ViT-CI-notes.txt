@@ -96,7 +96,7 @@ FUTURE TODOs:
 - I need to now make a notebook on the cluster that goes through each hyperparamter sweep and determines the optimal hyperparameters for each algorithm.
 
 - L2: L3: reg_str = 1e-4, L12 w/ lr = 1e-3: reg_str = 1e-3, L12 w/ lr = 1e-4: reg_str = 1e-5
-- L2Init:
+- L2Init: L3: reg_str = 1e-2, L12 w/ lr = 1e-3: reg_str = 1e-4, L12 w/ lr = 1e-4: reg_str = 1e-2 (last 50) 1e-1 (last 10)
 - S&P:
 - ReDO:
 - CBP:
