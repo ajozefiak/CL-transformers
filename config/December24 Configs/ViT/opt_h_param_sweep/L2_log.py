@@ -7,7 +7,9 @@ seed = int(sys.argv[1])
 layers = int(sys.argv[2])
 lr = float(sys.argv[3])
 
-reg_str = TODO
+if layers == 3:
+    # Optimal choice according to h_param_sweep
+    reg_str = 1e-4
     
 # config:
 num_layers = layers
