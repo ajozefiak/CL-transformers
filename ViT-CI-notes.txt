@@ -110,4 +110,16 @@ Note S&P results look quite poor for some reason, I may need to debug and figure
 - CBP: L3: reset_freq = 1e-2, L12 w/ lr = 1e-3: reset_freq = 1e-2, L12 w/ lr = 1e-4: reset_freq = 1e-2 (last 50) 1e-1 (last 10, barely better)
 
 - SNR: 
+L3 lr=1e-3:
+best_reset_percentile: 0.84, best_reset_freq: 0.004166666666666667, terminal 50 task accuracies: 0.6416800022125244
+best_reset_percentile: 0.96, best_reset_freq: 0.004166666666666667, terminal 10 task accuracies: 0.6053999662399292
+
+L12 lr=1e-3:
+best_reset_percentile: 0.99, best_reset_freq: 0.0020833333333333333, terminal 50 task accuracies: 0.6072399616241455
+best_reset_percentile: 0.96, best_reset_freq: 0.0005208333333333333, terminal 10 task accuracies: 0.5743999481201172
+
+L12 lr=1e-4:
+best_reset_percentile: 0.98, best_reset_freq: 0.0020833333333333333, terminal 50 task accuracies: 0.737280011177063
+best_reset_percentile: 0.68, best_reset_freq: 0.0020833333333333333, terminal 10 task accuracies: 0.7029999494552612
+
 
