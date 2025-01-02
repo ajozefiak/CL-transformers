@@ -103,7 +103,11 @@ Note S&P results look quite poor for some reason, I may need to debug and figure
 - S&P: L12 w/ lr = 1e-3: p = 0.7,  sigma = 1e-1 (last 50), p = 0.99, sigma = 1e-1 (last 10)
 - S&P: L12 w/ lr = 1e-4: p = 0.99, sigma = 1e-2, (last 50) p = 0.975, sigma = 1e-2 (last 10)
 
-- ReDO:
+- ReDO: L3  w/ lr = 1e-3: threshold = 0.08, reset_freq = 0.0166... (last 50), threshold = 0.02, reset_freq = 0.0166... (last 10)
+- ReDO: L12 w/ lr = 1e-3: threshold = 0.01, reset_freq = 0.0166... (last 50), threshold = 0.00, reset_freq = 0.002083... (last 10)
+- ReDO: L12 w/ lr = 1e-4: threshold = 0.08, reset_freq = 0.0166... (last 50), threshold = 0.08, reset_freq = 0.0166... (last 10)
+
 - CBP: L3: reset_freq = 1e-2, L12 w/ lr = 1e-3: reset_freq = 1e-2, L12 w/ lr = 1e-4: reset_freq = 1e-2 (last 50) 1e-1 (last 10, barely better)
+
 - SNR: 
 
