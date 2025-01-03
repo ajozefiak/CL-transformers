@@ -413,7 +413,7 @@ def get_reset_methods_ViT(config, alg, alg_params):
                     # thresholds = jnp.ceil(((gamma * thresholds) * expansion_mask) + (threshold_percentiles * (1 - expansion_mask))).astype(jnp.uint32)
 
                     # Because we estimate the mean, we should be avoiding the degenerate case of the threshold continuously shrinking
-                    thresholds = threshold_percentiles
+                    thresholds = jnp.ceil(threshold_percentiles).astype(jnp.uint32)
                     
                     reset_state['thresholds'][block] = thresholds
                     reset_state['arrivals_count'][block] = (0 * reset_state['arrivals_count'][block] + 1).astype(jnp.uint32)
