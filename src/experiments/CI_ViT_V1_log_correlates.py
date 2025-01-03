@@ -64,7 +64,7 @@ def run_CI_ViT_R1_log_correlates(config, alg, alg_params, seed, save_path, clust
     # Initialize data structures associated with resets and neuron_ages
     update_neuron_ages, get_neuron_pre_activ = get_neurons_ages_functions_ViT(config)
     neuron_ages = init_neuron_ages_ViT(config)
-    if alg == 'SNR' or alg == 'CBP' or alg == 'ReDO':
+    if alg == 'SNR' or alg == 'CBP' or alg == 'ReDO' or alg == 'SNR-V2':
         init_reset_state, reset_neurons = get_reset_methods_ViT(config, alg, alg_params)
         reset_state = init_reset_state(config, alg, alg_params)
 
@@ -114,7 +114,7 @@ def run_CI_ViT_R1_log_correlates(config, alg, alg_params, seed, save_path, clust
                 loss, state = train_step(state, x_batch, y_batch, split_key)
 
                 # Perform reset step and 
-                if alg == 'SNR' or alg == 'CBP' or alg == 'ReDO':
+                if alg == 'SNR' or alg == 'CBP' or alg == 'ReDO' or alg == 'SNR-V2':
                     key, split_key = jr.split(key)
                     state, reset_state, neuron_ages, reset_mask = reset_neurons(state, reset_state, neuron_ages, neuron_pre_activ, split_key)
                     # Store reset_mask in reset_mask_array
@@ -123,7 +123,7 @@ def run_CI_ViT_R1_log_correlates(config, alg, alg_params, seed, save_path, clust
                     #     reset_mask_array[0,t,:] = reset_mask['Block_0']
                         # reset_mask_array[1,t,:] = reset_mask['Block_1']
                         # reset_mask_array[2,t,:] = reset_mask['Block_2']
-                if alg != 'SNR':
+                if (alg != 'SNR' and alg != 'SNR-V2'):
                     neuron_ages = update_neuron_ages(neuron_ages, neuron_pre_activ)  
                 ###############
                 ###############
