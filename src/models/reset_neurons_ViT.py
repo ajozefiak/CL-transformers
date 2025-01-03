@@ -495,7 +495,7 @@ def get_reset_methods_ViT(config, alg, alg_params):
                     # Update arrival times NEW
                     reset_state['arrivals_sum'][block] = reset_state['arrivals_sum'][block] + arrivals_sum
                     # Not sure if we should be counting the firing mask here
-                    reset_state['arrivals_count'][block] = reset_state['arrivals_count'][block] + arrivals_count + firing_mask
+                    reset_state['arrivals_count'][block] = reset_state['arrivals_count'][block] + (arrivals_count).astype(jnp.uint32) + reset_mask
 
                 # TODO: Potentially make this deterministic
                 key, split_key = jr.split(key)
