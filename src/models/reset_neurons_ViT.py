@@ -449,7 +449,7 @@ def get_reset_methods_ViT(config, alg, alg_params):
                     shape = neuron_pre_activ['intermediates'][block]['MLP_0']['features'][0].shape
                     inputs = shape[0] * shape[1]
 
-                    arrivals_sum = input
+                    arrivals_sum = inputs
                     arrivals_count = jnp.sum(neuron_pre_activ['intermediates'][block]['MLP_0']['features'][0] > 0.0, axis=(0,1)) 
 
                     # Update neuron_ages[block]
