@@ -185,7 +185,7 @@ def get_ViT_methods(config, alg, alg_params, key):
     state = init_train_state(key, config)
 
     # Vanilla train_step (i.e. no regularization)
-    if alg == 'Vanilla' or alg == 'SNR' or alg == 'CBP' or alg == 'ReDO':
+    if alg == 'Vanilla' or alg == 'SNR' or alg == 'CBP' or alg == 'ReDO' or alg == 'SNR-V2':
     
         @jax.jit
         def train_step(state: train_state.TrainState, x: jnp.ndarray, y: jnp.ndarray, key: jr.PRNGKey) -> Tuple[jnp.ndarray, train_state.TrainState]:
