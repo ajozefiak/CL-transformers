@@ -20,7 +20,7 @@ def get_reset_methods_ViT(config, alg, alg_params):
     # NOTE: This does not appear to need more updating
     def init_reset_state(config, alg, alg_params):
         
-        if alg == 'SNR' or alg == 'SNR-L2' or alg == 'SNR-L2*':
+        if alg == 'SNR' or alg == 'SNR-L2' or alg == 'SNR-L2*' or alg == 'SNR-V2':
             reset_state = {
                 'thresholds': {},
                 'threshold_expansion_factor': 2,
@@ -384,6 +384,126 @@ def get_reset_methods_ViT(config, alg, alg_params):
                 reset_state['f'] = f
                 reset_state['u'] = u
             
+                return state.replace(params = params, opt_state = opt_state), reset_state, neuron_ages, reset_masks
+            
+            return reset_neurons
+
+        # TODO: Return to this after ReDO/CBP
+        # Relax the age condition to average age per example
+        if alg == 'SNR-V2':
+
+            @jax.jit
+            def update_thresholds(reset_state):
+
+                reset_percentile = reset_state['reset_percentile']
+                gamma = reset_state['threshold_expansion_factor']
+
+                for block in blocks:
+                    thresholds = reset_state['thresholds'][block]
+                
+                    # estimate lambda parameter
+                    lambda_hat = reset_state['arrivals_count'][block] / reset_state['arrivals_sum'][block]
+                    
+                    # TODO: potentially change to the geometric distribution
+                    threshold_percentiles = - jnp.log(1 - reset_percentile) / lambda_hat
+                    
+                    # expansion_mask = thresholds <= threshold_percentiles
+
+                    # update thresholds:
+                    # thresholds = jnp.ceil(((gamma * thresholds) * expansion_mask) + (threshold_percentiles * (1 - expansion_mask))).astype(jnp.uint32)
+
+                    # Because we estimate the mean, we should be avoiding the degenerate case of the threshold continuously shrinking
+                    thresholds = threshold_percentiles
+                    
+                    reset_state['thresholds'][block] = thresholds
+                    reset_state['arrivals_count'][block] = (0 * reset_state['arrivals_count'][block] + 1).astype(jnp.uint32)
+                    reset_state['arrivals_sum'][block] = (0 * reset_state['arrivals_sum'][block] + 1).astype(jnp.uint32)
+                return reset_state
+            
+            # This function updates neuron_ages, therefore, do not need to call update neuron_ages in the training loop 
+            # of the experiment
+            @jax.jit
+            def reset_neurons(state, reset_state, neuron_ages, neuron_pre_activ, key):
+                
+                params = state.params
+                opt_state = state.opt_state
+                reset_masks = {}
+
+                for block in blocks:
+
+                    # Generate random parameters for reset
+                    key, split_key = jr.split(key)
+                    params_rand = generate_layer(split_key)
+
+                    thresholds = reset_state['thresholds'][block]
+
+                    # Temporarilly store neuron_age
+                    pre_neuron_ages = neuron_ages[block]
+
+                    # Update neuron_ages, without considering resets (yet)
+                    is_neuron_dead_on_batch = jnp.all(neuron_pre_activ['intermediates'][block]['MLP_0']['features'][0] < 0.0, axis=(0,1))
+                    
+                    # New Code for SNR-V2
+                    # arrivals_sum = sum of interarrival times in a batch
+                    # arrivals_count = sum of arrivals in a batch: neuron_pre_activ > 0.0
+                    shape = neuron_pre_activ['intermediates'][block]['MLP_0']['features'][0].shape
+                    inputs = shape[0] * shape[1]
+
+                    arrivals_sum = input
+                    arrivals_count = jnp.sum(neuron_pre_activ['intermediates'][block]['MLP_0']['features'][0] > 0.0, axis=(0,1)) 
+
+                    # Update neuron_ages[block]
+                    neuron_ages[block] = ((neuron_ages[block] + inputs) * is_neuron_dead_on_batch) + jnp.where(1 - is_neuron_dead_on_batch, arrivals_sum / arrivals_count, 0.0)
+
+                    # Get firing_mask
+                    # firing_mask == True iff the neuron fired in the last batch
+                    firing_mask = neuron_ages[block] == 0
+
+                    # Get reset_mask
+                    # reset_mask == True if the neuron is to be reset due to exceeding the reset-threshold
+                    reset_mask = neuron_ages[block] >= thresholds
+                    reset_masks[block] = reset_mask
+
+                    ####################
+                    # Reset Neurons and Reset Adam Optimizer Parameters
+                    # MLP to MLP Adam Standard Reset based off reset_mask
+                    # Reset bias terms to zero
+                    params['params'][block]['MLP_0']['Dense_0']['bias'] = params['params'][block]['MLP_0']['Dense_0']['bias'] * (1 - reset_mask)
+                    opt_state[0].mu['params'][block]['MLP_0']['Dense_0']['bias'] = opt_state[0].mu['params'][block]['MLP_0']['Dense_0']['bias'] * (1 - reset_mask)
+                    opt_state[0].nu['params'][block]['MLP_0']['Dense_0']['bias'] = opt_state[0].nu['params'][block]['MLP_0']['Dense_0']['bias'] * (1 - reset_mask)
+
+                    # Reset incoming neuron weights according to initial distribution
+                    params['params'][block]['MLP_0']['Dense_0']['kernel'] = (params['params'][block]['MLP_0']['Dense_0']['kernel'] * (1 - reset_mask)) + (params_rand * reset_mask)
+                    opt_state[0].mu['params'][block]['MLP_0']['Dense_0']['kernel'] = opt_state[0].mu['params'][block]['MLP_0']['Dense_0']['kernel'] * (1 - reset_mask)
+                    opt_state[0].nu['params'][block]['MLP_0']['Dense_0']['kernel'] = opt_state[0].nu['params'][block]['MLP_0']['Dense_0']['kernel'] * (1 - reset_mask)
+                    
+                    # Reset outgoing weights to zero
+                    params['params'][block]['MLP_0']['Dense_1']['kernel'] = (1 - reset_mask)[:,None] * params['params'][block]['MLP_0']['Dense_1']['kernel']
+                    opt_state[0].mu['params'][block]['MLP_0']['Dense_1']['kernel'] = (1 - reset_mask)[:,None] * opt_state[0].mu['params'][block]['MLP_0']['Dense_1']['kernel'] 
+                    opt_state[0].nu['params'][block]['MLP_0']['Dense_1']['kernel'] = (1 - reset_mask)[:,None] * opt_state[0].nu['params'][block]['MLP_0']['Dense_1']['kernel'] 
+                    ####################
+
+                    # Update Ages due to resets
+                    neuron_ages[block] = neuron_ages[block] * (1 - reset_mask)                    
+
+                    # Update arrival times OLD
+                    # arrival_mask = firing_mask + reset_mask
+                    # arrival_times = pre_neuron_ages + 1
+                    # reset_state['arrivals_sum'][block] = reset_state['arrivals_sum'][block] + (arrival_times * arrival_mask)
+                    # reset_state['arrivals_count'][block] = reset_state['arrivals_count'][block] + arrival_mask
+                    
+                    # Update arrival times NEW
+                    reset_state['arrivals_sum'] = reset_state['arrivals_sum'] + arrivals_sum
+                    # Not sure if we should be counting the firing mask here
+                    reset_state['arrivals_count'] = reset_state['arrivals_count'] + arrivals_count + firing_mask
+
+                # TODO: Potentially make this deterministic
+                key, split_key = jr.split(key)
+                update_thresholds_cond = jr.bernoulli(split_key, reset_state['reset_freq'])
+                reset_state = jax.lax.cond(update_thresholds_cond, update_thresholds, lambda x: x, reset_state)
+
+                # TODO: Potentially return the reset_mask
+                # We don't need to output the thresholds since we have those already in the experiment loop through reset_states
                 return state.replace(params = params, opt_state = opt_state), reset_state, neuron_ages, reset_masks
             
             return reset_neurons
