@@ -22,8 +22,9 @@ if layers == 12 and lr == 1e-3:
     reset_freq = 1 / (8 * batches * epochs)
     # Need to still do a finer h_param_sweep since this is only the first pass
 if layers == 12 and lr == 1e-4:
-    reset_percentile = 0.98
-    reset_freq = 1 / (4 * batches * epochs)
+    reset_percentile = 0.6
+    reset_freq = 1 / (1 * batches * epochs)
+    # Need to still do a finer h_param_sweep since this is only the first pass
     
 # config:
 num_layers = layers
