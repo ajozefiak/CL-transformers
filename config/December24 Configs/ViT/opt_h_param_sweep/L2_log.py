@@ -16,6 +16,7 @@ if layers == 12 and lr == 1e-3:
     # reg_str = 1e-4 is the correct one
 if layers == 12 and lr == 1e-4:
     reg_str = 1e-5
+    # This one is correct
 
 # config:
 num_layers = layers

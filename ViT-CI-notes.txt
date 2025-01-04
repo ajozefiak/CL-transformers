@@ -160,3 +160,45 @@ Here are the thoughts that I jotted down in a notebook on the cluster when analy
 # Arrive last => No accumulation, so neuron inactivity resets with each batch => probably the right thing to do.
 
 # All I can say about SNR vs Vanilla is: if you're going to reset neurons, you better reset early enough otherwise you are potenttialy losing out on forward transfer with delayed plasticity gain.
+
+01/03/25
+
+Hyperparameter Sweep Correctness:
+- I had chosen hyperparameters based off the test accuracy on the last 50 epochs rather than the last 50 terminal task accuracies.
+- Here I am writing down each algorithm and it's hyperparameters and whether it needs to be rerun.
+
+L3: 
+Vanilla: N/A
+L2: (OKAY~) ran: reg_str = 1e-4, correct: reg_str = 1e-3 (slightly better)
+L2Init: (Perfect) ran: reg_str = 1e-2, correct: reg_str = 1e-2
+S&P: (Perfect) ran/correct: p = 0.99, sigma = 0.01
+CBP: (OKAY~) ran: reset_freq = 1e-2, correct: reset_freq = 1e-1 (slightly better at @ terminal 50 tasks, but worse at terminal 10 tasks)
+ReDO: (Perfect) ran/correct: threshold = 0.08, reset_freq = 1 / (0.5 * batches * epochs)
+SNR: (OKAY~) ran: reset_percentile = 0.84, reset_freq = 1 / (2 * batches * epochs), correct: reset_percentile = 0.84, reset_freq = 1 / (4 * batches * epochs) (h_params are similar and results are both poor for SNR)
+SNR-V2: (Perfect) ran/correct/finer-sweep: reset_percentile = 0.55, reset_freq = 1 / (0.75 * batches * epochs)
+
+L12 w/ lr = 1e-3: 
+Vanilla: N/A
+L2: (OKAY~) ran: reg_str = 1e-3, correct: reg_str = 1e-4 (slightly better)
+L2Init: (OKAY~) ran: reg_str = 1e-4, correct: reg_str = 1e-2 (better by at most 0.01)
+S&P: (Perfect): ran/correct: p = 0.7, sigma = 0.1
+CBP: (Perfect) ran: reset_freq = 1e-2, correct: reset_freq = 1e-2
+ReDO: (Maybe rerun~) ran: threshold = 0.01, reset_freq = 1 / (0.5 * batches * epochs), correct: threshold = 0.02, reset_freq = 1 / (0.25 * batches * epochs) (the performance looks better for the correct one, but all of these look pretty bad relative to Vanilla)
+SNR: (OKAY~) ran: reset_percentile = 0.99, reset_freq = 1 / (4 * batches * epochs), correct: reset_percentile = 0.92, reset_freq = 1 / (4 * batches * epochs) (H_params are similar and results are both poor for SNR)
+SNR-V2: (TODO) correct/original-sweep: reset_percentile = 0.6, reset_freq = 1 / (8 * batches * epochs) (Currently running the finer/wider sweep)
+
+L12 w/ lr = 1e-4: 
+Vanilla: N/A
+L2: (Perfect) ran/correct: reg_str = 1e-5
+L2Init: (Perfect): ran/correct: reg_str = 1e-2
+S&P: ran: (Perfect): ran/correct p = 0.99, sigma = 1e-2
+CBP: (OKAY~) ran: reset_freq = 1e-2, correct: reset_freq = 1e-1 (very, very similar performance)
+ReDO: (Maybe rerun~) ran: threshold = 0.08, reset_freq = 1 / (0.5 * batches * epochs) correct: threshold = 0.04, reset_freq = 1 / (1 * batches * epochs) (the correct one is about 0.01 better than what I ran, h_params are similar, but it could merit rerunning this)
+SNR: (Maybe/OKAY~) ran: reset_percentile = 0.98, reset_freq = 1 / (4 * batches * epochs), correct: reset_percentile = 0.98, reset_freq = 1 / (32 * batches * epochs) (similar h_params, and performance is only slightly better for the correct h_params, could be noise)
+SNR-V2: (TODO) correct/original-sweep: reset_percentile = 0.6, reset_freq = 1 / (1 * batches * epochs)
+
+- I have just setup an finer sweep for SNR-V2 w/ L12 and lr = 1e-3 that is slightly wider than the finer sweep for SNR-V2 L3.
+- I am just extending the reset_freq up to 15 and 32, given the original hyperparameter sweep results.
+- I am going to run the finer hyperparamter sweep for L!2 w/ lr = 1e-4, but will keep the original range of reset_freqs as in the finer L3 sweep
+
+- It looks like there is no algorithm that needs its optimal hyperparameter choice to be really 

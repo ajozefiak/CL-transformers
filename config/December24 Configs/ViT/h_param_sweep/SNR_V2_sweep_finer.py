@@ -17,7 +17,7 @@ reset_percentiles = [0.65,0.6,0.55,0.5]
 # The reset frequency is in terms of i resets (in expectation) per task = epochs * batches
 # For L3
 reset_freqs = [1 / (i * epochs * batches) for i in [0.25,0.5,0.75,1,2]]
-if layers == 3 and lr == 1e-3: 
+if layers == 12 and lr == 1e-3:
     reset_freqs = [1 / (i * epochs * batches) for i in [0.25,0.5,0.75,1,2,4,8,16]]
 
 # Run the experiment for each hyperparameter
