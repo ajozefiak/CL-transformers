@@ -11,6 +11,7 @@ lr = float(sys.argv[3])
 if layers == 3:
     p = 0.99
     sigma = 1e-2
+    # p = 0.99, sigma = 1e-2 is correct for L3 @ 50 tasks
 if layers == 12 and lr == 1e-3:
     p = 0.7
     sigma = 1e-1

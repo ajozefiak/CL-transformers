@@ -10,8 +10,10 @@ lr = float(sys.argv[3])
 # Optimal choices according to h_param_sweep
 if layers == 3:
     reg_str = 1e-4
+    # reg_str = 1e-3 is the correct one, but only slightly better
 if layers == 12 and lr == 1e-3:
-    reg_str = 1e-3  
+    reg_str = 1e-3
+    # reg_str = 1e-4 is the correct one
 if layers == 12 and lr == 1e-4:
     reg_str = 1e-5
 

@@ -17,9 +17,14 @@ if layers == 3:
     reset_percentile = 0.84
     reset_freq = 1 / (2 * batches * epochs)
     # reset_freq = 0.004166666666666667
+    # The below is the optimal choice @ 50 tasks, but has roughly the same performance as above
+    # reset_percentile = 0.84
+    # reset_freq = 1 / (8 * batches * epochs)
 if layers == 12 and lr == 1e-3:
     reset_percentile = 0.99
     reset_freq = 1 / (4 * batches * epochs)
+    # reset_freq = 0.0020833333333333333
+    # reset_percentile = 0.92
     # reset_freq = 0.0020833333333333333
 if layers == 12 and lr == 1e-4:
     reset_percentile = 0.98

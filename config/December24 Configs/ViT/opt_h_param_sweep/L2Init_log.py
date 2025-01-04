@@ -10,8 +10,10 @@ lr = float(sys.argv[3])
 # Optimal choices according to h_param_sweep
 if layers == 3:
     reg_str = 1e-2
+    # The correct one is in fact reg_str = 1e-2
 if layers == 12 and lr == 1e-3:
     reg_str = 1e-4  
+    # reg_str = 1e-2
 if layers == 12 and lr == 1e-4:
     reg_str = 1e-2
     # 1e-2 (last 50) 1e-1 (last 10)

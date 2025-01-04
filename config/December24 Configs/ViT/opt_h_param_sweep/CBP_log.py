@@ -9,6 +9,8 @@ lr = float(sys.argv[3])
 
 # Optimal choice for L3 lr=1e-3, L12 lr=1e-3, and L12 lr=1e-4 according to h_param_sweep
 reset_freq = 1e-2
+# reset_freq = 1e-1 is the correct one for L3 @ 50 tasks, but reg_str = 1e-1 is close and is better @ 10 tasks
+# reset_freq = 1e-2 is the correct one for L12 @ 50 tasks
 
 # config:
 num_layers = layers

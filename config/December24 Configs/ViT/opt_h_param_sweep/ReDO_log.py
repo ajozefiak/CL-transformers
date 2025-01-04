@@ -19,11 +19,14 @@ batches = 12
 if layers == 3:
     ReDO_threshold = 0.08
     ReDO_reset_freq = 1 / (0.5 * batches * epochs)
+    # The above are the correct optimal h_params
     # threshold = 0.02, reset_freq = 0.0166... is better for hte last 10 tasks
 if layers == 12 and lr == 1e-3:
     ReDO_threshold = 0.01
     ReDO_reset_freq = 1 / (0.5 * batches * epochs)
     # threshold = 0.00, reset_freq = 0.002083... is better for hte last 10 tasks
+    # ReDO_threshold = 0.02
+    # ReDO_reset_freq = 1 / (0.25 * batches * epochs)
 if layers == 12 and lr == 1e-4:
     ReDO_threshold = 0.08
     ReDO_reset_freq = 1 / (0.5 * batches * epochs)

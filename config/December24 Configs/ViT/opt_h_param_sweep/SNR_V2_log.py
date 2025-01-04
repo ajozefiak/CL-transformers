@@ -16,10 +16,11 @@ batches = 12
 if layers == 3:
     reset_percentile = 0.55
     reset_freq = 1 / (0.75 * batches * epochs)
+    # The above are the results of the finer h_param_sweep and are correct
 if layers == 12 and lr == 1e-3:
-    reset_percentile = 0.99
-    reset_freq = 1 / (4 * batches * epochs)
-    # reset_freq = 0.0020833333333333333
+    reset_percentile = 0.6
+    reset_freq = 1 / (8 * batches * epochs)
+    # Need to still do a finer h_param_sweep since this is only the first pass
 if layers == 12 and lr == 1e-4:
     reset_percentile = 0.98
     reset_freq = 1 / (4 * batches * epochs)
