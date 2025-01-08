@@ -235,3 +235,11 @@ Intermediate TODOs:
 Tomorrow, or later: 
 - I can run a more exhaustive hyperparameter sweep.
 - I can implement L2*, SNR-L2*, SNR-V2-L2*
+
+Progres:
+- I have just implemented SNR-L2, SNR-V2-L2 and I have written the config files for these, with the exception of SNR-V2-L2 for 12 layers.
+- I have also written a new config for L2 with the "correct" optimal hyperparameters 
+- results will be saved in /pool001/jozefiak/CI_ViT/opt_h_param_sweep_fixed/
+- This will take at most (13 + 13 + 1) * 3 = 81 GB, so after this I need to clear space
+- My experiments are currently running and do not seem to have any issues.
+- remaining TODO in this immediate list of TODOs: get th eoptimal SNR-V2 hyperparameters for the 12 layer networks and run those.
