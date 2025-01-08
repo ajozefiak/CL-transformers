@@ -20,7 +20,7 @@ def get_reset_methods_ViT(config, alg, alg_params):
     # NOTE: This does not appear to need more updating
     def init_reset_state(config, alg, alg_params):
         
-        if alg == 'SNR' or alg == 'SNR-L2' or alg == 'SNR-L2*' or alg == 'SNR-V2':
+        if alg == 'SNR' or alg == 'SNR-L2' or alg == 'SNR-L2*' or alg == 'SNR-V2' or alg == 'SNR-V2-L2':
             reset_state = {
                 'thresholds': {},
                 'threshold_expansion_factor': 2,
@@ -390,7 +390,7 @@ def get_reset_methods_ViT(config, alg, alg_params):
 
         # TODO: Return to this after ReDO/CBP
         # Relax the age condition to average age per example
-        if alg == 'SNR-V2':
+        if alg == 'SNR-V2' or alg == 'SNR-V2-L2':
 
             @jax.jit
             def update_thresholds(reset_state):

@@ -201,7 +201,7 @@ def get_ViT_methods(config, alg, alg_params, key):
         return state, train_step, accuracy
 
     # TODO: Double check that this is correct
-    if alg == 'L2':
+    if alg == 'L2' or alg == 'SNR-L2' or alg == 'SNR-V2-L2':
 
         reg_str = alg_params['reg_str']
 
@@ -281,4 +281,5 @@ def get_ViT_methods(config, alg, alg_params, key):
         
         return state, train_step, accuracy
 
-    # TODO: S&P, SNR, SNR-L2?, L2*?, SNR-L2*?, ReDO, CBP
+    # TODO: L2*?, SNR-L2*?
+    # TODO: Double check S&P

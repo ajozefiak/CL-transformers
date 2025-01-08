@@ -202,3 +202,36 @@ SNR-V2: (TODO) correct/original-sweep: reset_percentile = 0.6, reset_freq = 1 / 
 - I am going to run the finer hyperparamter sweep for L!2 w/ lr = 1e-4, but will keep the original range of reset_freqs as in the finer L3 sweep
 
 - It looks like there is no algorithm that needs its optimal hyperparameter choice to be really 
+
+01/07/25:
+
+- I have not yet analyzed the optimal hypermaters for SNR-V2 in the twelve layer experiments yet, though I should do that and potentially rerun those
+- I need to run this later
+
+- Vivek was also asking about SNR-L2, therefore I need to implement:
+- SNR-L2
+- SNR-V2-L2
+- SNR-L2*
+- SNR-V2-L2*
+
+In the mean time, I can run:
+- SNR-L2 (3 layer, 12 layers)
+- SNR-V2-L2 (3 layers) 
+
+- The question is, should I do a hyperparameter sweep, perhaps I do that after I get my results.
+- I should also log all of my results into my document. This includes the learning rate sweep, the hyperparameter sweep, and the choice of hyperparameters.
+
+- Before running any of this, I have used 898 GB of my pool001 directory. 
+- A layer logging experiment consumes 13 GB and a 3 layer experiminet conumes 900 Maybe
+
+- My immediate TODOs are to:
+- impolement SNR-L2, SNR-V2-L2
+- run: SNR-L2, SNR-V2-L2, and L2 with the correct optimal hyperparameters. This will give suboptimal results for the SNR variants, which I can tune later.
+
+Intermediate TODOs:
+- I should run the L3 experiment in a notebook and I should record the thresholds. Are these absurdly large? 
+- I should double check the derivation of my SNR-V2 reset technique
+
+Tomorrow, or later: 
+- I can run a more exhaustive hyperparameter sweep.
+- I can implement L2*, SNR-L2*, SNR-V2-L2*
