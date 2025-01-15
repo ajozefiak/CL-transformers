@@ -120,7 +120,8 @@ def run_CI_ViT_R1_log_correlates_2(config, alg, alg_params, seed, save_path, clu
 
                 # Perform reset step and 
                 if alg == 'SNR' or alg == 'CBP' or alg == 'ReDO' or alg == 'SNR-V2' or alg == 'SNR-L2' or alg == 'SNR-V2-L2':
-                    key, split_key = jr.split(key)state, reset_state, neuron_ages, reset_mask = reset_neurons(state, reset_state, neuron_ages, neuron_pre_activ, split_key)
+                    key, split_key = jr.split(key)
+                    state, reset_state, neuron_ages, reset_mask = reset_neurons(state, reset_state, neuron_ages, neuron_pre_activ, split_key)
                     
                     # Store reset_mask in reset_mask_array
                     # TODO: Make this programatic, perhaps as a function, so that we do not need to do this manually

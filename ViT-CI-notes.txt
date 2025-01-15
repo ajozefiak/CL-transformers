@@ -311,6 +311,7 @@ SNR-V2: reset_percentile: 0.6, reset_freq: 0.016666666666666666, terminal 50 tas
 Suboptimal
 SNR-L2: reg_str_1e-07_reset_percentile_0.98_reset_freq_0.00026041666666666666: terminal acc: 0.8185932636260986 (0.027605239301919937)
 
+
 One thing to do is to double check my implementation of SNR. 
 It could be wrong, but then why is CBP and ReDO doing better when I've proted the impelemntations over correctly?
 Also SNR + L2 generally does better than L2, so this cannot just be noise.
@@ -350,4 +351,6 @@ TODO 1: Experimental Loop:
 - Complete: Network weights.
 - Complete: Entropies. 
 - TODO: Neuron death. a_SNR, a_SNR_V2
+
+- It loops like my update_neuron_ages_2 is working
 
