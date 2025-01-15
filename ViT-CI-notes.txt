@@ -275,30 +275,79 @@ TODOs (Immediate):
 Best results for each algorithm:
 Metric: average training accuracy on the terminal epoch on the last 50 tasks:
 L3 layer ViT:
-L2: reg_str: 0.001, terminal 50 task accuracies: 0.7871933579444885
+No Intervention: lr = 1e-3, 0.77510 (0.01093)
+L2: reg_str: 0.001, terminal 50 task accuracies: 0.78719 (0.00864)
 L2 Init: reg_str: 0.01, terminal 50 task accuracies: 0.88452 (0.00232)
 CBP: reset_freq: 0.01, terminal 50 task accuracies: 0.96214 (0.00127)
 S&P: p: 0.99, sigma: 0.01, terminal 50 task accuracies: 0.69838 (0.00304)
 ReDO: 0.01, reset_freq: 0.03333333333333333, terminal 50 task accuracies: 0.84259 (0.00603)
-SNR:
-SNR-V2:
+SNR: reset_percentile: 0.84, reset_freq: 0.0010416666666666667, terminal 50 task accuracies: 0.69294 (0.00375)
+SNR-V2: reset_percentile: 0.55, reset_freq: 0.03333333333333333, terminal 50 task accuracies: 0.92855 (0.00376)
 Suboptimal:
 SNR-L2: reg_str_0.001_reset_percentile_0.84_reset_freq_0.0020833333333333333: terminal acc: 0.79410 (0.00828)
 SNR-L2-V2: reg_str_0.001_reset_percentile_0.55_reset_freq_0.011111111111111112: terminal acc: 0.841283 (0.00663)
 
 12 layer ViT with learning rate 1e-3:
-L2 reg_str: 0.0001: terminal acc: 0.81399 (0.00811)
+No intervention: lr: 0.001, accuracy: 0.64315 (0.01403)
+L2 reg_str: 0.0001, terminal 50 task accuracies: 0.83161 (0.01022)
+L2 Init: reg_str: 0.001, terminal 50 task accuracies: 0.91955 (0.00385)
+CBP: reset_freq: 0.01, terminal 50 task accuracies: 0.70365 (0.03138)
+S&P: p: 0.7, sigma: 0.1, terminal 50 task accuracies: 0.54589 (0.00072)
+ReDO: threshold: 0.02, reset_freq: 0.03333333333333333, terminal 50 task accuracies: 0.63802 (0.01893)
+SNR: reset_percentile: 0.92, reset_freq: 0.0020833333333333333, terminal 50 task accuracies: 0.62502 (0.01186)
+SNR-V2: reset_percentile: 0.55, reset_freq: 0.016666666666666666, terminal 50 task accuracies: 0.65547 (0.02421)
 Suboptimal:
 SNR-L2: reg_str_0.0001_reset_percentile_0.92_reset_freq_0.0020833333333333333: terminal acc: 0.83006 (0.00960)
 
 12 layer ViT with learning rate 1e-4:
-TODO
-L2_L12_lr_0.0001_reg_str_1e-05: terminal acc: 0.82098 (0.01815)
+No Intervention: lr: 0.0001, accuracy: 0.85539 (0.01288)
+L2 reg_str: 1e-07, terminal 50 task accuracies: 0.84837 (0.00856)
+L2 Init: reg_str: 0.001, terminal 50 task accuracies: 0.94631 (0.00651)
+CBP: reset_freq = 0.01, terminal 50 task accuracies: 0.98349 (0.00179)
+S&P: p: 0.99, sigma: 0.01, terminal 50 task accuracies: 0.65207 (0.00346)
+ReDO: threshold: 0.005, reset_freq: 0.03333333333333333, terminal 50 task accuracies: 0.95880 (0.00336)
+SNR: reset_percentile: 0.84, reset_freq: 0.0005208333333333333, terminal 50 task accuracies: 0.84267 (0.00708)
+SNR-V2: reset_percentile: 0.6, reset_freq: 0.016666666666666666, terminal 50 task accuracies: 0.97400 (0.00649)
 Suboptimal
-SNR-L2_L12_lr_0.0001_reg_str_1e-05_reset_percentile_0.98_reset_freq_0.00026041666666666666: terminal acc: 0.81347 (0.00305)
+SNR-L2: reg_str_1e-07_reset_percentile_0.98_reset_freq_0.00026041666666666666: terminal acc: 0.8185932636260986 (0.027605239301919937)
 
 One thing to do is to double check my implementation of SNR. 
 It could be wrong, but then why is CBP and ReDO doing better when I've proted the impelemntations over correctly?
 Also SNR + L2 generally does better than L2, so this cannot just be noise.
 I may need to double check SNR's implementation carefully and see if there is anyhting that could be going wrong.
 One option is to copy the code over to a notebook and to step through SNR's execution of the algorithm for the 3 layer model.
+
+01/15/25:
+
+- I just had my meeting with Vivek this morning. He wants to meet again today at 5pm EST. 
+- I need to log as much data as possible and understand what is going on. 
+- If neuron death is occuring: do the SNR-V1 definition and the SNR-V2 definition. 
+- Log the resets of each algorithm and plot this somehow.
+- Log the networks weights and see weight blow up is occuring.
+- Log the entropies and see if entropy collapse is occuring
+- Then I can go back and look at my CNN model and see what was happening with CBP and SNR, potentially.
+- Relate back the Permuted Shakespeare results and see what was happening and compare, at least we should look at the paper and see the story.
+
+- I should run results for the optimal hyperparameters for the 3 layer and the 12 layer models.
+- I should modify the config file to save the SNR-V1 and SNR-V2 ages. May need to manually save these, since it becomes confusing.
+- I should also run a hyperparameter sweep for SNR-V2-L2, but this can be done afterwards.
+
+- I have cleared 200 GB of data from /nobackup1/jozefiak/CL/Results/PS/PS_092824_scale_16 by deleting the covariates of the seed 11 and seed 10 models, leaving only 2 seeds with correlates.
+
+TODOs:
+1: Modify experimental loop so that all necessary correlates are logged.
+1.5: Double check that this works on the cluster.
+2: Write config files for optimal hyperparameters and run those, in order:
+SNR, SNR-V2, CBP, L2, L2Init, Vanilla, ReDO, SNR-V2-L2
+3: Process Results
+4: Compare Against Permuted Shakespeare
+5: Compare against CNN on CI problem. Would need to go back and refactor that code and run those experiments.
+
+TODO 1: Experimental Loop:
+- I have created a new experimental file.
+- Complete: Logging train and test accuracies.
+- Complete: Neuron Resets.
+- Complete: Network weights.
+- Complete: Entropies. 
+- TODO: Neuron death. a_SNR, a_SNR_V2
+
