@@ -354,3 +354,5 @@ TODO 1: Experimental Loop:
 
 - It loops like my update_neuron_ages_2 is working
 
+- Added my SNR config and completed the training loop, I just need to run it and verify that it works
+
