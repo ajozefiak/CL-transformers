@@ -44,6 +44,7 @@ def run_CI_ViT_R1_log_correlates_2(config, alg, alg_params, seed, save_path, clu
     train_acc = []
     test_acc = []
     neuron_ages_array = np.zeros((T, num_layers, n_neurons), dtype=np.uint32)
+    neuron_ages_array_2 = np.zeros((T, num_layers, n_neurons))
     resets_array = np.zeros((T, num_layers, n_neurons), dtype=bool)
     # TODO: store entropies of self attention layers -> compute these as a single average value at each time step or test set or both
     mean_entropies_train_array = np.zeros((T, num_layers))
@@ -62,8 +63,12 @@ def run_CI_ViT_R1_log_correlates_2(config, alg, alg_params, seed, save_path, clu
     state, train_step, accuracy = get_ViT_methods(config, alg, alg_params, split_key)
     
     # Initialize data structures associated with resets and neuron_ages
-    update_neuron_ages, get_neuron_pre_activ = get_neurons_ages_functions_ViT(config)
+    update_neuron_ages, get_neuron_pre_activ, update_neuron_ages_2 = get_neurons_ages_functions_ViT_2(config)
     neuron_ages = init_neuron_ages_ViT(config)
+
+    neuron_ages_log = init_neuron_ages_ViT(config)
+    neuron_ages_log_2 = init_neuron_ages_ViT_2(config)
+
     if alg == 'SNR' or alg == 'CBP' or alg == 'ReDO' or alg == 'SNR-V2' or alg == 'SNR-L2' or alg == 'SNR-V2-L2':
         init_reset_state, reset_neurons = get_reset_methods_ViT(config, alg, alg_params)
         reset_state = init_reset_state(config, alg, alg_params)
@@ -115,16 +120,17 @@ def run_CI_ViT_R1_log_correlates_2(config, alg, alg_params, seed, save_path, clu
 
                 # Perform reset step and 
                 if alg == 'SNR' or alg == 'CBP' or alg == 'ReDO' or alg == 'SNR-V2' or alg == 'SNR-L2' or alg == 'SNR-V2-L2':
-                    key, split_key = jr.split(key)
-                    state, reset_state, neuron_ages, reset_mask = reset_neurons(state, reset_state, neuron_ages, neuron_pre_activ, split_key)
+                    key, split_key = jr.split(key)state, reset_state, neuron_ages, reset_mask = reset_neurons(state, reset_state, neuron_ages, neuron_pre_activ, split_key)
+                    
                     # Store reset_mask in reset_mask_array
                     # TODO: Make this programatic, perhaps as a function, so that we do not need to do this manually
                     # if save_neuron_ages:
                     #     reset_mask_array[0,t,:] = reset_mask['Block_0']
                         # reset_mask_array[1,t,:] = reset_mask['Block_1']
                         # reset_mask_array[2,t,:] = reset_mask['Block_2']
-                if (alg != 'SNR' and alg != 'SNR-V2' and alg != 'SNR-L2' and alg != 'SNR-V2-L2'):
-                    neuron_ages = update_neuron_ages(neuron_ages, neuron_pre_activ)  
+                # if (alg != 'SNR' and alg != 'SNR-V2' and alg != 'SNR-L2' and alg != 'SNR-V2-L2'):
+                neuron_ages_log = update_neuron_ages(neuron_ages_log, neuron_pre_activ)
+                neuron_ages_log_2 = update_neuron_ages_2(neuron_ages_log_2, neuron_pre_activ)
                 ###############
                 ###############
                 
@@ -137,7 +143,8 @@ def run_CI_ViT_R1_log_correlates_2(config, alg, alg_params, seed, save_path, clu
 
                 # Log neuron_ages
                 for l in range(num_layers):
-                    neuron_ages_array[t_train,l,:] = neuron_ages[f'ViTBlock_{l}']
+                    neuron_ages_array[t_train,l,:] = neuron_ages_log[f'ViTBlock_{l}']
+                    neuron_ages_array_2[t_train,l,:] = neuron_ages_log_2[f'ViTBlock_{l}']
 
                 # Log reset_mask
                 # Check if reset_mask is defined, if not, do not log
@@ -186,6 +193,7 @@ def run_CI_ViT_R1_log_correlates_2(config, alg, alg_params, seed, save_path, clu
     train_acc_path = os.path.join(save_path, "train_acc.pkl")
     test_acc_path = os.path.join(save_path, "test_acc.pkl")
     neuron_ages_array_path = os.path.join(save_path, "neuron_ages_array.pkl")
+    neuron_ages_array_path_2 = os.path.join(save_path, "neuron_ages_array_2.pkl")
     resets_array_path = os.path.join(save_path, "resets_array.pkl")
     param_norms_path = os.path.join(save_path, "param_norms.pkl")
     mean_entropies_train_array_path = os.path.join(save_path, "mean_entropies_train_array.pkl")
@@ -205,6 +213,9 @@ def run_CI_ViT_R1_log_correlates_2(config, alg, alg_params, seed, save_path, clu
 
     with open(neuron_ages_array_path, 'wb') as f:
         pickle.dump(neuron_ages_array, f)
+
+    with open(neuron_ages_array_path_2, 'wb') as f:
+        pickle.dump(neuron_ages_array_2, f)
 
     with open(resets_array_path, 'wb') as f:
         pickle.dump(resets_array, f)
