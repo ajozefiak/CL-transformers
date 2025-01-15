@@ -242,5 +242,63 @@ Progres:
 - results will be saved in /pool001/jozefiak/CI_ViT/opt_h_param_sweep_fixed/
 - This will take at most (13 + 13 + 1) * 3 = 81 GB, so after this I need to clear space
 - My experiments are currently running and do not seem to have any issues.
-- remaining TODO in this immediate list of TODOs: get th eoptimal SNR-V2 hyperparameters for the 12 layer networks and run those.
+- remaining TODO in this immediate list of TODOs: get the optimal SNR-V2 hyperparameters for the 12 layer networks and run those.
 - TODO: I may need to tuen SNR-V2-L2 now that we have regularization. The reset threshold may now be too aggressive.
+
+01/12/25:
+
+- I am going to log the results that I ran a few days ago for SNR-L2 and may run some more hyperparameter sweeps.
+- I will also update my document tonight so that it is ready for a meeting tomorrow. This will include:
+- the SNR-L2 results,
+- perhaps details of a hyperparameter sweep
+- update my description of SNR-V2
+- touch up any formatting
+- add the learning rate sweep
+
+- I should also spend some time thinking about what else I should do to touch up my paper, as well getting an ICML template going.
+
+
+TODOs (Immediate):
+- Investigate the results and log them in my document. Take stock of what I have and then decide what to do next.
+- I should add the learning rate sweep to the end of the document.
+
+01/14/25:
+- Vivek wants to look at the training loss.
+- Therefore, I will look at the training loss over the hyperparameter sweep:
+- We can look at: 
+1: Cumulative average of all timesteps
+2: Cumulative average of terminal training losses over all timesteps
+3: average of all timesteps in last 50 tasks
+4: average of terminal training lossses for last 50 tasks
+
+
+Best results for each algorithm:
+Metric: average training accuracy on the terminal epoch on the last 50 tasks:
+L3 layer ViT:
+L2: reg_str: 0.001, terminal 50 task accuracies: 0.7871933579444885
+L2 Init: reg_str: 0.01, terminal 50 task accuracies: 0.88452 (0.00232)
+CBP: reset_freq: 0.01, terminal 50 task accuracies: 0.96214 (0.00127)
+S&P: p: 0.99, sigma: 0.01, terminal 50 task accuracies: 0.69838 (0.00304)
+ReDO: 0.01, reset_freq: 0.03333333333333333, terminal 50 task accuracies: 0.84259 (0.00603)
+SNR:
+SNR-V2:
+Suboptimal:
+SNR-L2: reg_str_0.001_reset_percentile_0.84_reset_freq_0.0020833333333333333: terminal acc: 0.79410 (0.00828)
+SNR-L2-V2: reg_str_0.001_reset_percentile_0.55_reset_freq_0.011111111111111112: terminal acc: 0.841283 (0.00663)
+
+12 layer ViT with learning rate 1e-3:
+L2 reg_str: 0.0001: terminal acc: 0.81399 (0.00811)
+Suboptimal:
+SNR-L2: reg_str_0.0001_reset_percentile_0.92_reset_freq_0.0020833333333333333: terminal acc: 0.83006 (0.00960)
+
+12 layer ViT with learning rate 1e-4:
+TODO
+L2_L12_lr_0.0001_reg_str_1e-05: terminal acc: 0.82098 (0.01815)
+Suboptimal
+SNR-L2_L12_lr_0.0001_reg_str_1e-05_reset_percentile_0.98_reset_freq_0.00026041666666666666: terminal acc: 0.81347 (0.00305)
+
+One thing to do is to double check my implementation of SNR. 
+It could be wrong, but then why is CBP and ReDO doing better when I've proted the impelemntations over correctly?
+Also SNR + L2 generally does better than L2, so this cannot just be noise.
+I may need to double check SNR's implementation carefully and see if there is anyhting that could be going wrong.
+One option is to copy the code over to a notebook and to step through SNR's execution of the algorithm for the 3 layer model.

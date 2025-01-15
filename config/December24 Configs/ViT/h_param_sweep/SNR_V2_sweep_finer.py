@@ -13,7 +13,8 @@ epochs = 10
 batches = 12
 
 # reset_percentiles = 1 - 0.01*2^i for i = 1,2,3,4,
-reset_percentiles = [0.65,0.6,0.55,0.5]
+# reset_percentiles = [0.65,0.6,0.55,0.5]
+reset_percentiles = [0.55,0.5,0.6,0.65]
 # The reset frequency is in terms of i resets (in expectation) per task = epochs * batches
 # For L3
 reset_freqs = [1 / (i * epochs * batches) for i in [0.25,0.5,0.75,1,2]]
