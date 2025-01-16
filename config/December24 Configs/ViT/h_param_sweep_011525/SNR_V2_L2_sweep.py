@@ -22,24 +22,24 @@ for reg_str in reg_strs:
     for reset_percentile in reset_percentiles:
         for reset_freq in reset_freqs:       
     
-        # config:
-        num_layers = layers
-        hidden_dim = int(num_layers * 16)
-        n_neurons = int(4 * hidden_dim)
-        config = CL_transformers.ModelConfigViT(num_layers=num_layers, hidden_dim=hidden_dim, n_neurons=n_neurons, lr=lr, num_classes=2)
+            # config:
+            num_layers = layers
+            hidden_dim = int(num_layers * 16)
+            n_neurons = int(4 * hidden_dim)
+            config = CL_transformers.ModelConfigViT(num_layers=num_layers, hidden_dim=hidden_dim, n_neurons=n_neurons, lr=lr, num_classes=2)
 
-        alg = 'SNR-V2-L2'
-        alg_params = {
-              'reg_str': reg_str,
-              'threshold': 10,
-              'reset_percentile': reset_percentile,
-              'reset_freq': reset_freq}
+            alg = 'SNR-V2-L2'
+            alg_params = {
+                'reg_str': reg_str,
+                'threshold': 10,
+                'reset_percentile': reset_percentile,
+                'reset_freq': reset_freq}
 
-        cluster = True
-        # Use default experiment config, so we can leave this blank
-        experiment_config = {}
+            cluster = True
+            # Use default experiment config, so we can leave this blank
+            experiment_config = {}
 
-        # TODO:
-        save_path = f'/nobackup1/jozefiak/CI_ViT/h_param_sweep/{alg}_L{num_layers}_lr_{lr}_reg_str_{reg_str}_reset_percentile_{reset_percentile}_reset_freq_{reset_freq}/seed_{seed}/'
+            # TODO:
+            save_path = f'/nobackup1/jozefiak/CI_ViT/h_param_sweep/{alg}_L{num_layers}_lr_{lr}_reg_str_{reg_str}_reset_percentile_{reset_percentile}_reset_freq_{reset_freq}/seed_{seed}/'
 
-        res = CL_transformers.run_CI_ViT_R1_reset_experiment(config, alg, alg_params, seed, save_path, cluster, experiment_config)
+            res = CL_transformers.run_CI_ViT_R1_reset_experiment(config, alg, alg_params, seed, save_path, cluster, experiment_config)
