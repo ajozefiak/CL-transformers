@@ -356,3 +356,4 @@ TODO 1: Experimental Loop:
 
 - Added my SNR config and completed the training loop, I just need to run it and verify that it works
 
+- I need to update this document. But briefly we are running an SNR-V2-L2 sweep for 12 layer ViT with lr = 1e-3
