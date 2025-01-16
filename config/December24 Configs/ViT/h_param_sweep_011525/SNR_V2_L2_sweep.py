@@ -21,7 +21,8 @@ reset_freqs = [1 / (i * epochs * batches) for i in [0.5]]
 for reg_str in reg_strs:
     for reset_percentile in reset_percentiles:
         for reset_freq in reset_freqs:       
-    
+            
+            print(f"seed: {seed}, reg_str: {reg_str}, reset_percentile: {reset_percentile}, reset_freq: {reset_freq:.5f}")
             # config:
             num_layers = layers
             hidden_dim = int(num_layers * 16)
