@@ -13,7 +13,7 @@ epochs = 10
 batches = 12
 
 reg_strs = [1e-7,1e-6,1e-5,1e-4,1e-3,1e-2,1e-1]
-reset_percentiles = [0.5,0.55,0.6,0.7,0.8]
+reset_percentiles = [0.5,0.55,0.6,0.65,0.7,0.8]
 # The reset frequency is in terms of i resets (in expectation) per task = epochs * batches
 reset_freqs = [1 / (i * epochs * batches) for i in [0.5]]
 
