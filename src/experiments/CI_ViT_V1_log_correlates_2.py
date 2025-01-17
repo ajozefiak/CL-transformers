@@ -122,14 +122,7 @@ def run_CI_ViT_R1_log_correlates_2(config, alg, alg_params, seed, save_path, clu
                 if alg == 'SNR' or alg == 'CBP' or alg == 'ReDO' or alg == 'SNR-V2' or alg == 'SNR-L2' or alg == 'SNR-V2-L2' or alg == 'SNR-L2*' or alg == 'SNR-V2-L2*':
                     key, split_key = jr.split(key)
                     state, reset_state, neuron_ages, reset_mask = reset_neurons(state, reset_state, neuron_ages, neuron_pre_activ, split_key)
-                    
-                    # Store reset_mask in reset_mask_array
-                    # TODO: Make this programatic, perhaps as a function, so that we do not need to do this manually
-                    # if save_neuron_ages:
-                    #     reset_mask_array[0,t,:] = reset_mask['Block_0']
-                        # reset_mask_array[1,t,:] = reset_mask['Block_1']
-                        # reset_mask_array[2,t,:] = reset_mask['Block_2']
-                # if (alg != 'SNR' and alg != 'SNR-V2' and alg != 'SNR-L2' and alg != 'SNR-V2-L2'):
+                
                 neuron_ages_log = update_neuron_ages(neuron_ages_log, neuron_pre_activ)
                 neuron_ages_log_2 = update_neuron_ages_2(neuron_ages_log_2, neuron_pre_activ)
                 ###############
