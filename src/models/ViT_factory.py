@@ -281,5 +281,60 @@ def get_ViT_methods(config, alg, alg_params, key):
         
         return state, train_step, accuracy
 
-    # TODO: L2*?, SNR-L2*?
+    # TODO: Double check that this is correct
+    if alg == 'L2*' or alg == 'SNR-L2*' or alg == 'SNR-V2-L2*':
+
+        reg_str = alg_params['reg_str']
+
+        # Specify the exact paths to exclude as tuples of keys
+        include_keys = []
+        for layer in range(config.num_layers):
+            KQV_path = ('params',
+                        f'ViTBlock_{layer}',
+                        'ViTSelfAttention_0',
+                        'Dense_0',
+                        'kernel')
+            include_keys.append(KQV_path)
+        
+        def mask_params(params):
+            def mask_fn(path, leaf):
+                # Convert the DictKey objects in the path to plain strings for comparison
+                path_as_str = tuple(k.key for k in path)
+        
+                # Check if the current path matches any path in exclude_keys
+                if path_as_str not in include_keys:
+                    # print(path_as_str)
+                    return jnp.zeros_like(leaf)  # Zero out this parameter
+                else:
+                    return leaf  # Keep the parameter
+
+            return jax.tree_util.tree_map_with_path(mask_fn, params)
+
+        @jax.jit
+        def l2_loss_fn(params):
+            # Apply mask to exclude specific parameters
+            masked_params = mask_params(params)
+    
+            # Compute L2 loss only for the remaining (non-excluded) parameters
+            return sum(jnp.sum(jnp.square(p)) for p in jax.tree_util.tree_leaves(masked_params))
+
+        @jax.jit
+        def train_step(state: train_state.TrainState, x: jnp.ndarray, y: jnp.ndarray, key: jr.PRNGKey) -> Tuple[jnp.ndarray, train_state.TrainState]:
+            def loss_fn(params):
+                logits = state.apply_fn(params, x, deterministic=False)
+                loss = optax.softmax_cross_entropy_with_integer_labels(logits, y).mean()
+                # l2_loss = sum(jnp.sum(jnp.square(p)) for p in jax.tree_util.tree_leaves(params))
+                l2_loss = l2_loss_fn(params)
+                loss_reg = loss + reg_str * l2_loss
+                return loss_reg, loss
+
+            loss, grads = jax.value_and_grad(loss_fn, has_aux=True)(state.params)
+            new_state = state.apply_gradients(grads=grads)
+
+            # Return the loss for only the objective, discarding the regularization component
+            loss = loss[1]
+            return loss, new_state
+
+        return state, train_step, accuracy
+
     # TODO: Double check S&P
