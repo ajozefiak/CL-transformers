@@ -69,7 +69,7 @@ def run_CI_ViT_R1_log_correlates_2(config, alg, alg_params, seed, save_path, clu
     neuron_ages_log = init_neuron_ages_ViT(config)
     neuron_ages_log_2 = init_neuron_ages_ViT_2(config)
 
-    if alg == 'SNR' or alg == 'CBP' or alg == 'ReDO' or alg == 'SNR-V2' or alg == 'SNR-L2' or alg == 'SNR-V2-L2':
+    if alg == 'SNR' or alg == 'CBP' or alg == 'ReDO' or alg == 'SNR-V2' or alg == 'SNR-L2' or alg == 'SNR-V2-L2' or alg == 'SNR-L2*' or alg == 'SNR-V2-L2*':
         init_reset_state, reset_neurons = get_reset_methods_ViT(config, alg, alg_params)
         reset_state = init_reset_state(config, alg, alg_params)
 
@@ -119,7 +119,7 @@ def run_CI_ViT_R1_log_correlates_2(config, alg, alg_params, seed, save_path, clu
                 loss, state = train_step(state, x_batch, y_batch, split_key)
 
                 # Perform reset step and 
-                if alg == 'SNR' or alg == 'CBP' or alg == 'ReDO' or alg == 'SNR-V2' or alg == 'SNR-L2' or alg == 'SNR-V2-L2':
+                if alg == 'SNR' or alg == 'CBP' or alg == 'ReDO' or alg == 'SNR-V2' or alg == 'SNR-L2' or alg == 'SNR-V2-L2' or alg == 'SNR-L2*' or alg == 'SNR-V2-L2*':
                     key, split_key = jr.split(key)
                     state, reset_state, neuron_ages, reset_mask = reset_neurons(state, reset_state, neuron_ages, neuron_pre_activ, split_key)
                     
