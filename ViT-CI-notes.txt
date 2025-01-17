@@ -369,3 +369,6 @@ terminal 50 task accuracies: 0.87326 (0.00714)
 
 But results are very similar for many other reset_percentiles with reg_str 1e-4 and 1e-3,
 many of these choices get a train accuracy of >= 0.86, so 0.87326 is somewhat due to noise.
+
+TODO:
+- I just need to run the SNR-V2-L2 and log the covariates, then rerun the notebooks on the cluster to get the plots with SNR-V2-L2
