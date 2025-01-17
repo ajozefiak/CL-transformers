@@ -372,3 +372,7 @@ many of these choices get a train accuracy of >= 0.86, so 0.87326 is somewhat du
 
 TODO:
 - I just need to run the SNR-V2-L2 and log the covariates, then rerun the notebooks on the cluster to get the plots with SNR-V2-L2
+
+Best test accuracy for SNR-V2-L2:
+reg_str 0.001 reset_percentile: 0.8, reset_freq: 0.00417, terminal 50 task accuracies: 0.8134799599647522
+- but even for reg_str 1e-4, results are similar, so this is just noise between the two regularization strengths
