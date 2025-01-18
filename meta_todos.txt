@@ -1,0 +1,16 @@
+- I need to figure out where I have saved all my results, what I have done exactly.
+- I need to figure out what each experiment does and what are the configs for.
+- I need to do this for my ViT experiments, my Permuted Shakespeare experiments and for my old experiments.
+
+- For my old experiments, I need to log correlates:
+- Weight norms, neuron death (2 definitions?), neuron resets, I may be foreggeting something else.
+
+- There's also the theory to work on.
+
+- I need to go back to my CI-ViT experiments and understand the choice of hyperparameters for L2Init. 
+- I need to understand the story here.
+- Are we using the same hyperparameter for L2Init for both the training and test accuracies?
+
+- I should see what happens if I use other threshold initializations, I could either run a full sweep or just use the optimal choice.
+- This I can investigate later since I suppose it should have relatively little impact and my intiial choice is quite reasonable.
+- May at the 3 layer ViT I could investigate.

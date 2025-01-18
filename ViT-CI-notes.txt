@@ -358,6 +358,11 @@ TODO 1: Experimental Loop:
 
 - I need to update this document. But briefly we are running an SNR-V2-L2 sweep for 12 layer ViT with lr = 1e-3
 
+Below is a brief update of the day's progress:
+- I showed Vivek the correlates and he agreed that plasticity loss and its common correlates are present.
+- In response he asked me run SNR-V2-L2 for the 12 layer ViT with learning rate 1e-3, where L2Init followed L2 were the only performant models.
+- So that is what I did and I analyzed the results the next day.
+
 01/16/25 Update:
 
 - I have just analyzed the results of the SNR-V2-L2 sweep:
@@ -376,3 +381,19 @@ TODO:
 Best test accuracy for SNR-V2-L2:
 reg_str 0.001 reset_percentile: 0.8, reset_freq: 0.00417, terminal 50 task accuracies: 0.8134799599647522
 - but even for reg_str 1e-4, results are similar, so this is just noise between the two regularization strengths
+
+01/18/25:
+- Yesterday Vivek made me implement SNR-V2-L2* algorithm: L2* = regularize only the KQV projection matrices.
+- I ran a small sweep over 4 hyperparameter choices for a single seed, just to seed if this helps. 
+- This resulted in SNR-V2-L2* improving on the perofrmance of SNR-V2-L2, but not better than L2Init, for train accuracy.
+- I received a bunch of TODOs:
+- In short: 
+- We need to run a finer sweep of SNR-V2-L2* and for more seeds, particularly tune the regularization strength.
+- We should understand why L2Init is doing so well. 
+- For me personally, recall what hyperparameters we are choosing for L2Init for train vs test accuracy. 
+- I could also do a finer h-param sweep for L2, but not critical since we beat L2 with SNR-V2-L2 and SNR-V2-L2* (so far)
+- More epochs to hurt L2Init?
+- Run the experiment longer for the 3 layer ViT
+- For me personally, can we look at other metrics. This is somewhat time consuming for all data, so I should sit down one day with 3 h-params of L2Init, SNR-V2-L2*, and CBP and then analyze.
+- My worry is that we could just be tuning to noise and already look at the last 50 tasks, L2Init and CBP do well for test and train accuracy, this seems like a very natural and robust period to measure.
+- Finally, move to an ATN classification experiment.
