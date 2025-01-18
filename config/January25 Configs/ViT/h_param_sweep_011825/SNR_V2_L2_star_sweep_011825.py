@@ -15,7 +15,7 @@ batches = 12
 
 reset_percentiles = [0.5, 0.55, 0.6, 0.65, 0.7, 0.8]
 reg_strs = [5e-5, 1e-4, 5e-4, 1e-3, 5e-3, 1e-2]
-reset_freqs = = [0.016666666666666666]
+reset_freqs = [0.016666666666666666]
 
 for reset_percentile in reset_percentiles:
     for reg_str in reg_strs:
