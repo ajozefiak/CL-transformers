@@ -6,9 +6,6 @@ import CL_transformers
 seed = int(sys.argv[1])
 layers = int(sys.argv[2])
 lr = float(sys.argv[3])
-option = int(sys.argv[4])
-
-
 
 epochs = 10
 batches = 12
