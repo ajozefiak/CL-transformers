@@ -5,9 +5,17 @@
 - 1: I have reduced the width, but I am still keeping it somewhat wide since I have only preliminary results on a very small sweep over 4 hyperparameters and a single seed.
 - 2: It is finer since we know that in this region, L2 variants perform well and drop off quickly.
 
+- 3 layers with learning rate 1e-3:
+- optimal reg_str was 1e-3 for SNR-V2-L2
+- I ran the h-param sweep with the same parameters as those below
 - 12 layers with learning rate 1e-3: 
-
 - optimal reg_str was 1e-4 on my "initial" sweep of other L2 methods:
 - eta = 0.5, 0.55, 0.6, 0.65, 0.7, 0.8
 - 5e-5, 1e-4, 5e-4, 1e-3, 5e-3, 1e-2
 - reset_freq = half a task as usual for now
+
+- 12 layers with learning rate 1e-4:
+- We found that L2 and SNR-V2-LR attained the greatest training accuracy with reg_str = 1e-7
+- Therefore, we use the following sweep:
+- reg_strs = [1e-8, 5e-8, 1e-7, 5e-7, 1e-6, 5e-6]
+- we keep eta and reset_freq as above.

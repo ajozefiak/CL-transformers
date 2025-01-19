@@ -397,3 +397,14 @@ reg_str 0.001 reset_percentile: 0.8, reset_freq: 0.00417, terminal 50 task accur
 - For me personally, can we look at other metrics. This is somewhat time consuming for all data, so I should sit down one day with 3 h-params of L2Init, SNR-V2-L2*, and CBP and then analyze.
 - My worry is that we could just be tuning to noise and already look at the last 50 tasks, L2Init and CBP do well for test and train accuracy, this seems like a very natural and robust period to measure.
 - Finally, move to an ATN classification experiment.
+
+- Today, I have set off SNR-V2-L2-star's fine hyperparameter sweep for (L3, lr=1e-3) and (L12, lr=1e-3).
+- TODO: do a sweep for (L12, lr=1e-4)
+- TODO: Analyze the results
+
+8:32 PM
+- By accident I did not update the experiment file and so resets did not apply, so I got results for SNR-L2*,
+- Although this shows that the optimal regularizarion strength is actually 5e-3 for (L3, 1e-3), with results of the form:
+- reg_str: 0.005 reset_percentile: 0.6, reset_freq: 0.01667, terminal 50 task accuracies: 0.84524 (0.00774)
+
+- I have fixed the experiment code and will rerun the (L3, 1e-3) and (L12, 1e-3) experiments right now
