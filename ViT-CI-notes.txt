@@ -408,3 +408,4 @@ reg_str 0.001 reset_percentile: 0.8, reset_freq: 0.00417, terminal 50 task accur
 - reg_str: 0.005 reset_percentile: 0.6, reset_freq: 0.01667, terminal 50 task accuracies: 0.84524 (0.00774)
 
 - I have fixed the experiment code and will rerun the (L3, 1e-3) and (L12, 1e-3) experiments right now
+- Initial results look and show that the algorithm and experiment loop are implemented correctly.
