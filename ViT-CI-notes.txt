@@ -409,3 +409,11 @@ reg_str 0.001 reset_percentile: 0.8, reset_freq: 0.00417, terminal 50 task accur
 
 - I have fixed the experiment code and will rerun the (L3, 1e-3) and (L12, 1e-3) experiments right now
 - Initial results look and show that the algorithm and experiment loop are implemented correctly.
+
+- I need to analyze my results in the morning, but we are getting some godo results so far.
+- (L3,1e-3): training accuracy is slightly better than SNR-V2-L2, but could do better with a finer sweep, but not better than CBP
+- (L3,1e-3): test accuracy is better than L2Init by 2-3%, so this is good news.
+- The above use different regularization strengths, perhaps this is fine. When people perform h-param sweeps they choose the h-params for the specific task.
+
+- TODO: I should really look at other metrics.
+- TODO: tomorrow: analyze results, implement ATN, look at the cumulative average train/test acc and see if we can gleam any trends, perhaps run the 3 layer model for more iterations.

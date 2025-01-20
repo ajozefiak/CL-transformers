@@ -25,7 +25,7 @@ class ModelConfigLViT:
     lr: float = 1e-3
     gradient_accumulation_steps: int = 1
     # TODO
-    n_neurons: int = mlp_ratio * hidden_dim
+    n_neurons: int = int(mlp_ratio * hidden_dim)
 
 # alg is a string specifiying the algorithm:
 # L2, L2Init, S&P, SNR, CBP, ReDO
