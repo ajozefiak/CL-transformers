@@ -6,6 +6,8 @@ import time
 import pickle
 import os
 import numpy as np
+# TODO: Check that datasets loads
+import datasets
 
 from ..models import *
 from ..data import *
@@ -17,7 +19,7 @@ def run_ATN_LViT_R1_reset_experiment(config, alg, alg_params, seed, save_path, c
     
     # Default Experimental Parameters
     batch_size = 16
-    articles = 16*32
+    articles = batch_size*32
     epochs = 1
     tasks = 500
 
@@ -56,32 +58,26 @@ def run_ATN_LViT_R1_reset_experiment(config, alg, alg_params, seed, save_path, c
 
     # Load the ImageNet-32 Dataset
     if cluster:
-        CI_dir = '/home/jozefiak/CL/Experiments/PS_fixed_111924/ImageNet_dataset/'
+        ATN_dir = '/home/jozefiak/CL/Experiments/PS_fixed_111924/ATN_dataset/'
     else:
-        CI_dir = '/content/drive/MyDrive/ML_Data/'
-    # Takes 51 second to load
-    X_train, y_train, X_test, y_test = load_Imagenet32(CI_dir)
+        ATN_dir = '/content/drive/MyDrive/CL LLM/Louis Wang Tutorial/Late August/Process All the News/January25/'
+    data = get_ATN_data(ATN_dir)
+    publications = list(data.keys())
 
-    # Generate random partition of classes into two families
-    task_key, task_split_key = jr.split(task_key)
-    label_partition_permutation = jr.permutation(task_split_key, 1000)
-    family_0 = label_partition_permutation[0:500]
-    family_1 = label_partition_permutation[500:1000]
-
-
-    # TODO: For now we have a fixed count of 500 tasks in the CI-R1 experiment
     for task in range(tasks):
-        X_train_, y_train_, X_test_, y_test_ = get_next_task_CI32(X_train, y_train, X_test, y_test, task, family_0, family_1, images_per_class)
+        task_key, task_split_key = jr.split(task_key)
+        ds_task = get_next_task(data, publications, task_split_key, articles)
 
         for epoch in range(epochs):
             task_key, task_split_key = jr.split(task_key)
-            X_train_, y_train_ = permute_image_order(X_train_, y_train_, task_split_key)
+            ds_task_shuffled = ds_task.shuffle(seed=int(task_split_key[0]))
 
-            for batch_start in range(0, X_train_.shape[0], batch_size):
-                batch_end = batch_start + batch_size
-
-                x_batch = X_train_[batch_start:batch_end]
-                y_batch = y_train_[batch_start:batch_end]
+            dataset_length = len(shuffled)
+            for start_idx in range(0, dataset_length, batch_size):
+                batch = shuffled[start_idx : start_idx + batch_size]
+          
+                x_batch = batch["tokens_512"][:128]
+                y_batch = batch["label"]
 
                 ###############
                 # COMMON TRAINING LOOP:
@@ -91,6 +87,7 @@ def run_ATN_LViT_R1_reset_experiment(config, alg, alg_params, seed, save_path, c
                 ###############
                 neuron_pre_activ = get_neuron_pre_activ(state, x_batch)
 
+                train_accuracy = accuracy(state, x_batch, y_batch)
                 key, split_key = jr.split(key)
                 loss, state = train_step(state, x_batch, y_batch, split_key)
 
@@ -98,12 +95,6 @@ def run_ATN_LViT_R1_reset_experiment(config, alg, alg_params, seed, save_path, c
                 if alg == 'SNR' or alg == 'CBP' or alg == 'ReDO' or alg == 'SNR-V2' or alg == 'SNR-L2' or alg == 'SNR-V2-L2' or alg == 'SNR-L2*' or alg == 'SNR-V2-L2*':
                     key, split_key = jr.split(key)
                     state, reset_state, neuron_ages, reset_mask = reset_neurons(state, reset_state, neuron_ages, neuron_pre_activ, split_key)
-                    # Store reset_mask in reset_mask_array
-                    # TODO: Make this programatic, perhaps as a function, so that we do not need to do this manually
-                    # if save_neuron_ages:
-                    #     reset_mask_array[0,t,:] = reset_mask['Block_0']
-                        # reset_mask_array[1,t,:] = reset_mask['Block_1']
-                        # reset_mask_array[2,t,:] = reset_mask['Block_2']
                 else:
                     neuron_ages = update_neuron_ages(neuron_ages, neuron_pre_activ)  
                 ###############
@@ -113,13 +104,13 @@ def run_ATN_LViT_R1_reset_experiment(config, alg, alg_params, seed, save_path, c
                 train_loss.append(loss)
 
                 # Log training accuracy
-                train_accuracy = accuracy(state, x_batch, y_batch)
                 train_acc.append(train_accuracy)
 
 
             # Log test accuracy at the end of the epoch
-            test_accuracy = accuracy(state, X_test_, y_test_)
-            test_acc.append(test_accuracy)
+            # TODO: We need to extractt a test set for each class
+            # test_accuracy = accuracy(state, X_test_, y_test_)
+            # test_acc.append(test_accuracy)
 
 
     # TODO: Save the results
