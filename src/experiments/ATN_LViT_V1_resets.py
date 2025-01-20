@@ -47,7 +47,7 @@ def run_ATN_LViT_R1_reset_experiment(config, alg, alg_params, seed, save_path, c
     
     # Get the state, and train_step, accuracy functions
     key, split_key = jr.split(key)
-    state, train_step, accuracy = get_ViT_methods(config, alg, alg_params, split_key)
+    state, train_step, accuracy = get_LViT_methods(config, alg, alg_params, split_key)
     
     # Initialize data structures associated with resets and neuron_ages
     update_neuron_ages, get_neuron_pre_activ = get_neurons_ages_functions_ViT(config)
@@ -85,7 +85,7 @@ def run_ATN_LViT_R1_reset_experiment(config, alg, alg_params, seed, save_path, c
                 # (2) outputs loss and neuron_ages for logging purposes
                 # In practice, it should be the case that this code can be copied to every experiment
                 ###############
-                # neuron_pre_activ = get_neuron_pre_activ(state, x_batch)
+                neuron_pre_activ = get_neuron_pre_activ(state, x_batch)
 
                 train_accuracy = accuracy(state, x_batch, y_batch)
                 key, split_key = jr.split(key)
