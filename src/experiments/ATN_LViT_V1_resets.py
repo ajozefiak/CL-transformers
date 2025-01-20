@@ -74,7 +74,7 @@ def run_ATN_LViT_R1_reset_experiment(config, alg, alg_params, seed, save_path, c
 
             dataset_length = len(shuffled)
             for start_idx in range(0, dataset_length, batch_size):
-                batch = shuffled[start_idx : start_idx + batch_size]
+                batch = ds_task_shuffled[start_idx : start_idx + batch_size]
           
                 x_batch = batch["tokens_512"][:128]
                 y_batch = batch["label"]
