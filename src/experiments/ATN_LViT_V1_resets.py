@@ -72,7 +72,7 @@ def run_ATN_LViT_R1_reset_experiment(config, alg, alg_params, seed, save_path, c
             task_key, task_split_key = jr.split(task_key)
             ds_task_shuffled = ds_task.shuffle(seed=int(task_split_key[0]))
 
-            dataset_length = len(shuffled)
+            dataset_length = len(ds_task_shuffled)
             for start_idx in range(0, dataset_length, batch_size):
                 batch = ds_task_shuffled[start_idx : start_idx + batch_size]
           
