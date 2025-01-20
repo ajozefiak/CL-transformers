@@ -11,6 +11,7 @@ import optax
 
 @dataclass
 class ModelConfigLViT:
+    vocab_size: int = 50257
     image_size: int = 32
     input_size: int = 512
     batch_size: int = 16
@@ -138,7 +139,7 @@ def get_LViT_methods(config, alg, alg_params, key):
             B, T = x.shape
 
             # LViT Token Embedding
-            x = nn.Embed(self.config.input_size, self.config.hidden_dim)(x)
+            x = nn.Embed(sself.config.vocab_size, self.config.hidden_dim)(x)
 
             # Prepend a CLS token:
             cls = self.param('cls', nn.initializers.zeros, (1, 1, self.config.hidden_dim))
