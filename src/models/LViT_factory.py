@@ -118,7 +118,7 @@ def get_LViT_methods(config, alg, alg_params, key):
             return x
 
 
-    class LViT(nn.Module):
+    class ViT(nn.Module):
         config: ModelConfigLViT
 
         @nn.compact
