@@ -29,7 +29,7 @@ class ModelConfigLViT:
 # L2, L2Init, S&P, SNR, CBP, ReDO
 # ReDO-L2, CBP-L2
 # alg_params is dictionary with hyperparameters
-def get_ViT_methods(config, alg, alg_params, key):
+def get_LViT_methods(config, alg, alg_params, key):
 
     class PatchEmbed(nn.Module):
         """Convert image into patch embeddings."""
