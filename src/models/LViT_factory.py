@@ -13,6 +13,7 @@ import optax
 class ModelConfigLViT:
     image_size: int = 32
     input_size: int = 512
+    batch_size: int = 16
     patch_size: int = 4
     num_classes: int = 1000
     hidden_dim: int = 192
@@ -173,7 +174,7 @@ def get_LViT_methods(config, alg, alg_params, key):
         model = ViT(config)
         # NOTE/TODO: The dummy shape changed from (1,config.image_size, config.image_size, 3) -> (100, config.image_size, config.image_size, 3)
         # in order to match the batch size and potentially avoid the slow warnings that I was seeing on the cluster
-        dummy_input = jnp.zeros((100, config.image_size, config.image_size, 3), jnp.float32)
+        dummy_input = jnp.zeros((config.batch_size, config.input_size), jnp.int32)
         params = model.init(key, dummy_input)
         optimizer = optax.adam(config.lr, b1=0.9, b2=0.999, eps=1e-7)
 
