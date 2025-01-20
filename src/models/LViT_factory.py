@@ -33,7 +33,7 @@ def get_LViT_methods(config, alg, alg_params, key):
 
     class PatchEmbed(nn.Module):
         """Convert image into patch embeddings."""
-        config: modelconfigLViT
+        config: ModelConfigLViT
 
         @nn.compact
         def __call__(self, x):
@@ -54,7 +54,7 @@ def get_LViT_methods(config, alg, alg_params, key):
             return x
 
     class ViTSelfAttention(nn.Module):
-        config: modelconfigLViT
+        config: ModelConfigLViT
 
         @nn.compact
         def __call__(self, x, deterministic=True):
@@ -89,7 +89,7 @@ def get_LViT_methods(config, alg, alg_params, key):
 
 
     class MLP(nn.Module):
-        config: modelconfigLViT
+        config: ModelConfigLViT
 
         @nn.compact
         def __call__(self, x, deterministic=True):
@@ -102,7 +102,7 @@ def get_LViT_methods(config, alg, alg_params, key):
 
 
     class ViTBlock(nn.Module):
-        config: modelconfigLViT
+        config: ModelConfigLViT
 
         @nn.compact
         def __call__(self, x, deterministic=True):
@@ -119,7 +119,7 @@ def get_LViT_methods(config, alg, alg_params, key):
 
 
     class LViT(nn.Module):
-        config: modelconfigLViT
+        config: ModelConfigLViT
 
         @nn.compact
         def __call__(self, x, deterministic=False):
@@ -169,7 +169,7 @@ def get_LViT_methods(config, alg, alg_params, key):
             return params
 
 
-    def init_train_state(key, config: modelconfigLViT) -> train_state.TrainState:
+    def init_train_state(key, config: ModelConfigLViT) -> train_state.TrainState:
         model = ViT(config)
         # NOTE/TODO: The dummy shape changed from (1,config.image_size, config.image_size, 3) -> (100, config.image_size, config.image_size, 3)
         # in order to match the batch size and potentially avoid the slow warnings that I was seeing on the cluster
