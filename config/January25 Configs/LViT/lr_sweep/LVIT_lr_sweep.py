@@ -14,7 +14,8 @@ for lr in learning_rates:
     # config:
     num_layers = layers
     hidden_dim = int(num_layers * 16)
-    config = CL_transformers.ModelConfigLViT(num_layers=num_layers, hidden_dim=hidden_dim, lr=lr, num_classes=2)
+    n_neurons = int(4 * hidden_dim)
+    config = CL_transformers.ModelConfigLViT(num_layers=num_layers, hidden_dim=hidden_dim, n_neurons=n_neurons, lr=lr, num_classes=2)
 
     alg = 'Vanilla'
     # No alg_params necessary for Vanilla algorithm
