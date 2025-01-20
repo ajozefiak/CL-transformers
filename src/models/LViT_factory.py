@@ -139,7 +139,7 @@ def get_LViT_methods(config, alg, alg_params, key):
             B, T = x.shape
 
             # LViT Token Embedding
-            x = nn.Embed(sself.config.vocab_size, self.config.hidden_dim)(x)
+            x = nn.Embed(self.config.vocab_size, self.config.hidden_dim)(x)
 
             # Prepend a CLS token:
             cls = self.param('cls', nn.initializers.zeros, (1, 1, self.config.hidden_dim))
