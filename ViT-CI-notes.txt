@@ -417,3 +417,22 @@ reg_str 0.001 reset_percentile: 0.8, reset_freq: 0.00417, terminal 50 task accur
 
 - TODO: I should really look at other metrics.
 - TODO: tomorrow: analyze results, implement ATN, look at the cumulative average train/test acc and see if we can gleam any trends, perhaps run the 3 layer model for more iterations.
+
+01/20/25 Update:
+- Over the weekend I ran the SNR-V2-L2* star that was finer. I got some better results.
+- In response, I setup a finer for SNR-V2-L2* for the (L3,1e-3) model since our performance is on the boundary.
+- SNR-V2-L2* obtains the greatest test accuracy for (L3,1e-3) and (L12, 1e-3)
+- SNR-V2-L2* obtains the greatest train accuracy for (L12, 1e-3) and (L12, 1e-4)
+- So there is still some room for improvement, but a bit better after tuning.
+
+I have also started implmemting the ATN experiment and have some initial experiments on the cluseter and colab.
+- So far I have settled on a context window of 512 tokens.
+- batch size of 16
+- 1 epoch per task
+- 16*32 = 512 articles from each class for each task
+- each task is a binary classification problem 
+- Tuning the learning rate, we see some plasticity loss for (L3, 1e-3)
+- The network was doing very well with more epochs, so I decided to decrease the number of epochs to 1, making the problem more difficult.
+
+TODO/IMPORTANT: I noticed that I was logging accuracy after the train_step in my ViT experiments. I fixed this for my LViT experiments.
+- However, I may need to fix this for my ViT experiments and see how performance changes.
