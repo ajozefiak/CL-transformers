@@ -1,2 +1,14 @@
 from .PS import run_experiment_PS
 from .PS_factory import run_experiment_PS_factory
+from .Alt_CATN import run_experiment_Alt_CATN
+from .ATN import run_experiment_ATN
+from .PS_factory_100724 import run_experiment_PS_100724
+from .PS_factory_112024 import run_experiment_PS_112024
+from .PS_factory_112024_no_shuffle import run_experiment_PS_112024_no_shuffle
+
+from .PS_factory_112024_cold_start import run_experiment_PS_112024_cold_start
+
+from .CI_ViT_V1 import run_CI_ViT_R1_experiment
+from .CI_ViT_V1_resets import run_CI_ViT_R1_reset_experiment
+from .CI_ViT_V1_log_correlates import run_CI_ViT_R1_log_correlates
+from .CI_ViT_V1_log_correlates_2 import run_CI_ViT_R1_log_correlates_2

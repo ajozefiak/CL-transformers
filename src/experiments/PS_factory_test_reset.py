@@ -117,30 +117,44 @@ def get_dataloader(text):
     
     return DataLoaderPermuteText   
 
-def run_experiment_PS_factory_test_reset(alg, alg_params, text, B, T, N, epochs, tasks, seed, save_neuron_ages, save_results, save_path, verbose, print_freq):
+# Add model config
+def run_experiment_PS_factory_test_reset(config, alg, alg_params, text, B, T, N, epochs, tasks, seed, save_neuron_ages, save_results, save_path, verbose, print_freq, save_weights, save_weights_freq):
     
     # Get the data_loader_class
     data_loader_class = get_dataloader(text)
 
     # Initialize the random key
     random_key = jr.PRNGKey(seed)
+    task_random_key = jr.PRNGKey(seed)
     print(f"Initial key: {random_key}, Type: {type(random_key)}")
     random_key, split_key = jr.split(random_key)
-
-    # TODO: change this if we want to play with the ModelConfig - maybe make it an argument
-    config = ModelConfig(vocab_size=11387)
-    train_state, train_step = get_transformer_methods(config, alg, alg_params, split_key)
-    neuron_ages = init_neuron_ages(config)
-    if alg == 'ART' or alg == 'ReDO' or alg == 'CBP':
-        init_reset_state, reset_neurons = get_reset_methods(config, alg, alg_params)
-        reset_state = init_reset_state(config, alg, alg_params)
 
     # Get the total number of training steps
     train_steps_per_task = (N * epochs) // (B * T)
 
+    # TODO: change this if we want to play with the ModelConfig - maybe make it an argument
+    if not config:
+        print("USING DEFAULT MODEL CONFIG")
+        config = ModelConfig(vocab_size=11387)
+    else:
+        print('USING CUSTOM MODEL CONFIG')
+    train_state, train_step = get_transformer_methods(config, alg, alg_params, split_key)
+    neuron_ages = init_neuron_ages(config)
+    if alg == 'ART' or alg == 'ART-L2' or alg == 'ART-L2*' or alg == 'ReDO' or alg == 'CBP':
+        init_reset_state, reset_neurons = get_reset_methods(config, alg, alg_params)
+        reset_state = init_reset_state(config, alg, alg_params)
+
+        # Initialize reset_mask_array
+        reset_mask_array = np.zeros((3, int(train_steps_per_task * tasks), int(config.n_neurons)), dtype = bool)
+
     # initialize neuron_ages_array
     if save_neuron_ages:
-        neuron_ages_array = np.zeros((3, int(train_steps_per_task * tasks), int(config.n_embd * 4)), dtype = np.uint32)
+        neuron_ages_array = np.zeros((1, int(train_steps_per_task * tasks), int(config.n_neurons)), dtype = np.uint32)
+
+    #  Initialize params_list
+    if save_weights:
+        params_list = []
+        probs_list = []
 
     # Iniitialize loss_array
     loss_array = np.zeros(train_steps_per_task * tasks)
@@ -154,8 +168,8 @@ def run_experiment_PS_factory_test_reset(alg, alg_params, text, B, T, N, epochs,
             print(f"Task: {task}")
 
         # Split the random key
-        random_key, split_key = jr.split(random_key)
-        data_loader = data_loader_class(text=text, B=B, T=T, N=N, key=split_key)
+        task_random_key, task_split_key = jr.split(task_random_key)
+        data_loader = data_loader_class(text=text, B=B, T=T, N=N, key=task_split_key)
         
         ###############
         # In principle, we should be able to copy the for loop below to other experiments as long as the 
@@ -178,20 +192,36 @@ def run_experiment_PS_factory_test_reset(alg, alg_params, text, B, T, N, epochs,
             random_key, split_key = jr.split(random_key)
             loss, train_state = train_step(train_state, x, y, split_key)
             # Perform reset step and 
-            if alg == 'ART' or alg == 'ReDO' or alg == 'CBP':
+            if alg == 'ART' or alg == 'ART-L2' or alg == 'ART-L2*' or alg == 'ReDO' or alg == 'CBP':
                 random_key, split_key = jr.split(random_key)
-                train_state, reset_state, neuron_ages = reset_neurons(train_state, reset_state, neuron_ages, neuron_pre_activ, split_key)
+                train_state, reset_state, neuron_ages, reset_mask = reset_neurons(train_state, reset_state, neuron_ages, neuron_pre_activ, split_key)
+                # Store reset_mask in reset_mask_array
+                reset_mask_array[0,t,:] = reset_mask['Block_0']
+                # reset_mask_array[1,t,:] = reset_mask['Block_1']
+                # reset_mask_array[2,t,:] = reset_mask['Block_2']
             else:
                 neuron_ages = update_neuron_ages(neuron_ages, neuron_pre_activ)  
             ###############
             ###############
+
+            ###############
+            # Save Weights
+            ###############
+            if save_weights & (t % save_weights_freq == 0):
+                params_list.append(train_state.params)
+                
+                temp_probs = []
+                temp_probs.append(neuron_pre_activ['intermediates']['Block_0']['CausalSelfAttention_0']['probs'])
+                # temp_probs.append(neuron_pre_activ['intermediates']['Block_1']['CausalSelfAttention_0']['probs'])
+                # temp_probs.append(neuron_pre_activ['intermediates']['Block_2']['CausalSelfAttention_0']['probs'])
+                probs_list.append(temp_probs)
             
             # Update loss_array and neuron_ages_array for logigng purposes
             loss_array[t] = loss
             if save_neuron_ages:
                 neuron_ages_array[0,t,:] = neuron_ages['Block_0']
-                neuron_ages_array[1,t,:] = neuron_ages['Block_1']
-                neuron_ages_array[2,t,:] = neuron_ages['Block_2']
+                # neuron_ages_array[1,t,:] = neuron_ages['Block_1']
+                # neuron_ages_array[2,t,:] = neuron_ages['Block_2']
             t += 1
 
             if verbose & (step % print_freq == 0):
@@ -209,19 +239,45 @@ def run_experiment_PS_factory_test_reset(alg, alg_params, text, B, T, N, epochs,
         # Define file names for the data
         loss_path = os.path.join(save_path, "loss_array.pkl")
         ages_path = os.path.join(save_path, "neuron_ages_array.pkl")
+        reset_mask_path = os.path.join(save_path, "reset_mask_array.pkl")
+        weights_path = os.path.join(save_path, "params_list.pkl")
+        probs_path = os.path.join(save_path, "probs_list.pkl")
 
         # Save the loss_array to a pickle file
         with open(loss_path, 'wb') as f:
             pickle.dump(loss_array, f)
             print(f"Saved loss_array to {loss_path}")
 
+        # Save the params_list
+        if save_weights:
+            with open(weights_path, 'wb') as f:
+                pickle.dump(params_list, f)
+                print(f"Saved params_list to {weights_path}")
+            with open(probs_path, 'wb') as f:
+                pickle.dump(probs_list, f)
+                print(f"Saved probs_list to {probs_path}")
+
+
         if save_neuron_ages:
             # Save the neuron_ages_array to a pickle file
             with open(ages_path, 'wb') as f:
                 pickle.dump(neuron_ages_array, f)
                 print(f"Saved neuron_ages_array to {ages_path}")
+        
+        if alg == 'ART' or alg == 'ART-L2' or alg == 'ART-L2*' or alg == 'ReDO' or alg == 'CBP':
+            # Save the reset_mask_array to a pkl file
+            with open(reset_mask_path, 'wb') as f:
+                pickle.dump(reset_mask_array, f)
+                print(f"Saved reset_mask_array to {reset_mask_path}")
 
+    # Return results in case we want to analyze/plot immediately
     if save_neuron_ages:
-        return loss_array, neuron_ages_array
+        if alg == 'ART' or alg == 'ART-L2' or alg == 'ART-L2*' or alg == 'ReDO' or alg == 'CBP':
+            return loss_array, neuron_ages_array, reset_mask_array
+        else:
+            return loss_array, neuron_ages_array
     else:
-        return loss_array
+        if alg == 'ART' or alg == 'ART-L2' or alg == 'ART-L2*' or alg == 'ReDO' or alg == 'CBP':
+            return loss_array, reset_mask_array
+        else:
+            return loss_array

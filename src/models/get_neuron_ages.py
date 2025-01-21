@@ -5,11 +5,12 @@ from .transformer import *
 def init_neuron_ages(config):
   neuron_ages = {}
   for i in range(config.n_layer):
-    neuron_ages[f'Block_{i}'] = jnp.zeros((config.n_embd * 4,), dtype=jnp.uint32)
+    neuron_ages[f'Block_{i}'] = jnp.zeros((config.n_neurons,), dtype=jnp.uint32)
   return neuron_ages
 
 # TODO: get blocks programatically
-blocks = ['Block_0', 'Block_1', 'Block_2']
+# blocks = ['Block_0', 'Block_1', 'Block_2']
+blocks = ['Block_0']
 
 # This function is updated so that neuron ages are in units of batches, not number of examples
 # Algorithmically, there is no difference since the "number of batches" is in multiples of batch_size * context_window

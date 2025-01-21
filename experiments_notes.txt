@@ -1,0 +1,115 @@
+120425:
+
+I noticed that my scale 256 experiments were running out of memory, this started to happen once I created new .py and .sh files that take the learning rate as an argument. These files are in the December24 configs for PS_120124...
+
+As an example, this is one of these new jobs that required me to increase the number of CPUs by a facrtor of 2, doubling the memory consumption. But now, too many resources are being expended on these experiments and it is clogging the cluster.
+sbatch PS_120124_Scale_X_epochs_Y_tasks_Z_ALG_lr_LR.sh 256 100 50 L2 1e-3
+
+My suspision is that either something changed with the cluster, or my new experiment is generating too much memory for some reason.
+
+In response, I am running an old job to see if this runs out of memory
+sbatch PS_112024_Scale_X_epochs_Y_tasks_Z_ALG.sh 256 100 50 ART-L2*
+Submitted batch job 60770007
+
+12/09/24 Update:
+
+I have looked into job 60770007 and it also appears to have suffered on OOM error:
+
+/var/spool/slurmd/job60778278/slurm_script: line 31: 3509085 Killed            \
+      python3 PS_112024_Scale_X_epochs_Y_tasks_Z_ALG.py $SLURM_ARRAY_TASK_ID $s\
+cale $epochs $tasks $alg
+slurmstepd: error: Detected 1 oom-kill event(s) in StepId=60778278.batch. Some \
+of your processes may have been killed by the cgroup out-of-memory handler.
+
+I don't think that I have changed anything with my code, especially with this older code. To remedy this I will:
+- investigate how much memory was used to save the results: This is only about 5.4G.
+- look into the code and see if there is anywhere that we are losing memory
+- rerun the experiment, but with marginally more memory to see if we only need to increase memory marginally. This currently running
+
+2 x 70 GB: Job 60828687 => OOM
+2 x 80 GB: Job 60828693 => OOM
+2 x 90 GB: Job 60828710 => OOM
+2 x 100 GB: Job 60828714 =>  A different memory error when dumping data
+2 x 110 GB: Job 60828715 => OOM
+2 x 120 GB: Job 60828760 => OOM
+
+I will then see what happens in a few days.
+
+Based on my investigations thus far, it appears that something may have changed with the settings in the cluster and I am generating more memory or garbage collection isn't working as usual.
+
+I am also saving only about 5.4G of results, so there must be some unneccessary accumulation of data in my experiments. I should somehow measure this.
+
+12/10/24 Update
+
+This is a different error for Job 2X100 GB: 60828714
+
+Traceback (most recent call last):
+  File "/nfs/home/jozefiak/CL/Experiments/PS_fixed_111924/PS_120124_Scale_X_epo\
+chs_Y_tasks_Z_ALG_lr_LR.py", line 99, in <module>
+    res = CL_transformers.run_experiment_PS_112024(config, alg, alg_params, tex\
+t, B, T, N, epochs, tasks, seed, save_neuron_ages, save_results, save_path, ver\
+bose, print_freq, save_weights, save_weights_freq)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/nfs/home/jozefiak/CL/Experiments/PS_fixed_111924/CL_transformers/src/e\
+xperiments/PS_factory_112024.py", line 300, in run_experiment_PS_112024
+    pickle.dump(neuron_ages_array, f)
+MemoryError
+
+But it looks like one of the jobs saved the results, so I'm not sure what happened.
+
+NOET: I am updating the config file to use 10 CPUs (out of the 40 for a single node)
+and to use a totla 128 GB (out of the total of 515 GB total)
+
+Howoever, only 3 out of 4 possible jobs are being allocated onto a node, so this is wasteful.
+In response I am running sbatch PS_120124_Scale_X_epochs_Y_tasks_Z_ALG_lr_LR.sh 256 100 50 ART-L2* 0.0011
+which requires 10 CPUs and 64GB of memory. Submitted batch job 60840193.
+- I am able to fit 3 jobs requireing 10 CPUs with 128GB and one job rquiring 10 CPUs and 64 GB onto a single node.
+Let's now see what happens.
+
+Jobs with 10 CPUs and 128 GB: 60839969, 60839964, 
+Jobs with 10 CPUs and 64 GB: 60840193
+Let's see if these run to completion and do not get an OOM exception. It may have in fact been the issue with too few CPUs. 
+
+Update in the evening of 12/10/24: Jobs of the form 60840193 where exceeding memory after 4 hours and 50 minutes, and then throwing an OOM error
+
+I am trying the following with garbage collection being called at the begining of each task: 10 CPUs, 64 GB
+
+[jozefiak@eofe8 PS_fixed_111924]$ sbatch PS_120124_Scale_X_epochs_Y_tasks_Z_ALG_lr_LR.sh 256 100 50 ART-L2* 0.00111
+Submitted batch job 60845048 => this garbage collection has not helped at all and we still ran out of memory at time 4-5 hours,
+which is in line with the earlier experiment that ocnsumed 64GB in 4 hours
+
+Update again, later in the evening. The jobs 60839969, 60839964 are also getting OOM errors after about 9 hours. I have no idea why this is occurring.
+
+My conclusion, it looks like a linear growth in memory consumption, so the memory is due to the repeated tasks. Something is being allocated and not deleted.
+
+12/19/24:
+
+- I have sepnt the last week reading about scaling laws. There are:
+- The Kaplan paper.
+- The Chinchilla paper.
+- Scaling Laws under the microscope (authors from Israel)
+- Scaling Laws for constrained data (i.e. multiple epochs). This one uses a similar scaling law as that of the CHinchilla paper.
+
+Overall these scaling laws are in terms of:
+- N (number of non-embedding parameters)
+- D (or D_U as I would call it) number of (unique) tokens in the dataset
+- D_P (number of tokens processeed) or S (steps)
+- C is compute where C = \Theta(ND) or C = \Theta(NS)
+
+Kaplan et al. claims that models are "trained to convergence" but there largest experiments train for 5X tokens than are present in their dataset WebText2.
+This implies that Kapal et al., for a fixed D (eitehr D_U or D_P) are training until convergence which includes multiple epochs.
+The scaling laws under the microscope paper confirms this and the constrained scaling laws paper clearly trains over multiple epochs. 
+However, when decomposing the scaling law in terms of compute, it is unclear how the models are fit exactly.
+Does D become D_U or D_P? This is the only thing that I am confused by, and is somewhat limiting the connection of my work to the scaling laws papers.
+
+Results are in /pool001/jozefiak/CL/SL/test/ and /pool001/jozefiak/CL/SL/train/
+
+- thin_XX.pkl and wide_XX.pkl are results from late last week that I am not too happy with.
+- Recent results are of the form:
+- scale_3_D_1M_freq_60 which means: 3 layers with aspect ratio 32, learning ratio of 0.001, D_U = 1M, logging test loss every 60 steps. 
+- I ran these from scale 2 to 10 and from 1M, 10M, to 100M datasets. All logged every 60 steps. I used a batch size of 128 and context window of 128.
+
+- scale_2_D_10M_freq_15_CL.pkl Is the same experiment as above, except the dataset is split into 10 tasks, each of 1M tokens and the model being trained for 5 epochs on each task.
+

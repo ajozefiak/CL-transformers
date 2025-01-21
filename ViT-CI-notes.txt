@@ -1,0 +1,438 @@
+12/23/24
+
+- Here I am creating a notes section.
+- Some of this will be moved to a .tex file on Overleaf for ease of presentation and eventual merging into my paper.
+- For now I will work with the CI-R1 experiment. The Contiual ImageNet experiment with 1 pass though the dataset.
+- I have implemented this experiment as CI_ViT_V1.py and CI_ViT_V1_resets.py
+- So far, all config files are in config/December24 Configs/ViT
+
+TODO META: 
+- I need to figure out how and where to log results.
+- Master Directory:
+- /pool001/jozefiak/CI_ViT/
+- ../experiment_name/alg_h-params/seed_i/
+- /lr_sweep/ 
+- /test_acc.pkl
+- /train_acc.pkl
+- /train_loss.pkl
+- e.g. - /pool001/jozefiak/CI_ViT/lr_sweep/Vanilla_lr_1e-1/seed_0/test_acc.pkl
+- TODO: make a function that saves to disk and creates the necessary directory if it does not experiments
+
+
+TODO 1:
+- I will begin by performing a learning rate sweep for 5 seeds.
+- I should record the train loss, train accuracy, and train error.
+- I could record other covarites, but perhaps that should be done later.
+- The other covariates to record are: neuron activities, neuron ages, entropies of self attention layers, weight magnitudes
+
+- I have completed TODO 1.
+- For 3 layers, lr = 1e-3 is better initially and has clear plasticity loss while lr = 1e-4 performs better eventually.
+- For 12 layers, lr = 1e-4 is clearly better htroughout and shows minimal plasticity train_loss
+- For 12 layers, lr = 1e-3 shows clear plasticity loss and is better than lr = 1e-5 initially, which seems to improve over time.
+
+TODO 2: I am now implementing and running the hyperparameter sweeps.
+- I am running the sweeps for L2 and L2Init from 1e-1 to 1e-7
+- I have just launched a Shrink and Perturb sweep. 
+- These leaves me with implementing the reset based algorithms, then the *-algorithms.
+
+TODO 3: Reset Algorithms:
+- I have made some progress on refactoring my code for the reset algorithms.
+- I need to write a new experiment loop with resets.
+
+
+- Note: For S&P I did not fix the use of the random number generator and I was using the same key throughout an epoch.
+- This may have caused some issues, so I should look into it later potentially. But there are 500*10 epochs, so perhaps this is not too concerning for now.
+
+12/30/24 Update: I am back from my trip. I will begin today with implementing and testing the reset algorithms. Then I will run the massive hyperparameter sweep.
+- CI_ViT_V1_resets.py looks good, but I need to run it to be sure.
+- get_neuron_ages_ViT.py looks reasonable, but I should double check that this one works.
+-- update_neuron_ages, get_neuron_pre_activ CI_ViT_V1_resets appear to be working.
+- reset_neurons_ViT.py seems to look correct for CBP, though I really need to test it
+-- neuron_ages do not appear to be updating correctly, or at all rather from the reset_neurons function for CBP
+-- Actually, it appears that we do not update neuron_ages in CBP
+
+NOTE: So far my crude tests seem to show that CBP is working as expected, I just need to keep in mind the below notes
+
+Update at 6:20 PM: I have just my CBP sweep for num_layers=3, lr=1e-3, 
+- The script is not saving results after each seed like with S&P, which is a bit strange.
+- This terminated due a typo, I was using x instead of x_batch, but the warning that I am receiving should be independent of this.
+- I am in the process of implementing ReDO and I will try and run ReDO with num_layers=3, lr=1e-3 before running the num_layers=12 experiments.
+- The cluster is now much busier.
+- ReDO looks good to me, but I have not tested it on the Colab yet.
+- I have placed CBP and ReDO jobs on the cluster. They are waiting for priority and resoures.
+
+
+Update at 6:20 PM of 12/31/24:
+- I have ran the CBP sweep, the ReDO sweep has completed for L3 and is in progress for L12
+- I have scheduled the SNR sweep. 
+- Next, I need to write an experimental loop for running each optimal hyperparameter choice for 5 new seeds and recording the covariates.
+- I also need to record the optimal hyperparameters.
+- All of this needs to be put into a document, which will be a bit annoying since I need to record all of the experimental details, architectural details and so forth.
+
+Covariates and statistics to record:
+- train loss, train accuracy, test accuracy: We are currently doing this.
+- Magnitudes of weights: I can record this at the end of each opoch (or task)
+- Neuron ages (measures inactivity)
+- Neuron resets
+- entropies of self attention layers.
+
+- I should implement this and run it for the Vanilla algorithm in Colab to confirm that it works.
+- Then I can run this on the cluster or even Colab for every algorithm.
+
+
+FUTURE TODOs:
+
+- DONE: TODO: I just need to change the configs to account for the number of neurons due to scaling: n_neurons = 4 * hidden_dim
+- TODO: For CBP, I may need to lower the age threshold and the perhaps play with the decay factor.
+- At the moment, since we are counting inactivity in terms of units of batches, an age threshold of 100 implies that we 
+- can only reset a neuron after 100 batches which is almost one task. Perhaps this is not too bad for this application.
+- DONE (see below): TODO: For CBP, it does not appear that we are updating neuron_ages in the reset_neurons, therefore:
+- DONE: for all methods except SNR, we should be manually updating neuron_ages when logging all covariates. 
+
+1/1/25: 
+- Yesterday I have run the SNR algorithms for L3 and L12. The L12 sweeps are still running.
+- I have also implemented the CI_ViT_V1_log_correlates.py file which logs all of the above correlates. 
+- I have run this for Vanilla L3 with lr 1e-3, and L12 with lr 1e-3 and 1e-4
+- I need to now make a notebook on the cluster that goes through each hyperparamter sweep and determines the optimal hyperparameters for each algorithm.
+
+- L2: L3: reg_str = 1e-4, L12 w/ lr = 1e-3: reg_str = 1e-3, L12 w/ lr = 1e-4: reg_str = 1e-5
+- L2Init: L3: reg_str = 1e-2, L12 w/ lr = 1e-3: reg_str = 1e-4, L12 w/ lr = 1e-4: reg_str = 1e-2 (last 50) 1e-1 (last 10)
+
+Note S&P results look quite poor for some reason, I may need to debug and figure out what is going on
+- S&P: L3  w/ lr = 1e-3: p = 0.99, sigma = 1e-2
+- S&P: L12 w/ lr = 1e-3: p = 0.7,  sigma = 1e-1 (last 50), p = 0.99, sigma = 1e-1 (last 10)
+- S&P: L12 w/ lr = 1e-4: p = 0.99, sigma = 1e-2, (last 50) p = 0.975, sigma = 1e-2 (last 10)
+
+- ReDO: L3  w/ lr = 1e-3: threshold = 0.08, reset_freq = 0.0166... (last 50), threshold = 0.02, reset_freq = 0.0166... (last 10)
+- ReDO: L12 w/ lr = 1e-3: threshold = 0.01, reset_freq = 0.0166... (last 50), threshold = 0.00, reset_freq = 0.002083... (last 10)
+- ReDO: L12 w/ lr = 1e-4: threshold = 0.08, reset_freq = 0.0166... (last 50), threshold = 0.08, reset_freq = 0.0166... (last 10)
+
+- CBP: L3: reset_freq = 1e-2, L12 w/ lr = 1e-3: reset_freq = 1e-2, L12 w/ lr = 1e-4: reset_freq = 1e-2 (last 50) 1e-1 (last 10, barely better)
+
+- SNR: 
+L3 lr=1e-3:
+best_reset_percentile: 0.84, best_reset_freq: 0.004166666666666667, terminal 50 task accuracies: 0.6416800022125244
+best_reset_percentile: 0.96, best_reset_freq: 0.004166666666666667, terminal 10 task accuracies: 0.6053999662399292
+
+L12 lr=1e-3:
+best_reset_percentile: 0.99, best_reset_freq: 0.0020833333333333333, terminal 50 task accuracies: 0.6072399616241455
+best_reset_percentile: 0.96, best_reset_freq: 0.0005208333333333333, terminal 10 task accuracies: 0.5743999481201172
+
+L12 lr=1e-4:
+best_reset_percentile: 0.98, best_reset_freq: 0.0020833333333333333, terminal 50 task accuracies: 0.737280011177063
+best_reset_percentile: 0.68, best_reset_freq: 0.0020833333333333333, terminal 10 task accuracies: 0.7029999494552612
+
+Midnight of 1/1/31:
+
+- I realize that when choosing the optimal hyperparameter, I based my choices off the optimal test accuracy over the final 50 epochs,
+- rather than the terminal epoch's test accuracy over the last 50 tasks => so this may require rerunning everything.
+- Results, for L3 so far, look good for everything except SNR.
+- If the issue isn't with the implementation and the hyperparameter sweep, below are some thoughts, but first...
+- Tomorrow, I should spend some time with 1) either quickly setting up experiments or summarizing my work so far
+- Then 2) I should implement the new experiments for SNR
+
+Here are the thoughts that I jotted down in a notebook on the cluster when analyzing intial results for L3:
+# If the SNR implementation is correct, then I suspect two things:
+# 1) Having a large batch size may be causing, some, discrepencies with the earlier results. 
+# Perhas ReDO and CBP can compute more accurate utilities with larger batch sizes and SNR is too late in detecting inactive neurons
+# Here, a batch sonsists of 100 images * 65 tokens/image = 6500 neuron firings per batch
+# This is much larger than the earlier MLP and CNN experiments which had fewer neuron firings per batch
+# 2) It may just be that ReDO and CBP fare better at estimating a neuron's 'utliity'
+# 3) It is also strange that SNR does worse than Vanilla
+# 4) SNR has 36-61X fewer resets than CBP and ReDO over the course of the experiment
+# 5) CBP and ReDO appear to have more dormant neurons, which means that they are also resetting other neurons
+
+
+# I should record my results, somewhere, and simultaneously, I should debug my SNR implementation.
+# Currently, the fact that SNR has fewer inactive neurons matches the expectations. 
+
+# Other note, I find it quite strange that SNR does worse than the Vanilla algorithm,
+# it's almost as though resetting the inactive neurons is worse than not resetting and also worse than overly resetting
+
+# I have two ideas for dealing with SNR in this regime:
+# - allow for \epsilon-death which means that a neuron is inactive if it does not fire for sufficiently many 'inputs'
+# - keep track of inactivity in some continuous manner, so if the neuron does not fire for 80% of neurons
+# then treat it as not firing for 0.8 * batch_size * # of tokens
+# I need to think about this and perhaps probe Chat-GPT.
+# One "greedy" approach is to assume that that the inactivities are continuguous and either arrive first,
+# or arrive last.
+# Arrive first => compound with previous steps inactivity, but this may just accumulate
+# Arrive last => No accumulation, so neuron inactivity resets with each batch => probably the right thing to do.
+
+# All I can say about SNR vs Vanilla is: if you're going to reset neurons, you better reset early enough otherwise you are potenttialy losing out on forward transfer with delayed plasticity gain.
+
+01/03/25
+
+Hyperparameter Sweep Correctness:
+- I had chosen hyperparameters based off the test accuracy on the last 50 epochs rather than the last 50 terminal task accuracies.
+- Here I am writing down each algorithm and it's hyperparameters and whether it needs to be rerun.
+
+L3: 
+Vanilla: N/A
+L2: (OKAY~) ran: reg_str = 1e-4, correct: reg_str = 1e-3 (slightly better)
+L2Init: (Perfect) ran: reg_str = 1e-2, correct: reg_str = 1e-2
+S&P: (Perfect) ran/correct: p = 0.99, sigma = 0.01
+CBP: (OKAY~) ran: reset_freq = 1e-2, correct: reset_freq = 1e-1 (slightly better at @ terminal 50 tasks, but worse at terminal 10 tasks)
+ReDO: (Perfect) ran/correct: threshold = 0.08, reset_freq = 1 / (0.5 * batches * epochs)
+SNR: (OKAY~) ran: reset_percentile = 0.84, reset_freq = 1 / (2 * batches * epochs), correct: reset_percentile = 0.84, reset_freq = 1 / (4 * batches * epochs) (h_params are similar and results are both poor for SNR)
+SNR-V2: (Perfect) ran/correct/finer-sweep: reset_percentile = 0.55, reset_freq = 1 / (0.75 * batches * epochs)
+
+L12 w/ lr = 1e-3: 
+Vanilla: N/A
+L2: (OKAY~) ran: reg_str = 1e-3, correct: reg_str = 1e-4 (slightly better)
+L2Init: (OKAY~) ran: reg_str = 1e-4, correct: reg_str = 1e-2 (better by at most 0.01)
+S&P: (Perfect): ran/correct: p = 0.7, sigma = 0.1
+CBP: (Perfect) ran: reset_freq = 1e-2, correct: reset_freq = 1e-2
+ReDO: (Maybe rerun~) ran: threshold = 0.01, reset_freq = 1 / (0.5 * batches * epochs), correct: threshold = 0.02, reset_freq = 1 / (0.25 * batches * epochs) (the performance looks better for the correct one, but all of these look pretty bad relative to Vanilla)
+SNR: (OKAY~) ran: reset_percentile = 0.99, reset_freq = 1 / (4 * batches * epochs), correct: reset_percentile = 0.92, reset_freq = 1 / (4 * batches * epochs) (H_params are similar and results are both poor for SNR)
+SNR-V2: (TODO) correct/original-sweep: reset_percentile = 0.6, reset_freq = 1 / (8 * batches * epochs) (Currently running the finer/wider sweep)
+
+L12 w/ lr = 1e-4: 
+Vanilla: N/A
+L2: (Perfect) ran/correct: reg_str = 1e-5
+L2Init: (Perfect): ran/correct: reg_str = 1e-2
+S&P: ran: (Perfect): ran/correct p = 0.99, sigma = 1e-2
+CBP: (OKAY~) ran: reset_freq = 1e-2, correct: reset_freq = 1e-1 (very, very similar performance)
+ReDO: (Maybe rerun~) ran: threshold = 0.08, reset_freq = 1 / (0.5 * batches * epochs) correct: threshold = 0.04, reset_freq = 1 / (1 * batches * epochs) (the correct one is about 0.01 better than what I ran, h_params are similar, but it could merit rerunning this)
+SNR: (Maybe/OKAY~) ran: reset_percentile = 0.98, reset_freq = 1 / (4 * batches * epochs), correct: reset_percentile = 0.98, reset_freq = 1 / (32 * batches * epochs) (similar h_params, and performance is only slightly better for the correct h_params, could be noise)
+SNR-V2: (TODO) correct/original-sweep: reset_percentile = 0.6, reset_freq = 1 / (1 * batches * epochs)
+
+- I have just setup an finer sweep for SNR-V2 w/ L12 and lr = 1e-3 that is slightly wider than the finer sweep for SNR-V2 L3.
+- I am just extending the reset_freq up to 15 and 32, given the original hyperparameter sweep results.
+- I am going to run the finer hyperparamter sweep for L!2 w/ lr = 1e-4, but will keep the original range of reset_freqs as in the finer L3 sweep
+
+- It looks like there is no algorithm that needs its optimal hyperparameter choice to be really 
+
+01/07/25:
+
+- I have not yet analyzed the optimal hypermaters for SNR-V2 in the twelve layer experiments yet, though I should do that and potentially rerun those
+- I need to run this later
+
+- Vivek was also asking about SNR-L2, therefore I need to implement:
+- SNR-L2
+- SNR-V2-L2
+- SNR-L2*
+- SNR-V2-L2*
+
+In the mean time, I can run:
+- SNR-L2 (3 layer, 12 layers)
+- SNR-V2-L2 (3 layers) 
+
+- The question is, should I do a hyperparameter sweep, perhaps I do that after I get my results.
+- I should also log all of my results into my document. This includes the learning rate sweep, the hyperparameter sweep, and the choice of hyperparameters.
+
+- Before running any of this, I have used 898 GB of my pool001 directory. 
+- A layer logging experiment consumes 13 GB and a 3 layer experiminet conumes 900 Maybe
+
+- My immediate TODOs are to:
+- impolement SNR-L2, SNR-V2-L2
+- run: SNR-L2, SNR-V2-L2, and L2 with the correct optimal hyperparameters. This will give suboptimal results for the SNR variants, which I can tune later.
+
+Intermediate TODOs:
+- I should run the L3 experiment in a notebook and I should record the thresholds. Are these absurdly large? 
+- I should double check the derivation of my SNR-V2 reset technique
+
+Tomorrow, or later: 
+- I can run a more exhaustive hyperparameter sweep.
+- I can implement L2*, SNR-L2*, SNR-V2-L2*
+
+Progres:
+- I have just implemented SNR-L2, SNR-V2-L2 and I have written the config files for these, with the exception of SNR-V2-L2 for 12 layers.
+- I have also written a new config for L2 with the "correct" optimal hyperparameters 
+- results will be saved in /pool001/jozefiak/CI_ViT/opt_h_param_sweep_fixed/
+- This will take at most (13 + 13 + 1) * 3 = 81 GB, so after this I need to clear space
+- My experiments are currently running and do not seem to have any issues.
+- remaining TODO in this immediate list of TODOs: get the optimal SNR-V2 hyperparameters for the 12 layer networks and run those.
+- TODO: I may need to tuen SNR-V2-L2 now that we have regularization. The reset threshold may now be too aggressive.
+
+01/12/25:
+
+- I am going to log the results that I ran a few days ago for SNR-L2 and may run some more hyperparameter sweeps.
+- I will also update my document tonight so that it is ready for a meeting tomorrow. This will include:
+- the SNR-L2 results,
+- perhaps details of a hyperparameter sweep
+- update my description of SNR-V2
+- touch up any formatting
+- add the learning rate sweep
+
+- I should also spend some time thinking about what else I should do to touch up my paper, as well getting an ICML template going.
+
+
+TODOs (Immediate):
+- Investigate the results and log them in my document. Take stock of what I have and then decide what to do next.
+- I should add the learning rate sweep to the end of the document.
+
+01/14/25:
+- Vivek wants to look at the training loss.
+- Therefore, I will look at the training loss over the hyperparameter sweep:
+- We can look at: 
+1: Cumulative average of all timesteps
+2: Cumulative average of terminal training losses over all timesteps
+3: average of all timesteps in last 50 tasks
+4: average of terminal training lossses for last 50 tasks
+
+
+Best results for each algorithm:
+Metric: average training accuracy on the terminal epoch on the last 50 tasks:
+L3 layer ViT:
+No Intervention: lr = 1e-3, 0.77510 (0.01093)
+L2: reg_str: 0.001, terminal 50 task accuracies: 0.78719 (0.00864)
+L2 Init: reg_str: 0.01, terminal 50 task accuracies: 0.88452 (0.00232)
+CBP: reset_freq: 0.01, terminal 50 task accuracies: 0.96214 (0.00127)
+S&P: p: 0.99, sigma: 0.01, terminal 50 task accuracies: 0.69838 (0.00304)
+ReDO: 0.01, reset_freq: 0.03333333333333333, terminal 50 task accuracies: 0.84259 (0.00603)
+SNR: reset_percentile: 0.84, reset_freq: 0.0010416666666666667, terminal 50 task accuracies: 0.69294 (0.00375)
+SNR-V2: reset_percentile: 0.55, reset_freq: 0.03333333333333333, terminal 50 task accuracies: 0.92855 (0.00376)
+Suboptimal:
+SNR-L2: reg_str_0.001_reset_percentile_0.84_reset_freq_0.0020833333333333333: terminal acc: 0.79410 (0.00828)
+SNR-L2-V2: reg_str_0.001_reset_percentile_0.55_reset_freq_0.011111111111111112: terminal acc: 0.841283 (0.00663)
+
+12 layer ViT with learning rate 1e-3:
+No intervention: lr: 0.001, accuracy: 0.64315 (0.01403)
+L2 reg_str: 0.0001, terminal 50 task accuracies: 0.83161 (0.01022)
+L2 Init: reg_str: 0.001, terminal 50 task accuracies: 0.91955 (0.00385)
+CBP: reset_freq: 0.01, terminal 50 task accuracies: 0.70365 (0.03138)
+S&P: p: 0.7, sigma: 0.1, terminal 50 task accuracies: 0.54589 (0.00072)
+ReDO: threshold: 0.02, reset_freq: 0.03333333333333333, terminal 50 task accuracies: 0.63802 (0.01893)
+SNR: reset_percentile: 0.92, reset_freq: 0.0020833333333333333, terminal 50 task accuracies: 0.62502 (0.01186)
+SNR-V2: reset_percentile: 0.55, reset_freq: 0.016666666666666666, terminal 50 task accuracies: 0.65547 (0.02421)
+Suboptimal:
+SNR-L2: reg_str_0.0001_reset_percentile_0.92_reset_freq_0.0020833333333333333: terminal acc: 0.83006 (0.00960)
+
+12 layer ViT with learning rate 1e-4:
+No Intervention: lr: 0.0001, accuracy: 0.85539 (0.01288)
+L2 reg_str: 1e-07, terminal 50 task accuracies: 0.84837 (0.00856)
+L2 Init: reg_str: 0.001, terminal 50 task accuracies: 0.94631 (0.00651)
+CBP: reset_freq = 0.01, terminal 50 task accuracies: 0.98349 (0.00179)
+S&P: p: 0.99, sigma: 0.01, terminal 50 task accuracies: 0.65207 (0.00346)
+ReDO: threshold: 0.005, reset_freq: 0.03333333333333333, terminal 50 task accuracies: 0.95880 (0.00336)
+SNR: reset_percentile: 0.84, reset_freq: 0.0005208333333333333, terminal 50 task accuracies: 0.84267 (0.00708)
+SNR-V2: reset_percentile: 0.6, reset_freq: 0.016666666666666666, terminal 50 task accuracies: 0.97400 (0.00649)
+Suboptimal
+SNR-L2: reg_str_1e-07_reset_percentile_0.98_reset_freq_0.00026041666666666666: terminal acc: 0.8185932636260986 (0.027605239301919937)
+
+
+One thing to do is to double check my implementation of SNR. 
+It could be wrong, but then why is CBP and ReDO doing better when I've proted the impelemntations over correctly?
+Also SNR + L2 generally does better than L2, so this cannot just be noise.
+I may need to double check SNR's implementation carefully and see if there is anyhting that could be going wrong.
+One option is to copy the code over to a notebook and to step through SNR's execution of the algorithm for the 3 layer model.
+
+01/15/25:
+
+- I just had my meeting with Vivek this morning. He wants to meet again today at 5pm EST. 
+- I need to log as much data as possible and understand what is going on. 
+- If neuron death is occuring: do the SNR-V1 definition and the SNR-V2 definition. 
+- Log the resets of each algorithm and plot this somehow.
+- Log the networks weights and see weight blow up is occuring.
+- Log the entropies and see if entropy collapse is occuring
+- Then I can go back and look at my CNN model and see what was happening with CBP and SNR, potentially.
+- Relate back the Permuted Shakespeare results and see what was happening and compare, at least we should look at the paper and see the story.
+
+- I should run results for the optimal hyperparameters for the 3 layer and the 12 layer models.
+- I should modify the config file to save the SNR-V1 and SNR-V2 ages. May need to manually save these, since it becomes confusing.
+- I should also run a hyperparameter sweep for SNR-V2-L2, but this can be done afterwards.
+
+- I have cleared 200 GB of data from /nobackup1/jozefiak/CL/Results/PS/PS_092824_scale_16 by deleting the covariates of the seed 11 and seed 10 models, leaving only 2 seeds with correlates.
+
+TODOs:
+1: Modify experimental loop so that all necessary correlates are logged.
+1.5: Double check that this works on the cluster.
+2: Write config files for optimal hyperparameters and run those, in order:
+SNR, SNR-V2, CBP, L2, L2Init, Vanilla, ReDO, SNR-V2-L2
+3: Process Results
+4: Compare Against Permuted Shakespeare
+5: Compare against CNN on CI problem. Would need to go back and refactor that code and run those experiments.
+
+TODO 1: Experimental Loop:
+- I have created a new experimental file.
+- Complete: Logging train and test accuracies.
+- Complete: Neuron Resets.
+- Complete: Network weights.
+- Complete: Entropies. 
+- TODO: Neuron death. a_SNR, a_SNR_V2
+
+- It loops like my update_neuron_ages_2 is working
+
+- Added my SNR config and completed the training loop, I just need to run it and verify that it works
+
+- I need to update this document. But briefly we are running an SNR-V2-L2 sweep for 12 layer ViT with lr = 1e-3
+
+Below is a brief update of the day's progress:
+- I showed Vivek the correlates and he agreed that plasticity loss and its common correlates are present.
+- In response he asked me run SNR-V2-L2 for the 12 layer ViT with learning rate 1e-3, where L2Init followed L2 were the only performant models.
+- So that is what I did and I analyzed the results the next day.
+
+01/16/25 Update:
+
+- I have just analyzed the results of the SNR-V2-L2 sweep:
+- best performance:
+reg_str: 0.0001
+reset_percentile: 0.55, 
+reset_freq: 0.016666666666666666
+terminal 50 task accuracies: 0.87326 (0.00714)
+
+But results are very similar for many other reset_percentiles with reg_str 1e-4 and 1e-3,
+many of these choices get a train accuracy of >= 0.86, so 0.87326 is somewhat due to noise.
+
+TODO:
+- I just need to run the SNR-V2-L2 and log the covariates, then rerun the notebooks on the cluster to get the plots with SNR-V2-L2
+
+Best test accuracy for SNR-V2-L2:
+reg_str 0.001 reset_percentile: 0.8, reset_freq: 0.00417, terminal 50 task accuracies: 0.8134799599647522
+- but even for reg_str 1e-4, results are similar, so this is just noise between the two regularization strengths
+
+01/18/25:
+- Yesterday Vivek made me implement SNR-V2-L2* algorithm: L2* = regularize only the KQV projection matrices.
+- I ran a small sweep over 4 hyperparameter choices for a single seed, just to seed if this helps. 
+- This resulted in SNR-V2-L2* improving on the perofrmance of SNR-V2-L2, but not better than L2Init, for train accuracy.
+- I received a bunch of TODOs:
+- In short: 
+- We need to run a finer sweep of SNR-V2-L2* and for more seeds, particularly tune the regularization strength.
+- We should understand why L2Init is doing so well. 
+- For me personally, recall what hyperparameters we are choosing for L2Init for train vs test accuracy. 
+- I could also do a finer h-param sweep for L2, but not critical since we beat L2 with SNR-V2-L2 and SNR-V2-L2* (so far)
+- More epochs to hurt L2Init?
+- Run the experiment longer for the 3 layer ViT
+- For me personally, can we look at other metrics. This is somewhat time consuming for all data, so I should sit down one day with 3 h-params of L2Init, SNR-V2-L2*, and CBP and then analyze.
+- My worry is that we could just be tuning to noise and already look at the last 50 tasks, L2Init and CBP do well for test and train accuracy, this seems like a very natural and robust period to measure.
+- Finally, move to an ATN classification experiment.
+
+- Today, I have set off SNR-V2-L2-star's fine hyperparameter sweep for (L3, lr=1e-3) and (L12, lr=1e-3).
+- TODO: do a sweep for (L12, lr=1e-4)
+- TODO: Analyze the results
+
+8:32 PM
+- By accident I did not update the experiment file and so resets did not apply, so I got results for SNR-L2*,
+- Although this shows that the optimal regularizarion strength is actually 5e-3 for (L3, 1e-3), with results of the form:
+- reg_str: 0.005 reset_percentile: 0.6, reset_freq: 0.01667, terminal 50 task accuracies: 0.84524 (0.00774)
+
+- I have fixed the experiment code and will rerun the (L3, 1e-3) and (L12, 1e-3) experiments right now
+- Initial results look and show that the algorithm and experiment loop are implemented correctly.
+
+- I need to analyze my results in the morning, but we are getting some godo results so far.
+- (L3,1e-3): training accuracy is slightly better than SNR-V2-L2, but could do better with a finer sweep, but not better than CBP
+- (L3,1e-3): test accuracy is better than L2Init by 2-3%, so this is good news.
+- The above use different regularization strengths, perhaps this is fine. When people perform h-param sweeps they choose the h-params for the specific task.
+
+- TODO: I should really look at other metrics.
+- TODO: tomorrow: analyze results, implement ATN, look at the cumulative average train/test acc and see if we can gleam any trends, perhaps run the 3 layer model for more iterations.
+
+01/20/25 Update:
+- Over the weekend I ran the SNR-V2-L2* star that was finer. I got some better results.
+- In response, I setup a finer for SNR-V2-L2* for the (L3,1e-3) model since our performance is on the boundary.
+- SNR-V2-L2* obtains the greatest test accuracy for (L3,1e-3) and (L12, 1e-3)
+- SNR-V2-L2* obtains the greatest train accuracy for (L12, 1e-3) and (L12, 1e-4)
+- So there is still some room for improvement, but a bit better after tuning.
+
+I have also started implmemting the ATN experiment and have some initial experiments on the cluseter and colab.
+- So far I have settled on a context window of 512 tokens.
+- batch size of 16
+- 1 epoch per task
+- 16*32 = 512 articles from each class for each task
+- each task is a binary classification problem 
+- Tuning the learning rate, we see some plasticity loss for (L3, 1e-3)
+- The network was doing very well with more epochs, so I decided to decrease the number of epochs to 1, making the problem more difficult.
+
+TODO/IMPORTANT: I noticed that I was logging accuracy after the train_step in my ViT experiments. I fixed this for my LViT experiments.
+- However, I may need to fix this for my ViT experiments and see how performance changes.

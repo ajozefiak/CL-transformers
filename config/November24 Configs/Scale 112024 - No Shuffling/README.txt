@@ -1,0 +1,1 @@
+In this directory I have the exact same experiments as in Scale 112024, except I am running the experiment with no shuflfing between epochs.
