@@ -1,0 +1,22 @@
+I have also started implmemting the ATN experiment and have some initial experiments on the cluseter and colab.
+- So far I have settled on a context window of 512 tokens.
+- batch size of 16
+- 1 epoch per task
+- 16*32 = 512 articles from each class for each task
+- each task is a binary classification problem 
+- Tuning the learning rate, we see some plasticity loss for (L3, 1e-3)
+- The network was doing very well with more epochs, so I decided to decrease the number of epochs to 1, making the problem more difficult.
+
+
+01/23/25
+- Vivek suggested that I use more articles, so I am increasing the number of articles by at least a factor of 10.
+- Therefore, I have filtered the dataset into each publication and I have tokenized each title+text into 512 token long exaples.
+- Many of the publications have on average about 500 tokens of text in the article, therefore, I limit my tokenization to 512 tokens.
+
+Current TODOs:
+- Implement new experimental loop using .hf files for each publication.
+- Run this experiment on Colab to get a feel for the number of articles per task, epochs, etc.
+- Then schedule a job on the cluster to run a learning rate sweep.
+
+Further TODOs:
+- Log where we have all of our results, files, etc.

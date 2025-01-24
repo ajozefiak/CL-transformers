@@ -14,3 +14,9 @@
 - I should see what happens if I use other threshold initializations, I could either run a full sweep or just use the optimal choice.
 - This I can investigate later since I suppose it should have relatively little impact and my intiial choice is quite reasonable.
 - May at the 3 layer ViT I could investigate.
+
+- Our paper got accepted. We need to get a Camera ready copy for March 1. 
+- We are also working on the Journal submission. 
+
+- Finally. I should compile all of my results and code, for the LLM and previous experiments. Touch it up. Organize things better, for both the conference and journal submission.
+- Perhpas I should make a git repo that implements my experiments.
