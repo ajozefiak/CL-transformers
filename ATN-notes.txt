@@ -55,3 +55,14 @@ Washington Post: 3332
 - Then the minimum number of articles per publication becomes: New Republic with 11807 articles.
 
 - For now, I will just get an experiment implemented, schedule the job on the cluster and then I can optimize it later.
+
+01/24/25:
+- My job last night did not run because I forgot to specify the number of layers
+- My learning rate sweep is currently running. There are two things that I will be watching for:
+- 1: Is plasticity loss occuring.
+- 2: How long is the experiment taking.
+
+- Ideas for changes:
+- Perhaps I could accelerate the experiment if I do not add the labels ot the dataset, and instead always sample 8 examples from each class at a time.
+- Should I increase batch size, like I had in continual imagenet? 
+- Perhaps I do a multiclass classification problem, rather than binary. 

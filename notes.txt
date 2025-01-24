@@ -20,3 +20,10 @@ ssh jozefiak@eofe8.mit.edu
 
 Sort pending jobs based on priority and list priority value:
 squeue -p sched_mit_sloan_gpu_r8 -t PD -o "%.18i %.9P %.8j %.8u %.2t %.10M %.6D %.10R %.10Q" --sort=-Q
+
+Check how long a job ran on the cluster:
+sacct -j  62543181_0 --format=JobID,JobName,Elapsed
+
+Specifiy a start time: 
+sbatch --begin=now+2hours file_name.sh 3
+
