@@ -21,6 +21,7 @@ from .src.experiments.CI_ViT_V1_log_correlates import run_CI_ViT_R1_log_correlat
 from .src.experiments.CI_ViT_V1_log_correlates_2 import run_CI_ViT_R1_log_correlates_2
 
 from .src.experiments.ATN_LViT_V1_resets import run_ATN_LViT_R1_reset_experiment
+from .src.experiments.ATN_LViT_V2_resets import run_ATN_LViT_V2_experiment
 
 # # Import everything in src/__init__.py __all__
 # from .src import *

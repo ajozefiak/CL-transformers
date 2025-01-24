@@ -4,6 +4,7 @@ import jax.random as jr
 import jax.numpy as jnp
 import pickle
 import datasets
+from datasets import load_from_disk
 
 def get_ATN_data(path):
     path = path + "/ds_tokenized_512.pkl"
@@ -35,4 +36,62 @@ def get_next_task(data, publications, key, articles):
   union_ds = datasets.concatenate_datasets([ds_0, ds_1])
   union_ds = union_ds.with_format("jax", columns=["tokens_512", "label"])
   return union_ds
+
+
+publications = ['Vox',
+ 'Business Insider',
+ 'Reuters',
+ 'TMZ',
+ 'Vice',
+ 'Vice News',
+ 'Hyperallergic',
+ 'TechCrunch',
+ 'Axios',
+ 'Refinery 29',
+ 'The Verge',
+ 'Mashable',
+ 'People',
+ 'Economist',
+ 'CNN',
+ 'Gizmodo',
+ 'Wired',
+ 'CNBC',
+ 'New Republic',
+ 'Fox News',
+ 'The Hill',
+ 'Politico',
+ 'The New York Times',
+ 'Buzzfeed News'
+#  'New Yorker',               
+#  'Washington Post'
+ ]
+
+# New implementation that uses (nearly) the full dataset
+
+def get_ATN_data_full(path, publications):
+    data = []
+    for pub in publications:
+        data.append(datasets.load_from_disk(path + f'{pub}.hf'))
+    return data
+
+
+def get_next_task_full(data, publications, key, articles):
+  # Sample two random indices
+  key, split_key = jr.split(key)
+  idx_0, idx_1 = select_two_rand_pubs(publications, key)
+
+  # shuflfe datasets and get exact number of articles from each dataset
+  ds_0 = data[idx_0].shuffle(seed=int(split_key[0])).select(range(articles))
+  key, split_key = jr.split(key)
+  ds_1 = data[idx_1].shuffle(seed=int(split_key[0])).select(range(articles))
+
+  # Add labels
+  ds_0 = ds_0.add_column("label", np.zeros(len(ds_0), dtype=int))
+  ds_1 = ds_1.add_column("label", np.ones(len(ds_1), dtype=int))
+
+  union_ds = datasets.concatenate_datasets([ds_0, ds_1])
+  union_ds = union_ds.with_format("jax", columns=["tokens_512", "label"])
+
+  return union_ds
+
             

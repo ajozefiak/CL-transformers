@@ -1,1 +1,34 @@
-In this .txt file we list every file and experiment related to the ATN problem.
+- In this .txt file we list every file and experiment related to the ATN problem.
+- I may also list a refined summary of my experiments and of my observations regarding the dataset and any experimental dynamics.
+
+After preprocessing and removing empty articles, here the number of articles for each publication:
+Vox: 47265
+Business Insider: 57934
+Reuters: 825136
+TMZ: 49504
+Vice: 100986
+Vice News: 15539
+Hyperallergic: 13539
+TechCrunch: 52051
+Axios: 47311
+Refinery 29: 87111
+The Verge: 51556
+Mashable: 94107
+People: 135691
+Economist: 23200
+CNN: 125300
+Gizmodo: 27226
+New Yorker: 4644
+Wired: 20185
+CNBC: 234139
+New Republic: 11807
+Fox News: 20144
+The Hill: 208411
+Politico: 46235
+The New York Times: 249072
+Buzzfeed News: 32724
+Washington Post: 3332
+
+The New Yorker has 4644 articles, which is slightly less than the original count of 4701.
+The Washington Post has 3332 articles, which is substantially less than the original count of 40882.
+Upon investigation, 37550 Washington Post articles contain a missing article, and only have a title and some other associated data.
