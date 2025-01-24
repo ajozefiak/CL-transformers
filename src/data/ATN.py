@@ -78,7 +78,7 @@ def get_ATN_data_full(path, publications):
 def get_next_task_full(data, publications, key, articles):
   # Sample two random indices
   key, split_key = jr.split(key)
-  idx_0, idx_1 = select_two_rand_pubs(publications, key)
+  idx_0, idx_1 = select_two_rand_pubs(publications, split_key)
 
   # shuflfe datasets and get exact number of articles from each dataset
   ds_0 = data[idx_0].shuffle(seed=int(split_key[0])).select(range(articles))
