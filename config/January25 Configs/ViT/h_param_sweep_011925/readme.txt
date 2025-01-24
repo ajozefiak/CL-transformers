@@ -9,3 +9,5 @@ Therefore, I am running the following sweep for (L3, 1e-3):
 reg_strs = [5e-6, 7.5e-6, 1e-5, 2.5e-5, 5e-5, 7.5e-5, 1e-4]
 reset_perentiles = [0.45, 0.475, 0.5, 0.55, 0.55, 0.6]
 reset_freqs = [1 / (i * epochs * batches) for i in [0.5, 1, 2]]
+
+The 01/20/25 date just ran the 01/19/25 job, but wiht a smaller time limit due to server maintenance

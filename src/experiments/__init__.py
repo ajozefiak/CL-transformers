@@ -14,4 +14,4 @@ from .CI_ViT_V1_log_correlates import run_CI_ViT_R1_log_correlates
 from .CI_ViT_V1_log_correlates_2 import run_CI_ViT_R1_log_correlates_2
 
 from .ATN_LViT_V1_resets import run_ATN_LViT_R1_reset_experiment
-from .run_ATN_LViT_V2_resets import run_ATN_LViT_V2_experiment
+from .ATN_LViT_V2_resets import run_ATN_LViT_V2_experiment
