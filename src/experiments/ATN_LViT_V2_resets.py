@@ -23,7 +23,7 @@ def run_ATN_LViT_V2_experiment(config, alg, alg_params, seed, save_path, cluster
     articles = batch_size*320 
     # articles = 5120
     epochs = 1
-    tasks = 300
+    tasks = 500
 
     # Extract Experiment Config Data
     if 'batch_size' in experiment_config:
@@ -87,14 +87,13 @@ def run_ATN_LViT_V2_experiment(config, alg, alg_params, seed, save_path, cluster
                     #  'Washington Post'
                     ]
     if cluster:
-        ATN_dir = '/home/jozefiak/CL/Experiments/PS_fixed_111924/ATN_dataset/'
+        ATN_dir = '/home/jozefiak/CL/Experiments/PS_fixed_111924/ATN_dataset_full/'
     else:
         ATN_dir = '/content/drive/MyDrive/CL LLM/Louis Wang Tutorial/Late August/Process All the News/Data/tokenize_all_512/'
     data = get_ATN_data_full(ATN_dir, publications)
     
 
     for task in range(tasks):
-        print(f"Task {task}")
         task_key, task_split_key = jr.split(task_key)
         ds_task = get_next_task_full(data, publications, task_split_key, articles)
 
