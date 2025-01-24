@@ -23,7 +23,7 @@ def run_ATN_LViT_V2_experiment(config, alg, alg_params, seed, save_path, cluster
     articles = batch_size*320 
     # articles = 5120
     epochs = 1
-    tasks = 500
+    tasks = 300
 
     # Extract Experiment Config Data
     if 'batch_size' in experiment_config:
@@ -94,6 +94,7 @@ def run_ATN_LViT_V2_experiment(config, alg, alg_params, seed, save_path, cluster
     
 
     for task in range(tasks):
+        print(f"Task {task}")
         task_key, task_split_key = jr.split(task_key)
         ds_task = get_next_task_full(data, publications, task_split_key, articles)
 
