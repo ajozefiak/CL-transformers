@@ -66,3 +66,6 @@ Washington Post: 3332
 - Perhaps I could accelerate the experiment if I do not add the labels ot the dataset, and instead always sample 8 examples from each class at a time.
 - Should I increase batch size, like I had in continual imagenet? 
 - Perhaps I do a multiclass classification problem, rather than binary. 
+
+- I have updated my experimental files in the evening, but when I try ot pull my git repo in the cluster, I get an out of disk space error, this is quite strange
+- I do not know where the excessive data was saved
