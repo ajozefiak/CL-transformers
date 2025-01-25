@@ -95,18 +95,22 @@ def run_ATN_LViT_V2_experiment(config, alg, alg_params, seed, save_path, cluster
 
     for task in range(tasks):
         task_key, task_split_key = jr.split(task_key)
-        ds_task = get_next_task_full(data, publications, task_split_key, articles)
+        data_task, labels_task = get_next_task_full(data, publications, task_split_key, articles)
 
         for epoch in range(epochs):
             task_key, task_split_key = jr.split(task_key)
-            ds_task_shuffled = ds_task.shuffle(seed=int(task_split_key[0]))
+            data_shuffled, labels_shuffled = shuffle_task(data_task, labels_task, task_split_key)
+    
+            dataset_length = len(data_shuffled)
 
-            dataset_length = len(ds_task_shuffled)
             for start_idx in range(0, dataset_length, batch_size):
-                batch = ds_task_shuffled[start_idx : start_idx + batch_size]
-          
-                x_batch = batch["tokens_512"][:128]
-                y_batch = batch["label"]
+                
+                # start_idx
+                end_idx = start_idx + batch_size
+
+                x_batch = data_shuffled[start_idx:end_idx]
+                y_batch = labels_shuffled[start_idx:end_idx]                
+
 
                 ###############
                 # COMMON TRAINING LOOP:
